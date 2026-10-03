@@ -1,0 +1,33 @@
+﻿# Environment Variables & Secrets
+.env
+*.env
+!.env.example
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Test generated reports (preserve sample demo reports only)
+backend/generated_reports/*.pdf
+!backend/generated_reports/SA-2026-FATIMA-BLEED.pdf
+!backend/generated_reports/SA-2026-MARIAM-LACUNAR.pdf
+
+# IDE and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Generated Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Temporary & Log Files
+*.log
+*.tmp
+*.bak

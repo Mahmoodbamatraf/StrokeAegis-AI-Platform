@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrokeAegis AI — Multi-Agent Clinical Decision Support</title>
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css?v=20260924_header_icons">
+</head>
+<body>
+    <!-- Top Clinical Header -->
+    <header class="top-header">
+        <div class="header-container">
+            <div class="brand-section" id="header-brand-home" style="cursor: pointer;">
+                <img src="/assets/logo.png" alt="StrokeAegis AI Logo" class="brand-logo">
+                <div class="brand-text">
+                    <h1 class="brand-title"><span data-i18n="brand.title">StrokeAegis</span> <span class="brand-ai" data-i18n="brand.ai">AI</span></h1>
+                    <p class="brand-tagline" data-i18n="brand.tagline">AI-Powered Stroke Reporting & Integrated Clinical Solutions</p>
+                </div>
+            </div>
+
+            <!-- Center Header: Interactive Cute Robot Head Assistant Trigger -->
+            <div class="header-robot-center" id="header-robot-trigger" role="button" tabindex="0" title="Click to chat with StrokeAegis Medical Assistant">
+                <div class="header-robot-card">
+                    <div class="header-robot-avatar-wrap">
+                        <img src="/assets/robot_face_no_text.svg" alt="StrokeAegis AI Assistant" class="header-robot-head-img">
+                        <span class="header-robot-pulse-ring"></span>
+                        <span class="header-robot-status-dot"></span>
+                    </div>
+                    <div class="header-robot-caption">
+                        <div class="header-robot-badge">
+                            <span class="robot-sparkle"><svg class="lucide-icon lucide-sparkles" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg></span>
+                            <strong data-i18n="robot.ask">Ask StrokeAegis AI</strong>
+                        </div>
+                        <span class="header-robot-sub" data-i18n="robot.sub">Medical Chatbot &bull; Click to Chat</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-controls-group">
+                <!-- Language Toggle Capsule: EN / عربي -->
+                <button type="button" class="capsule-toggle lang-capsule" id="btn-lang-toggle" title="Switch Language / تبديل اللغة" aria-label="Toggle language">
+                    <span class="capsule-knob">
+                        <svg class="knob-svg globe-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </span>
+                    <span class="capsule-text">
+                        <span class="lang-opt lang-opt-en active">EN</span>
+                        <span class="capsule-divider">|</span>
+                        <span class="lang-opt lang-opt-ar">عربي</span>
+                    </span>
+                </button>
+
+                <!-- Theme Toggle Capsule: Draggable & Clickable Day/Night Switch -->
+                <button type="button" class="capsule-toggle theme-capsule theme-drag-switch" id="btn-theme-toggle" title="Drag or Click to switch theme" aria-label="Toggle theme">
+                    <!-- Day Sky Background (Light mode) -->
+                    <span class="track-bg track-bg-day" aria-hidden="true">
+                        <span class="track-cloud-icon"><svg class="lucide-icon lucide-cloud" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" /> </svg></span>
+                        <span class="track-target-moon"><svg class="lucide-icon lucide-moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /> </svg></span>
+                    </span>
+
+                    <!-- Night Sky Background (Dark mode) -->
+                    <span class="track-bg track-bg-night" aria-hidden="true">
+                        <span class="track-target-sun"><svg class="lucide-icon lucide-sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /> </svg></span>
+                        <span class="track-stars-icon"><svg class="lucide-icon lucide-sparkles" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg></span>
+                    </span>
+
+                    <!-- Sliding 3D Knob -->
+                    <span class="capsule-knob theme-switch-knob" id="theme-switch-knob">
+                        <span class="theme-icon-light" id="theme-icon-sun">
+                            <svg class="knob-svg sun-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </span>
+                        <span class="theme-icon-dark" id="theme-icon-moon">
+                            <svg class="knob-svg moon-svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </span>
+                    </span>
+                    <span class="capsule-text theme-label" id="theme-label-text" style="display: none;">DARK MODE</span>
+                </button>
+
+                <!-- Real-time Notifications Bell Capsule (Shown when authenticated) -->
+                <button type="button" class="capsule-toggle notif-capsule" id="btn-header-notifs" title="Clinical Notifications" style="display: none;">
+                    <span class="capsule-knob">
+                        <span class="notif-bell-icon"><svg class="lucide-icon lucide-bell" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M10.268 21a2 2 0 0 0 3.464 0" /> <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /> </svg></span>
+                    </span>
+                    <span class="notif-badge-pill" id="header-notif-count" style="display: none;">0</span>
+                </button>
+
+                <!-- User Auth Session Capsule in Header -->
+                <div class="header-auth-section" id="header-auth-section">
+                    <button type="button" class="capsule-toggle auth-nav-btn" id="btn-header-auth" title="Sign In / Register">
+                        <span class="capsule-knob">
+                            <svg class="knob-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </span>
+                        <span class="capsule-text" id="header-auth-label" data-i18n="auth.signin_nav">Sign In</span>
+                    </button>
+                    <div class="header-user-badge" id="header-user-badge" style="display: none;">
+                        <div class="user-badge-avatar" id="header-user-avatar"><svg class="lucide-icon lucide-stethoscope" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 2v2" /> <path d="M5 2v2" /> <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" /> <path d="M8 15a6 6 0 0 0 12 0v-3" /> <circle cx="20" cy="10" r="2" /> </svg></div>
+                        <div class="user-badge-info">
+                            <span class="user-badge-name" id="header-user-name">Dr. Sarah</span>
+                            <span class="user-badge-role" id="header-user-role">Doctor</span>
+                        </div>
+                        <button type="button" class="user-badge-signout" id="btn-header-signout" title="Sign Out">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="signout-svg">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="main-container">
+
+        <!-- ============================================================== -->
+        <!-- SCREEN 0: LEADING & AUTHENTICATION PORTAL                      -->
+        <!-- ============================================================== -->
+        <section id="screen-landing" class="screen active">
+            <div class="landing-container">
+                <div class="landing-grid">
+
+                    <!-- LEFT COLUMN: BRAND HERO & CUTE DOCTOR ROBOT -->
+                    <div class="landing-hero-col">
+                        <div class="landing-badge-pill">
+                            <span class="badge-sparkle"><svg class="lucide-icon lucide-sparkles" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg></span>
+                            <span data-i18n="landing.badge">PRECISION CLINICAL NEUROLOGY</span>
+                        </div>
+
+                        <h1 class="landing-main-title">
+                            <span class="title-lead" data-i18n="landing.title_lead">Start Building Precision Care with</span>
+                            <span class="title-brand">StrokeAegis <span class="brand-ai">AI</span></span>
+                        </h1>
+
+                        <p class="landing-lead-desc" data-i18n="landing.lead_desc">
+                            The intelligent multi-agent clinical decision support system uniting deep brain CT neuroimaging, tabular vascular risk modeling, and AHA/ASA guideline-grounded AI agents.
+                        </p>
+
+                        <!-- CUTE DOCTOR ROBOT STAGE -->
+                        <div class="landing-robot-stage">
+                            <!-- Glowing Aura Backdrop -->
+                            <div class="robot-ambient-glow"></div>
+
+                            <!-- Speech Bubble -->
+                            <div class="robot-speech-bubble" id="landing-robot-bubble">
+                                <span class="bubble-sparkle"><svg class="lucide-icon lucide-sparkles" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg></span>
+                                <span class="bubble-text" id="landing-robot-text" data-i18n="landing.robot_welcome">
+                                    Hello! I'm AegisBot. Sign in as a Doctor or Patient to explore clinical decision support!
+                                </span>
+                            </div>
+
+                            <!-- Cute Doctor Robot SVG -->
+                            <div class="robot-avatar-wrapper">
+                                <img src="/assets/medical_robot_transparent.svg" alt="StrokeAegis Doctor Robot" class="landing-doctor-robot-img" id="landing-doctor-robot">
+                            </div>
+                        </div>
+
+                        <!-- Feature Badges Row -->
+                        <div class="landing-features-grid">
+                            <div class="feat-card">
+                                <div class="feat-icon"><svg class="lucide-icon lucide-shield-check" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /> <path d="m9 12 2 2 4-4" /> </svg></div>
+                                <div class="feat-content">
+                                    <strong data-i18n="landing.feat1_title">ConvNeXt Gate</strong>
+                                    <span data-i18n="landing.feat1_desc">Brain CT safety door</span>
+                                </div>
+                            </div>
+                            <div class="feat-card">
+                                <div class="feat-icon"><svg class="lucide-icon lucide-brain" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 18V5" /> <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /> <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /> <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /> <path d="M18 18a4 4 0 0 0 2-7.464" /> <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /> <path d="M6 18a4 4 0 0 1-2-7.464" /> <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /> </svg></div>
+                                <div class="feat-content">
+                                    <strong data-i18n="landing.feat2_title">EfficientNetV2-S</strong>
+                                    <span data-i18n="landing.feat2_desc">Grad-CAM explainability</span>
+                                </div>
+                            </div>
+                            <div class="feat-card">
+                                <div class="feat-icon"><svg class="lucide-icon lucide-bar-chart-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 3v16a2 2 0 0 0 2 2h16" /> <path d="M7 16h8" /> <path d="M7 11h12" /> <path d="M7 6h3" /> </svg></div>
+                                <div class="feat-content">
+                                    <strong data-i18n="landing.feat3_title">Vascular ML</strong>
+                                    <span data-i18n="landing.feat3_desc">Calibrated risk tiering</span>
+                                </div>
+                            </div>
+                            <div class="feat-card">
+                                <div class="feat-icon"><svg class="lucide-icon lucide-bot" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 8V4H8" /> <rect width="16" height="12" x="4" y="8" rx="2" /> <path d="M2 14h2" /> <path d="M20 14h2" /> <path d="M15 13v2" /> <path d="M9 13v2" /> </svg></div>
+                                <div class="feat-content">
+                                    <strong data-i18n="landing.feat4_title">4 CrewAI Agents</strong>
+                                    <span data-i18n="landing.feat4_desc">AHA/ASA & ESO guidelines</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: ULTRA-MODERN AUTH PORTAL CARD -->
+                    <div class="landing-auth-col">
+                        <div class="modern-auth-card" id="landing-auth-card">
+                            <div class="auth-card-glow"></div>
+
+                            <!-- Header: Navigation Tabs (Sign In vs Create Account) -->
+                            <div class="auth-tabs-track">
+                                <button type="button" class="auth-tab-btn active" id="tab-auth-signin">
+                                    <span class="tab-icon"><svg class="lucide-icon lucide-key" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m2 21 9.6-9.6" /> <path d="m7.5 15.5 2.3 2.3a1 1 0 0 1 0 1.4l-2.1 2.1a1 1 0 0 1-1.4 0L4 19" /> <circle cx="15.5" cy="7.5" r="5.5" /> </svg></span>
+                                    <span data-i18n="auth.tab_signin">Sign In</span>
+                                </button>
+                                <button type="button" class="auth-tab-btn" id="tab-auth-signup">
+                                    <span class="tab-icon"><svg class="lucide-icon lucide-sparkles" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg></span>
+                                    <span data-i18n="auth.tab_signup">Create Account</span>
+                                </button>
+                            </div>
+
+                            <!-- Role Switcher (Doctor vs Patient) -->
+                            <div class="auth-role-selector">
+                                <label class="role-selector-label" data-i18n="auth.select_role_label">Select Your Account Role:</label>
+                                <div class="role-pills-row">
+                                    <button type="button" class="role-pill active" id="role-pill-doctor" data-role="doctor">
+                                        <span class="role-icon"><svg class="lucide-icon lucide-stethoscope" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 2v2" /> <path d="M5 2v2" /> <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" /> <path d="M8 15a6 6 0 0 0 12 0v-3" /> <circle cx="20" cy="10" r="2" /> </svg></span>
+                                        <div class="role-pill-text">
+                                            <strong data-i18n="auth.role_doctor_title">Doctor</strong>
+                                            <span data-i18n="auth.role_doctor_sub">Clinician / Specialist</span>
+                                        </div>
+                                    </button>
+                                    <button type="button" class="role-pill" id="role-pill-patient" data-role="patient">
+                                        <span class="role-icon"><svg class="lucide-icon lucide-user" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" /> </svg></span>
+                                        <div class="role-pill-text">
+                                            <strong data-i18n="auth.role_patient_title">Patient</strong>
+                                            <span data-i18n="auth.role_patient_sub">Personal Health</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Alert / Status Banner -->
+                            <div class="auth-alert-banner" id="auth-alert-banner" style="display: none;">
+                                <span class="alert-icon" id="auth-alert-icon"><svg class="lucide-icon lucide-alert-triangle" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /> <path d="M12 9v4" /> <path d="M12 17h.01" /> </svg></span>
+                                <span class="alert-msg" id="auth-alert-msg"></span>
+                            </div>
+
+                            <!-- Main Auth Form -->
+                            <form id="auth-portal-form" class="auth-form" novalidate>
+                                <!-- Shared Field: Email -->
+                                <div class="form-group-modern">
+                                    <label for="auth-input-email" data-i18n="auth.email_label">Email Address</label>
+                                    <div class="input-with-icon">
+                                        <span class="input-icon"><svg class="lucide-icon lucide-mail" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /> <rect x="2" y="4" width="20" height="16" rx="2" /> </svg></span>
+                                        <input type="email" id="auth-input-email" class="modern-input" placeholder="e.g. doctor@strokeaegis.local" required autocomplete="email">
+                                    </div>
+                                </div>
+
+                                <!-- Shared Field: Password -->
+                                <div class="form-group-modern">
+                                    <div class="label-row">
+                                        <label for="auth-input-password" data-i18n="auth.password_label">Password</label>
+                                    </div>
+                                    <div class="input-with-icon">
+                                        <span class="input-icon"><svg class="lucide-icon lucide-lock" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="18" height="11" x="3" y="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" /> </svg></span>
+                                        <input type="password" id="auth-input-password" class="modern-input" placeholder="••••••••" required autocomplete="current-password" minlength="6">
+                                        <button type="button" class="pwd-toggle-btn" id="btn-toggle-pwd" title="Toggle password visibility">
+                                            <span id="pwd-eye-icon"><svg class="lucide-icon lucide-eye" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /> <circle cx="12" cy="12" r="3" /> </svg></span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- CONDITIONAL FIELDS: SIGN UP ONLY -->
+                                <div id="auth-signup-fields" class="signup-fields-section" style="display: none;">
+                                    <!-- Full Name (Both Roles) -->
+                                    <div class="form-group-modern">
+                                        <label for="auth-input-fullname" data-i18n="auth.fullname_label">Full Name</label>
+                                        <div class="input-with-icon">
+                                            <span class="input-icon"><svg class="lucide-icon lucide-user" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" /> </svg></span>
+                                            <input type="text" id="auth-input-fullname" class="modern-input" placeholder="e.g. Dr. Sarah Al-Mansoor" minlength="2">
+                                        </div>
+                                    </div>
+
+                                    <!-- Doctor Specific Fields -->
+                                    <div id="auth-doctor-fields" class="role-specific-fields">
+                                        <div class="form-row-2col">
+                                            <div class="form-group-modern">
+                                                <label for="auth-input-license" data-i18n="auth.license_label">Medical License #</label>
+                                                <div class="input-with-icon">
+                                                    <span class="input-icon"><svg class="lucide-icon lucide-scroll" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M19 17V5a2 2 0 0 0-2-2H4" /> <path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3" /> </svg></span>
+                                                    <input type="text" id="auth-input-license" class="modern-input" placeholder="e.g. MD-SA-98234" minlength="2">
+                                                </div>
+                                            </div>
+                                            <div class="form-group-modern">
+                                                <label for="auth-input-spec" data-i18n="auth.spec_label">Specialization</label>
+                                                <div class="input-with-icon">
+                                                    <span class="input-icon"><svg class="lucide-icon lucide-stethoscope" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 2v2" /> <path d="M5 2v2" /> <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" /> <path d="M8 15a6 6 0 0 0 12 0v-3" /> <circle cx="20" cy="10" r="2" /> </svg></span>
+                                                    <input type="text" id="auth-input-spec" class="modern-input" placeholder="Stroke Neurology" value="Stroke Neurology">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group-modern">
+                                            <label for="auth-input-hospital" data-i18n="auth.hospital_label">Hospital / Center Affiliation</label>
+                                            <div class="input-with-icon">
+                                                <span class="input-icon"><svg class="lucide-icon lucide-hospital" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 7v4" /> <path d="M14 21v-3a2 2 0 0 0-4 0v3" /> <path d="M14 9h-4" /> <path d="M18 11h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2" /> <path d="M18 21V5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16" /> </svg></span>
+                                                <input type="text" id="auth-input-hospital" class="modern-input" placeholder="e.g. King Faisal Specialist Hospital">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Patient Specific Fields -->
+                                    <div id="auth-patient-fields" class="role-specific-fields" style="display: none;">
+                                        <div class="form-row-2col">
+                                            <div class="form-group-modern">
+                                                <label for="auth-input-dob" data-i18n="auth.dob_label">Date of Birth</label>
+                                                <div class="input-with-icon">
+                                                    <span class="input-icon"><svg class="lucide-icon lucide-calendar" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M8 2v3" /> <path d="M16 2v3" /> <rect x="3" y="3" width="18" height="18" rx="2" /> <path d="M3 9h18" /> </svg></span>
+                                                    <input type="date" id="auth-input-dob" class="modern-input">
+                                                </div>
+                                            </div>
+                                            <div class="form-group-modern">
+                                                <label for="auth-input-gender" data-i18n="auth.gender_label">Gender</label>
+                                                <div class="input-with-icon">
+                                                    <span class="input-icon"><svg class="lucide-icon lucide-user-check" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m16 11 2 2 4-4" /> <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <circle cx="9" cy="7" r="4" /> </svg></span>
+                                                    <select id="auth-input-gender" class="modern-input">
+                                                        <option value="Male">Male</option>
+                                                        <option value="Female">Female</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group-modern">
+                                            <label for="auth-input-emergency" data-i18n="auth.emergency_label">Emergency Kin Contact</label>
+                                            <div class="input-with-icon">
+                                                <span class="input-icon"><svg class="lucide-icon lucide-phone" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /> </svg></span>
+                                                <input type="text" id="auth-input-emergency" class="modern-input" placeholder="Name & Phone Number">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Action Button -->
+                                <button type="submit" class="auth-submit-btn" id="btn-auth-submit">
+                                    <span class="btn-spinner" id="auth-btn-spinner" style="display: none;"></span>
+                                    <span class="btn-text" id="auth-btn-text" data-i18n="auth.submit_signin_doc">Sign In as Doctor</span>
+                                    <span class="btn-arrow">&rarr;</span>
+                                </button>
+                            </form>
+
+                            <div class="auth-divider">
+                                <span class="divider-text" data-i18n="auth.or_quick_demo">or use 1-click fast demo access</span>
+                            </div>
+
+                            <!-- 1-Click Fast Demo Sign-In Buttons -->
+                            <div class="auth-demo-pills">
+                                <button type="button" class="demo-pill-btn doctor-demo" id="btn-demo-doctor" title="1-Click Login as Demo Doctor">
+                                    <span class="demo-badge"><svg class="lucide-icon lucide-stethoscope" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 2v2" /> <path d="M5 2v2" /> <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" /> <path d="M8 15a6 6 0 0 0 12 0v-3" /> <circle cx="20" cy="10" r="2" /> </svg> Fast Doctor</span>
+                                    <span class="demo-sub">Dr. Sarah (Neurologist)</span>
+                                </button>
+                                <button type="button" class="demo-pill-btn patient-demo" id="btn-demo-patient" title="1-Click Login as Demo Patient">
+                                    <span class="demo-badge"><svg class="lucide-icon lucide-user" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" /> </svg> Fast Patient</span>
+                                    <span class="demo-sub">Ahmed (Patient Portal)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SCREEN 0.5: DOCTOR CLINICAL WORKSPACE                           -->
+        <!-- ============================================================== -->
+        <section id="screen-doctor-portal" class="screen">
+            <!-- Doctor Top Hero / Welcome Banner -->
+            <div class="portal-hero doctor-hero">
+                <div class="portal-hero-main">
+                    <div class="portal-hero-avatar"><svg class="lucide-icon lucide-stethoscope" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 2v2" /> <path d="M5 2v2" /> <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" /> <path d="M8 15a6 6 0 0 0 12 0v-3" /> <circle cx="20" cy="10" r="2" /> </svg></div>
+                    <div class="portal-hero-info">
+                        <div class="portal-role-tag" data-i18n="doc.role_tag">ATTENDING NEUROLOGIST WORKSPACE</div>
+                        <h1 class="portal-welcome-name" id="doc-welcome-name">Dr. Sarah Al-Mansoor</h1>
+                        <p class="portal-sub-details" id="doc-sub-details">Stroke Neurology &amp; Neurocritical Care &bull; King Faisal Specialist Hospital &bull; Lic: MD-SA-98234</p>
+                    </div>
+                </div>
+                <!-- Doctor Fast Stats Counter Grid -->
+                <div class="portal-stats-grid">
+                    <div class="portal-stat-card">
+                        <span class="stat-num" id="doc-stat-patients">1</span>
+                        <span class="stat-label" data-i18n="doc.stats.patients">Active Patients</span>
+                    </div>
+                    <div class="portal-stat-card pending-card">
+                        <span class="stat-num" id="doc-stat-pending">0</span>
+                        <span class="stat-label" data-i18n="doc.stats.pending">Reports Awaiting Sign-Off</span>
+                    </div>
+                    <div class="portal-stat-card">
+                        <span class="stat-num" id="doc-stat-assessments">0</span>
+                        <span class="stat-label" data-i18n="doc.stats.assessments">Total Assessments</span>
+                    </div>
+                    <div class="portal-stat-card">
+                        <span class="stat-num" id="doc-stat-unread">0</span>
+                        <span class="stat-label" data-i18n="doc.stats.unread">Unread Messages</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doctor Navigation Tabs -->
+            <div class="portal-subnav-bar">
+                <div class="portal-subnav-tabs">
+                    <button type="button" class="portal-subnav-btn active" id="doc-tab-patients" data-tab="doc-pane-patients">
+                        <svg class="lucide-icon lucide-users" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" /> </svg> <span data-i18n="doc.tabs.patients">My Patients Directory</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn" id="doc-tab-reports" data-tab="doc-pane-reports">
+                        <svg class="lucide-icon lucide-clipboard-list" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="8" height="4" x="8" y="2" rx="1" ry="1" /> <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /> <path d="M12 11h4" /> <path d="M12 16h4" /> <path d="M8 11h.01" /> <path d="M8 16h.01" /> </svg> <span data-i18n="doc.tabs.reports">Clinical Reports &amp; Sign-Off</span>
+                        <span class="portal-badge-count" id="doc-badge-pending-reports" style="display: none;">0</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn" id="doc-tab-chat" data-tab="doc-pane-chat">
+                        <svg class="lucide-icon lucide-message-square" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" /> </svg> <span data-i18n="doc.tabs.chat">Patient Messages</span>
+                        <span class="portal-badge-count" id="doc-badge-unread-msgs" style="display: none;">0</span>
+                    </button>
+                </div>
+                <div class="portal-subnav-actions">
+                    <button type="button" class="btn-portal-action primary" id="btn-doc-launch-ai">
+                        <svg class="lucide-icon lucide-bot" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 8V4H8" /> <rect width="16" height="12" x="4" y="8" rx="2" /> <path d="M2 14h2" /> <path d="M20 14h2" /> <path d="M15 13v2" /> <path d="M9 13v2" /> </svg> <span data-i18n="doc.actions.launch_ai">Launch AI Clinical System</span>
+                    </button>
+                    <button type="button" class="btn-portal-action secondary" id="btn-doc-launch-reg">
+                        <svg class="lucide-icon lucide-zap" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /> </svg> <span data-i18n="doc.actions.launch_reg">Regular Engines</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 1: Patients Directory Pane -->
+            <div class="portal-pane active" id="doc-pane-patients">
+                <!-- Incoming Connection Requests Banner / Cards -->
+                <div id="doc-incoming-requests-container" style="display: none; margin-bottom: 1.25rem;"></div>
+
+                <div class="portal-pane-header">
+                    <div class="search-filter-box">
+                        <span class="search-icon"><svg class="lucide-icon lucide-search" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg></span>
+                        <input type="text" id="doc-patient-search" class="portal-search-input" placeholder="Search patients by name, MRN, or status..." data-i18n-placeholder="doc.search_placeholder">
+                    </div>
+                    <div class="pane-header-actions">
+                        <button type="button" class="btn-portal-action primary" id="btn-open-admit-modal" style="padding: 0.45rem 1.1rem; font-size: 0.85rem; border-radius: 9999px;">
+                            <svg class="lucide-icon lucide-user-plus" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <circle cx="9" cy="7" r="4" /> <line x1="19" x2="19" y1="8" y2="14" /> <line x1="22" x2="16" y1="11" y2="11" /> </svg> <span data-i18n="doc.actions.admit_patient">Add Patient</span>
+                        </button>
+                        <button type="button" class="btn-refresh-data" id="btn-refresh-doc-patients" title="Refresh Directory">
+                            <svg class="lucide-icon lucide-refresh-cw" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /> <path d="M21 3v5h-5" /> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /> <path d="M8 16H3v5" /> </svg> <span data-i18n="common.refresh">Refresh</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="portal-table-container">
+                    <table class="portal-table" id="table-doc-patients">
+                        <thead>
+                            <tr>
+                                <th data-i18n="doc.th.patient">Patient</th>
+                                <th data-i18n="doc.th.mrn">MRN</th>
+                                <th data-i18n="doc.th.demographics">Demographics</th>
+                                <th data-i18n="doc.th.status">Status</th>
+                                <th data-i18n="doc.th.latest_risk">Latest Assessment</th>
+                                <th data-i18n="doc.th.actions">Clinical Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-doc-patients">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 2: Clinical Reports & Sign-Off Pane -->
+            <div class="portal-pane" id="doc-pane-reports">
+                <div class="portal-pane-header">
+                    <h3 class="pane-title" data-i18n="doc.reports_title">Official Clinical Decision Reports</h3>
+                    <button type="button" class="btn-refresh-data" id="btn-refresh-doc-reports" title="Refresh Reports">
+                        <svg class="lucide-icon lucide-refresh-cw" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /> <path d="M21 3v5h-5" /> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /> <path d="M8 16H3v5" /> </svg> <span data-i18n="common.refresh">Refresh</span>
+                    </button>
+                </div>
+                <div class="portal-table-container">
+                    <table class="portal-table" id="table-doc-reports">
+                        <thead>
+                            <tr>
+                                <th data-i18n="doc.th.report_file">Report ID / PDF</th>
+                                <th data-i18n="doc.th.patient">Patient</th>
+                                <th data-i18n="doc.th.date">Generated Date</th>
+                                <th data-i18n="doc.th.findings">Clinical Findings</th>
+                                <th data-i18n="doc.th.validation">Multi-Agent Validation</th>
+                                <th data-i18n="doc.th.certification">Physician Sign-Off</th>
+                                <th data-i18n="doc.th.actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-doc-reports">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: Patient Messages (1-to-1 Chat) Pane -->
+            <div class="portal-pane" id="doc-pane-chat">
+                <div class="messaging-grid">
+                    <!-- Conversations Sidebar -->
+                    <div class="messaging-sidebar">
+                        <div class="messaging-sidebar-header">
+                            <h4 data-i18n="chat.active_threads">Patient Threads</h4>
+                        </div>
+                        <div class="conversations-list" id="doc-conversations-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                    <!-- Active Chat Area -->
+                    <div class="messaging-chatbox" id="doc-chatbox">
+                        <div class="chatbox-header" id="doc-chat-header">
+                            <div class="chatbox-counterparty">
+                                <span class="chat-avatar"><svg class="lucide-icon lucide-user" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" /> </svg></span>
+                                <div>
+                                    <h4 class="chat-name" id="doc-chat-recipient-name">Select a patient conversation</h4>
+                                    <span class="chat-meta" id="doc-chat-recipient-meta">Clinical Consultation Thread</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chatbox-stream" id="doc-chat-stream">
+                            <div class="chat-empty-state" data-i18n="chat.select_thread">Select a conversation thread on the left to start messaging.</div>
+                        </div>
+                        <form class="chatbox-input-form" id="doc-chat-form">
+                            <input type="text" id="doc-chat-input" class="chatbox-input" placeholder="Type a clinical instruction or response..." data-i18n-placeholder="chat.doc_placeholder" autocomplete="off" disabled>
+                            <button type="submit" id="btn-doc-chat-send" class="btn-chat-send" disabled>
+                                <span>Send</span> <svg class="lucide-icon lucide-send" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" /> <path d="m21.854 2.147-10.94 10.939" /> </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SCREEN 0.6: PATIENT PERSONAL HEALTH PORTAL                      -->
+        <!-- ============================================================== -->
+        <section id="screen-patient-portal" class="screen">
+            <!-- Patient Top Hero / Welcome Banner -->
+            <div class="portal-hero patient-hero">
+                <div class="portal-hero-main">
+                    <div class="portal-hero-avatar"><svg class="lucide-icon lucide-user" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" /> </svg></div>
+                    <div class="portal-hero-info">
+                        <div class="portal-role-tag" data-i18n="pat.role_tag">PERSONAL STROKE HEALTH PORTAL</div>
+                        <h1 class="portal-welcome-name" id="pat-welcome-name">Patient Portal</h1>
+                        <p class="portal-sub-details" id="pat-sub-details">Personal Stroke Health Portal</p>
+                    </div>
+                </div>
+                <!-- Patient Stats Grid -->
+                <div class="portal-stats-grid">
+                    <div class="portal-stat-card">
+                        <span class="stat-num" id="pat-stat-assessments">0</span>
+                        <span class="stat-label" data-i18n="pat.stats.assessments">My Assessments</span>
+                    </div>
+                    <div class="portal-stat-card">
+                        <span class="stat-num" id="pat-stat-reports">0</span>
+                        <span class="stat-label" data-i18n="pat.stats.reports">Certified Reports</span>
+                    </div>
+                    <div class="portal-stat-card highlight-card">
+                        <span class="stat-num" id="pat-stat-risk">--</span>
+                        <span class="stat-label" data-i18n="pat.stats.risk_tier">Latest Risk Status</span>
+                    </div>
+                    <div class="portal-stat-card">
+                        <span class="stat-num" id="pat-stat-unread">0</span>
+                        <span class="stat-label" data-i18n="pat.stats.unread">Doctor Messages</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patient Navigation Tabs -->
+            <div class="portal-subnav-bar">
+                <div class="portal-subnav-tabs">
+                    <button type="button" class="portal-subnav-btn active" id="pat-tab-selfcheck" data-tab="pat-pane-selfcheck">
+                        <svg class="lucide-icon lucide-stethoscope" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 2v2" /> <path d="M5 2v2" /> <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" /> <path d="M8 15a6 6 0 0 0 12 0v-3" /> <circle cx="20" cy="10" r="2" /> </svg> <span data-i18n="pat.tabs.selfcheck">Vascular Health Check</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn" id="pat-tab-results" data-tab="pat-pane-results">
+                        <svg class="lucide-icon lucide-bar-chart-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 3v16a2 2 0 0 0 2 2h16" /> <path d="M7 16h8" /> <path d="M7 11h12" /> <path d="M7 6h3" /> </svg> <span data-i18n="pat.tabs.results">My Results &amp; Scans</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn" id="pat-tab-reports" data-tab="pat-pane-reports">
+                        <svg class="lucide-icon lucide-file-text" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" /> <path d="M14 2v5a1 1 0 0 0 1 1h5" /> <path d="M10 9H8" /> <path d="M16 13H8" /> <path d="M16 17H8" /> </svg> <span data-i18n="pat.tabs.reports">My Certified Reports</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn" id="pat-tab-doctor" data-tab="pat-pane-doctor">
+                        <svg class="lucide-icon lucide-stethoscope" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 2v2" /> <path d="M5 2v2" /> <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" /> <path d="M8 15a6 6 0 0 0 12 0v-3" /> <circle cx="20" cy="10" r="2" /> </svg> <span data-i18n="pat.tabs.doctor">My Doctor &amp; Care Team</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn" id="pat-tab-chat" data-tab="pat-pane-chat">
+                        <svg class="lucide-icon lucide-message-square" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" /> </svg> <span data-i18n="pat.tabs.chat">Doctor Chat</span>
+                        <span class="portal-badge-count" id="pat-badge-unread-msgs" style="display: none;">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 1: Vascular Self-Check Form -->
+            <div class="portal-pane active" id="pat-pane-selfcheck">
+                <div class="selfcheck-card-container">
+                    <div class="selfcheck-intro">
+                        <h3 data-i18n="pat.selfcheck.title">Instant Cerebrovascular Risk Evaluation</h3>
+                        <p data-i18n="pat.selfcheck.desc">Assess your personalized stroke risk based on clinical cardiovascular and metabolic biomarkers validated by machine learning.</p>
+                    </div>
+                    <form id="pat-selfcheck-form" class="selfcheck-form">
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label for="pat-sc-age" data-i18n="form.age">Age (Years)</label>
+                                <input type="number" id="pat-sc-age" value="67" min="1" max="110" step="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-sc-gender" data-i18n="form.gender">Gender</label>
+                                <select id="pat-sc-gender">
+                                    <option value="Male" selected>Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-sc-hypertension" data-i18n="form.hypertension">Hypertension</label>
+                                <select id="pat-sc-hypertension">
+                                    <option value="0">No (Normal BP)</option>
+                                    <option value="1" selected>Yes (Diagnosed High BP)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-sc-heart" data-i18n="form.heart_disease">Heart Disease</label>
+                                <select id="pat-sc-heart">
+                                    <option value="0">No</option>
+                                    <option value="1" selected>Yes (CAD, Arrhythmia, etc.)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-sc-glucose" data-i18n="form.glucose">Avg Glucose Level (mg/dL)</label>
+                                <input type="number" id="pat-sc-glucose" value="185.0" min="40" max="400" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-sc-bmi" data-i18n="form.bmi">Body Mass Index (BMI)</label>
+                                <input type="number" id="pat-sc-bmi" value="31.2" min="10" max="70" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-sc-smoking" data-i18n="form.smoking">Smoking Status</label>
+                                <select id="pat-sc-smoking">
+                                    <option value="never smoked">Never Smoked</option>
+                                    <option value="formerly smoked" selected>Formerly Smoked</option>
+                                    <option value="smokes">Currently Smokes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-sc-married" data-i18n="form.married">Ever Married</label>
+                                <select id="pat-sc-married">
+                                    <option value="Yes" selected>Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-sc-residence" data-i18n="form.residence">Residence Type</label>
+                                <select id="pat-sc-residence">
+                                    <option value="Urban" selected>Urban</option>
+                                    <option value="Rural">Rural</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="selfcheck-actions">
+                            <button type="submit" class="btn-calculate-risk" id="btn-pat-run-risk">
+                                <span id="pat-sc-spinner" class="spinner-sm" style="display: none;"></span>
+                                <span id="pat-sc-btn-icon"><svg class="lucide-icon lucide-zap" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /> </svg></span> <span id="pat-sc-btn-text" data-i18n="pat.selfcheck.btn">Calculate My Stroke Risk</span>
+                            </button>
+                            <!-- Animated calculating progress banner -->
+                            <div id="pat-sc-calculating-banner" class="sc-calculating-banner" style="display: none;">
+                                <div class="calc-banner-header">
+                                    <div class="calc-pulse-orb">
+                                        <span class="calc-pulse-ring"></span>
+                                        <span class="calc-pulse-core"><svg class="lucide-icon lucide-brain" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 18V5" /> <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /> <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /> <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /> <path d="M18 18a4 4 0 0 0 2-7.464" /> <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /> <path d="M6 18a4 4 0 0 1-2-7.464" /> <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /> </svg></span>
+                                    </div>
+                                    <div class="calc-banner-text">
+                                        <div class="calc-title" data-i18n="pat.selfcheck.analyzing_factors">Analyzing Cardiovascular Factors...</div>
+                                        <div class="calc-subtitle" data-i18n="pat.selfcheck.ml_consulting">Consulting Machine Learning Ensembles &amp; Vascular Risk Models</div>
+                                    </div>
+                                </div>
+                                <div class="calc-progress-track">
+                                    <div class="calc-progress-shimmer"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- Legacy in-page card kept hidden in favor of modal -->
+                    <div id="pat-selfcheck-result" class="selfcheck-result-card" style="display: none !important;"></div>
+                </div>
+            </div>
+
+            <!-- Tab 2: My Results & Scans Pane -->
+            <div class="portal-pane" id="pat-pane-results">
+                <div class="portal-pane-header">
+                    <h3 class="pane-title" data-i18n="pat.results_title">Longitudinal Health Assessment History</h3>
+                    <button type="button" class="btn-refresh-data" id="btn-refresh-pat-assessments">
+                        <svg class="lucide-icon lucide-refresh-cw" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /> <path d="M21 3v5h-5" /> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /> <path d="M8 16H3v5" /> </svg> <span data-i18n="common.refresh">Refresh</span>
+                    </button>
+                </div>
+                <div class="timeline-container" id="pat-timeline-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Tab 3: My Certified Reports Pane -->
+            <div class="portal-pane" id="pat-pane-reports">
+                <div class="portal-pane-header">
+                    <h3 class="pane-title" data-i18n="pat.reports_title">Certified Clinical Reports</h3>
+                    <button type="button" class="btn-refresh-data" id="btn-refresh-pat-reports">
+                        <svg class="lucide-icon lucide-refresh-cw" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /> <path d="M21 3v5h-5" /> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /> <path d="M8 16H3v5" /> </svg> <span data-i18n="common.refresh">Refresh</span>
+                    </button>
+                </div>
+                <div class="reports-cards-grid" id="pat-reports-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Tab 4: My Doctor & Care Team Pane -->
+            <div class="portal-pane" id="pat-pane-doctor">
+                <div class="portal-pane-header" style="margin-bottom: 1.5rem;">
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0 0 0.25rem 0; color: var(--text-main);">My Doctor &amp; Care Team</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Supervising primary neurologist and specialized clinical care team</p>
+                    </div>
+                    <div class="pane-header-actions">
+                        <button type="button" class="btn-portal-action primary" id="btn-open-find-doctor-modal" style="padding: 0.45rem 1.1rem; font-size: 0.85rem; border-radius: 9999px;">
+                            <svg class="lucide-icon lucide-search" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg> <span>Find a Doctor</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Incoming Doctor Requests (if any) -->
+                <div id="pat-incoming-requests-container" style="display: none; margin-bottom: 1.5rem;"></div>
+
+                <!-- Primary Doctor Card -->
+                <div id="pat-primary-doctor-container" style="margin-bottom: 2rem;">
+                    <div class="doctor-profile-card" id="pat-doctor-card">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Care Team Section -->
+                <div id="pat-care-team-container" style="margin-bottom: 2rem;">
+                    <h4 style="font-size: 0.95rem; font-weight: 600; margin: 0 0 0.75rem 0; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+                        <svg class="lucide-icon lucide-users" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Specialized Care Team
+                    </h4>
+                    <div id="pat-care-team-list" class="care-team-grid">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Outgoing Pending Requests -->
+                <div id="pat-outgoing-requests-container" style="display: none;"></div>
+            </div>
+
+            <!-- Tab 5: Doctor Chat (1-to-1) Pane -->
+            <div class="portal-pane" id="pat-pane-chat">
+                <div class="messaging-chatbox patient-chatbox">
+                    <div class="chatbox-header">
+                        <div class="chatbox-counterparty">
+                            <span class="chat-avatar"><svg class="lucide-icon lucide-stethoscope" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 2v2" /> <path d="M5 2v2" /> <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" /> <path d="M8 15a6 6 0 0 0 12 0v-3" /> <circle cx="20" cy="10" r="2" /> </svg></span>
+                            <div>
+                                <h4 class="chat-name" id="pat-chat-doctor-name">No Supervising Doctor Assigned</h4>
+                                <span class="chat-meta" id="pat-chat-doctor-meta">Connect with a physician via My Doctor &amp; Care Team</span>
+                            </div>
+                        </div>
+                        <div class="chatbox-header-actions">
+                            <select id="pat-chat-doctor-select" class="choice-patient-select" style="display: none; padding: 0.35rem 0.75rem; font-size: 0.82rem; border-radius: 8px;">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chatbox-stream" id="pat-chat-stream">
+                        <!-- Messages dynamically rendered -->
+                    </div>
+                    <form class="chatbox-input-form" id="pat-chat-form">
+                        <input type="text" id="pat-chat-input" class="chatbox-input" placeholder="Connect with a doctor to enable messaging..." data-i18n-placeholder="chat.pat_placeholder" autocomplete="off" disabled>
+                        <button type="submit" id="btn-pat-chat-send" class="btn-chat-send" disabled>
+                            <span>Send</span> <svg class="lucide-icon lucide-send" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" /> <path d="m21.854 2.147-10.94 10.939" /> </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SCREEN 1: HOME PAGE — DUAL SYSTEM MODE SELECTION               -->
+        <!-- ============================================================== -->
+        <section id="screen-home" class="screen">
+            <div class="home-hero">
+                <span class="section-badge-center" data-i18n="home.badge">INTEGRATED CLINICAL PLATFORM</span>
+                <h1 class="home-hero-title" data-i18n="home.title">Select Clinical Workflow Mode</h1>
+                <p class="home-hero-desc">
+                    Choose between the comprehensive multi-agent clinical decision support pipeline
+                    or direct standalone access to the deterministic deep learning and machine learning engines.
+                </p>
+            </div>
+
+            <div class="mode-cards-grid">
+                <!-- OPTION 1: AI SYSTEM -->
+                <div class="mode-card mode-ai" id="home-card-ai">
+                    <div class="mode-card-glow"></div>
+                    <div class="mode-badge-top"><span class="icon-sparkle"><svg class="lucide-icon lucide-sparkles" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg></span> FULL INTELLIGENCE &bull; CREWAI FLOW</div>
+                    <div class="mode-card-header">
+                        <div class="mode-icon-circle ai-glow"><svg class="lucide-icon lucide-bot" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 8V4H8" /> <rect width="16" height="12" x="4" y="8" rx="2" /> <path d="M2 14h2" /> <path d="M20 14h2" /> <path d="M15 13v2" /> <path d="M9 13v2" /> </svg></div>
+                        <div>
+                            <h2 class="mode-title" data-i18n="home.card_ai.title">OPTION 1 &mdash; AI SYSTEM</h2>
+                            <p class="mode-subtitle" data-i18n="home.card_ai.subtitle">Complete End-to-End Intelligent Clinical Workflow</p>
+                        </div>
+                    </div>
+                    <p class="mode-description">
+                        Guides you step-by-step through the unified StrokeAegis pipeline: Patient Vitals &rarr;
+                        Brain CT Gatekeeper &rarr; Deep Neuroimaging Classifier &rarr; <strong>4 Specialized CrewAI Clinical Agents</strong>
+                        with guideline RAG &rarr; Medical Safety Validation &rarr; Unified Clinical Report & PDF.
+                    </p>
+                    <div class="pipeline-flow-tags">
+                        <span class="flow-tag">1. Patient Vitals</span>
+                        <span class="flow-arrow">&rarr;</span>
+                        <span class="flow-tag">2. Brain CT</span>
+                        <span class="flow-arrow">&rarr;</span>
+                        <span class="flow-tag highlight">3. 4 AI Agents & Robot</span>
+                        <span class="flow-arrow">&rarr;</span>
+                        <span class="flow-tag gold">4. Clinical Report</span>
+                    </div>
+                    <div class="mode-card-footer">
+                        <button type="button" class="btn btn-primary btn-block btn-lg" id="btn-home-start-ai">
+                            <svg class="lucide-icon lucide-zap" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /> </svg> Launch AI System Pipeline &rarr;
+                        </button>
+                    </div>
+                </div>
+
+                <!-- OPTION 2: REGULAR SYSTEM -->
+                <div class="mode-card mode-regular" id="home-card-regular">
+                    <div class="mode-badge-top">DETERMINISTIC INFERENCE ENGINES</div>
+                    <div class="mode-card-header">
+                        <div class="mode-icon-circle"><svg class="lucide-icon lucide-zap" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /> </svg></div>
+                        <div>
+                            <h2 class="mode-title" data-i18n="home.card_reg.title">OPTION 2 &mdash; REGULAR SYSTEM</h2>
+                            <p class="mode-subtitle">Direct AI Model Analysis (Choose an Analysis Path)</p>
+                        </div>
+                    </div>
+                    <p class="mode-description">
+                        Fast, direct access to the standalone AI inference engines without agent orchestration.
+                        Select between tabular vascular stroke risk prediction or brain CT neuroimaging diagnostic classification.
+                    </p>
+                    <div class="regular-paths-preview">
+                        <div class="path-preview-item">
+                            <strong>PATH A: STROKE RISK ASSESSMENT</strong>
+                            <small>Tabular ML Ensemble &bull; No CT scan required</small>
+                        </div>
+                        <div class="path-preview-item">
+                            <strong>PATH B: STROKE CT DIAGNOSIS</strong>
+                            <small>Door Model Gatekeeper &bull; EfficientNetV2-S &bull; Grad-CAM</small>
+                        </div>
+                    </div>
+                    <div class="mode-card-footer">
+                        <button type="button" class="btn btn-secondary btn-block btn-lg" id="btn-home-start-regular">
+                            <svg class="lucide-icon lucide-bar-chart-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 3v16a2 2 0 0 0 2 2h16" /> <path d="M7 16h8" /> <path d="M7 11h12" /> <path d="M7 6h3" /> </svg> Choose Analysis Path &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SCREEN 2: OPTION 1 — AI SYSTEM STEP-BY-STEP WIZARD            -->
+        <!-- ============================================================== -->
+        <section id="screen-ai-system" class="screen">
+            <!-- Navigation & Breadcrumb Header -->
+            <div class="wizard-nav-bar">
+                <button type="button" class="btn btn-secondary btn-sm btn-back" id="btn-ai-back-home">
+                    <span>←</span> Return to System Selection
+                </button>
+                <div class="wizard-stepper">
+                    <div class="wstep-item active" id="wstep-1">
+                        <span class="wnum">1</span>
+                        <span class="wlabel">Patient Profile</span>
+                    </div>
+                    <div class="wconnector"></div>
+                    <div class="wstep-item" id="wstep-2">
+                        <span class="wnum">2</span>
+                        <span class="wlabel">Brain CT Scan</span>
+                    </div>
+                    <div class="wconnector"></div>
+                    <div class="wstep-item" id="wstep-3">
+                        <span class="wnum">3</span>
+                        <span class="wlabel">Agent Monitor</span>
+                    </div>
+                    <div class="wconnector"></div>
+                    <div class="wstep-item" id="wstep-4">
+                        <span class="wnum">4</span>
+                        <span class="wlabel">Clinical Report</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- AI STEP 1: PATIENT DEMOGRAPHIC & VITALS PROFILE            -->
+            <!-- ========================================================== -->
+            <div id="ai-wizard-step-1" class="wizard-pane active">
+                <div class="card wizard-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <span class="stage-tag">STEP 1 OF 4</span>
+                            <h3 data-i18n="step1.title">Patient Demographic & Vitals Profile</h3>
+                        </div>
+                        <span class="badge-blue">Predictive ML Risk Input</span>
+                    </div>
+
+                    <!-- 1-Click Presets Bar (Does NOT autofill by default) -->
+                    <div class="presets-row">
+                        <span class="presets-label"><span class="icon-sparkle"><svg class="lucide-icon lucide-sparkles" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg></span> Clinical Case Examples:</span>
+                        <button type="button" class="preset-pill" id="ai-preset-high">High-Risk (Elderly Diabetic Cardiac)</button>
+                        <button type="button" class="preset-pill" id="ai-preset-mod">Moderate-Risk (Hypertensive Smoker)</button>
+                        <button type="button" class="preset-pill" id="ai-preset-low">Low-Risk (Young Active Non-Smoker)</button>
+                        <button type="button" class="preset-pill btn-clear-pill" id="ai-preset-clear">Clear Form</button>
+                    </div>
+
+                    <!-- Clean Empty Form by Default -->
+                    <form id="ai-patient-form">
+                        <div class="form-section-title">Demographics & Lifestyle</div>
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label for="ai-gender">Gender *</label>
+                                <select id="ai-gender" class="form-control" required>
+                                    <option value="" disabled selected>Select gender...</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ai-age">Age (years) *</label>
+                                <input type="number" id="ai-age" class="form-control" placeholder="e.g. 67" min="1" max="120" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ai-smoking">Smoking Status *</label>
+                                <select id="ai-smoking" class="form-control" required>
+                                    <option value="" disabled selected>Select smoking status...</option>
+                                    <option value="formerly smoked">Formerly Smoked</option>
+                                    <option value="smokes">Current Smoker</option>
+                                    <option value="never smoked">Never Smoked</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label for="ai-married">Marital Status</label>
+                                <select id="ai-married" class="form-control">
+                                    <option value="Yes">Ever Married: Yes</option>
+                                    <option value="No">Ever Married: No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ai-work">Work Type</label>
+                                <select id="ai-work" class="form-control">
+                                    <option value="Private">Private Company</option>
+                                    <option value="Self-employed">Self-employed</option>
+                                    <option value="Govt_job">Government Job</option>
+                                    <option value="children">Children</option>
+                                    <option value="Never_worked">Never Worked</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ai-residence">Residence Type</label>
+                                <select id="ai-residence" class="form-control">
+                                    <option value="Urban">Urban</option>
+                                    <option value="Rural">Rural</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-section-title">Vascular Comorbidities & Clinical Labs</div>
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label for="ai-hypertension">Chronic Hypertension Diagnosis *</label>
+                                <select id="ai-hypertension" class="form-control" required>
+                                    <option value="" disabled selected>Select hypertension status...</option>
+                                    <option value="1">Positive (Hypertensive &ge;130/80)</option>
+                                    <option value="0">Negative (Normotensive)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ai-heart">Heart Disease History *</label>
+                                <select id="ai-heart" class="form-control" required>
+                                    <option value="" disabled selected>Select cardiac history...</option>
+                                    <option value="1">Positive (Coronary / Atrial Fibrillation)</option>
+                                    <option value="0">No Known Heart Disease</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label for="ai-glucose">Average Blood Glucose Level (mg/dL) *</label>
+                                <input type="number" step="0.1" id="ai-glucose" class="form-control" placeholder="e.g. 145.0" min="40" max="500" required>
+                                <small class="field-hint">Normal fasting: 70-100 &bull; Prediabetes: 100-125 &bull; High: &ge;126</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="ai-bmi">Body Mass Index (BMI kg/m²) *</label>
+                                <input type="number" step="0.1" id="ai-bmi" class="form-control" placeholder="e.g. 28.5" min="10" max="70" required>
+                                <small class="field-hint">Normal: 18.5-24.9 &bull; Overweight: 25-29.9 &bull; Obese: &ge;30</small>
+                            </div>
+                        </div>
+
+                        <div class="wizard-footer-actions">
+                            <button type="button" class="btn btn-secondary" id="btn-ai-step1-preset-fill">
+                                <svg class="lucide-icon lucide-zap" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /> </svg> Quick Fill (High-Risk Example)
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg" id="btn-ai-to-step-2">
+                                Continue to Brain CT Scan &rarr;
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- AI STEP 2: BRAIN CT NEUROIMAGING SCAN                      -->
+            <!-- ========================================================== -->
+            <div id="ai-wizard-step-2" class="wizard-pane">
+                <div class="card wizard-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <span class="stage-tag">STEP 2 OF 4</span>
+                            <h3 data-i18n="step2.title">Brain CT Neuroimaging Scan</h3>
+                        </div>
+                        <span class="badge-blue">Door Model Gate &bull; EfficientNetV2-S</span>
+                    </div>
+
+                    <!-- Presets Selection Bar -->
+                    <div class="presets-row">
+                        <span class="presets-label"><span class="icon-sparkle"><svg class="lucide-icon lucide-sparkles" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg></span> Test Scan Presets:</span>
+                        <div class="ct-presets-mini-list" id="ai-ct-presets-container">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <div class="step-instruction-box">
+                        <p>Upload an axial non-contrast head CT scan (NCCT) or click one of the verified sample presets above to test the ConvNeXt-Tiny safety gatekeeper and diagnostic classifier.</p>
+                    </div>
+
+                    <!-- Clean Dropzone (Always visible initially, no default image!) -->
+                    <div class="dropzone-compact" id="ai-dropzone">
+                        <input type="file" id="ai-ct-file-input" accept="image/*" class="file-input-hidden">
+                        <div class="dropzone-inner">
+                            <div class="upload-icon-circle"><svg class="lucide-icon lucide-brain" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 18V5" /> <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /> <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /> <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /> <path d="M18 18a4 4 0 0 0 2-7.464" /> <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /> <path d="M6 18a4 4 0 0 1-2-7.464" /> <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /> </svg></div>
+                            <div>
+                                <h4>Drop Brain CT scan here</h4>
+                                <p>or click to browse from your computer (DICOM / PNG / JPEG)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scan Preview Card (Hidden until scan is dropped or preset clicked) -->
+                    <div class="scan-preview-card" id="ai-scan-preview" style="display: none;">
+                        <div class="preview-meta">
+                            <div>
+                                <strong id="ai-preview-name">scan.png</strong>
+                                <span class="badge-green-sm" id="ai-preview-badge">Scan Attached</span>
+                            </div>
+                            <button type="button" class="btn-text-danger" id="ai-btn-clear-scan">Remove Image</button>
+                        </div>
+                        <div class="preview-img-wrap">
+                            <img id="ai-preview-img" src="" alt="Scan Preview">
+                        </div>
+                    </div>
+
+                    <div class="wizard-footer-actions">
+                        <button type="button" class="btn btn-secondary" id="btn-ai-back-to-step1">
+                            &larr; Back to Patient Profile
+                        </button>
+                        <button type="button" class="btn btn-primary btn-lg btn-pulse" id="btn-launch-ai-pipeline">
+                            <svg class="lucide-icon lucide-zap" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /> </svg> Run Full StrokeAegis Clinical Pipeline &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- AI STEP 3: AGENT ACTIVITY MONITOR & CUTE ROBOT             -->
+            <!-- ========================================================== -->
+            <div id="ai-wizard-step-3" class="wizard-pane">
+                <div class="card robot-activity-card">
+                    <div class="robot-panel-header">
+                        <div class="robot-header-left">
+                            <span class="pulse-indicator"></span>
+                            <h3 data-i18n="step3.title">StrokeAegis AI Agent Activity Monitor</h3>
+                        </div>
+                        <span class="badge-crewai" data-i18n="step3.badge">CrewAI Flow Orchestrator Active</span>
+                    </div>
+
+                    <div class="robot-monitor-grid">
+                        <!-- Left: Cute Medical Robot Visual -->
+                        <div class="robot-avatar-column">
+                            <div class="robot-avatar-wrapper" id="robot-avatar-wrapper">
+                                <img src="/assets/medical_robot_transparent.svg" alt="StrokeAegis Medical AI Assistant" class="robot-svg-img working" id="robot-img">
+                                <div class="robot-shadow"></div>
+                            </div>
+                            <div class="robot-speech-bubble" id="robot-speech-bubble">
+                                <div class="speech-agent-tag" id="speech-agent-tag"><svg class="lucide-icon lucide-bot" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 8V4H8" /> <rect width="16" height="12" x="4" y="8" rx="2" /> <path d="M2 14h2" /> <path d="M20 14h2" /> <path d="M15 13v2" /> <path d="M9 13v2" /> </svg> System Initializing</div>
+                                <div class="speech-message" id="speech-message">Starting StrokeAegis multi-agent clinical flow...</div>
+                                <div class="speech-sub" id="speech-sub">Orchestrating deterministic models and RAG clinical agents.</div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Agent Execution Timeline -->
+                        <div class="agent-timeline-column">
+                            <div class="timeline-title"><span data-i18n="timeline.title">COORDINATED CLINICAL AGENT PIPELINE</span></div>
+                            <div class="agents-timeline-list">
+                                <!-- Stage 1 & 2: Models -->
+                                <div class="agent-step-item" id="ag-step-models">
+                                    <div class="step-icon-status" id="ag-icon-models"><svg class="lucide-icon lucide-settings" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /> <circle cx="12" cy="12" r="3" /> </svg></div>
+                                    <div class="step-content">
+                                        <div class="step-head">
+                                            <strong>ML Risk & Brain CT Models</strong>
+                                            <span class="agent-status-badge working" id="badge-ag-models">Working...</span>
+                                        </div>
+                                        <p class="step-role">Deterministic Inference Engines &bull; ConvNeXt-Tiny & EfficientNetV2-S</p>
+                                        <small class="step-activity" id="act-ag-models">Evaluating vascular risk and verifying CT safety gate</small>
+                                    </div>
+                                </div>
+
+                                <!-- Agent 1: Prevention -->
+                                <div class="agent-step-item" id="ag-step-prevention">
+                                    <div class="step-icon-status" id="ag-icon-prevention"><svg class="lucide-icon lucide-shield-check" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /> <path d="m9 12 2 2 4-4" /> </svg></div>
+                                    <div class="step-content">
+                                        <div class="step-head">
+                                            <strong>Prevention Agent</strong>
+                                            <span class="agent-status-badge waiting" id="badge-ag-prevention">Waiting</span>
+                                        </div>
+                                        <p class="step-role">Stroke Prevention Clinical Specialist &bull; RAG Knowledge Base</p>
+                                        <small class="step-activity" id="act-ag-prevention">Retrieving stroke prevention guidelines from Medical RAG</small>
+                                    </div>
+                                </div>
+
+                                <!-- Agent 2: Emergency -->
+                                <div class="agent-step-item" id="ag-step-emergency">
+                                    <div class="step-icon-status" id="ag-icon-emergency"><svg class="lucide-icon lucide-siren" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M7 18v-6a5 5 0 1 1 10 0v6" /> <path d="M5 21a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2z" /> <path d="M21 12h1" /> <path d="M18.5 4.5 18 5" /> <path d="M2 12h1" /> <path d="M12 2v1" /> <path d="m4.929 4.929.707.707" /> <path d="M12 12v6" /> </svg></div>
+                                    <div class="step-content">
+                                        <div class="step-head">
+                                            <strong>Emergency Clinical Support Agent</strong>
+                                            <span class="agent-status-badge waiting" id="badge-ag-emergency">Waiting</span>
+                                        </div>
+                                        <p class="step-role">Acute Stroke Clinical Specialist &bull; RAG Knowledge Base</p>
+                                        <small class="step-activity" id="act-ag-emergency">Analyzing acute stroke guideline evidence and reperfusion criteria</small>
+                                    </div>
+                                </div>
+
+                                <!-- Agent 3: Validation -->
+                                <div class="agent-step-item" id="ag-step-validation">
+                                    <div class="step-icon-status" id="ag-icon-validation"><svg class="lucide-icon lucide-search" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg></div>
+                                    <div class="step-content">
+                                        <div class="step-head">
+                                            <strong>Medical Validation Agent</strong>
+                                            <span class="agent-status-badge waiting" id="badge-ag-validation">Waiting</span>
+                                        </div>
+                                        <p class="step-role">Medical Safety & Validation Specialist &bull; No Direct RAG</p>
+                                        <small class="step-activity" id="act-ag-validation">Auditing clinical contradictions, consistency, and citation accuracy</small>
+                                    </div>
+                                </div>
+
+                                <!-- Agent 4: Report -->
+                                <div class="agent-step-item" id="ag-step-report">
+                                    <div class="step-icon-status" id="ag-icon-report"><svg class="lucide-icon lucide-clipboard-list" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="8" height="4" x="8" y="2" rx="1" ry="1" /> <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /> <path d="M12 11h4" /> <path d="M12 16h4" /> <path d="M8 11h.01" /> <path d="M8 16h.01" /> </svg></div>
+                                    <div class="step-content">
+                                        <div class="step-head">
+                                            <strong>Medical Report Agent</strong>
+                                            <span class="agent-status-badge waiting" id="badge-ag-report">Waiting</span>
+                                        </div>
+                                        <p class="step-role">Clinical Documentation Specialist &bull; No Direct RAG</p>
+                                        <small class="step-activity" id="act-ag-report">Synthesizing clinical decision report and compiling PDF document</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wizard-footer-actions step3-footer" id="step3-footer" style="display: none;">
+                        <button type="button" class="btn btn-primary btn-lg" id="btn-to-report-view">
+                            <svg class="lucide-icon lucide-file-text" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" /> <path d="M14 2v5a1 1 0 0 0 1 1h5" /> <path d="M10 9H8" /> <path d="M16 13H8" /> <path d="M16 17H8" /> </svg> View Full Clinical Findings & Report &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- AI STEP 4: COMPREHENSIVE CLINICAL RESULTS & REPORT         -->
+            <!-- ========================================================== -->
+            <div id="ai-wizard-step-4" class="wizard-pane">
+
+                <!-- Top Completion Bar with Home Button -->
+                <div class="results-top-nav">
+                    <div>
+                        <span class="badge-green-sm">Analysis Completed</span>
+                        <h2 class="results-page-title">StrokeAegis AI Clinical Decision Support Package</h2>
+                    </div>
+                    <div class="results-nav-actions">
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-new-ai-analysis">
+                            <svg class="lucide-icon lucide-refresh-cw" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /> <path d="M21 3v5h-5" /> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /> <path d="M8 16H3v5" /> </svg> New Patient Analysis
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-ai-finish-home">
+                            <svg class="lucide-icon lucide-home" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /> <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> </svg> Return to Home
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Row 1: ML Risk + CT Findings -->
+                <div class="results-row-2">
+                    <!-- ML Risk Card -->
+                    <div class="card result-card" id="res-ml-card">
+                        <div class="card-header">
+                            <div class="header-left">
+                                <span class="stage-tag">PREDICTIVE ML</span>
+                                <h3>Machine Learning Stroke Risk</h3>
+                            </div>
+                            <span class="badge-version">StrokePrediction-V2</span>
+                        </div>
+                        <div class="result-body">
+                            <div class="gauge-display-row">
+                                <div class="gauge-circle-compact" id="ai-gauge-circle">
+                                    <span class="gauge-pct" id="ai-gauge-pct">--%</span>
+                                    <small>Probability</small>
+                                </div>
+                                <div class="gauge-meta">
+                                    <div class="tier-pill" id="ai-tier-pill">CALCULATING...</div>
+                                    <p class="tier-text" id="ai-tier-desc">--</p>
+                                    <small class="threshold-text">Model Decision Cutoff: <strong>49.0%</strong></small>
+                                </div>
+                            </div>
+                            <div class="factors-mini-list">
+                                <h5>Primary Clinical Risk Multipliers:</h5>
+                                <div id="ai-factors-chips" class="chips-container"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CT Neuroimaging Card -->
+                    <div class="card result-card" id="res-ct-card">
+                        <div class="card-header">
+                            <div class="header-left">
+                                <span class="stage-tag">NEUROIMAGING DL</span>
+                                <h3>CT Diagnosis & Grad-CAM Explainability</h3>
+                            </div>
+                            <span class="badge-calibrated">Calibrated (T = 0.856)</span>
+                        </div>
+                        <div class="result-body">
+                            <!-- Gatekeeper status strip -->
+                            <div class="gate-strip" id="ai-gate-strip">
+                                <span class="strip-icon" id="ai-gate-icon"><svg class="lucide-icon lucide-door-closed" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16" /> <path d="M2 21h20" /> <path d="M9 12h.01" /> </svg></span>
+                                <div class="strip-info">
+                                    <strong id="ai-gate-title">Gatekeeper Verified</strong>
+                                    <small id="ai-gate-desc">Authentic Brain CT Scan</small>
+                                </div>
+                            </div>
+
+                            <!-- CT Classification Outcome -->
+                            <div class="ct-outcome-box" id="ai-ct-outcome">
+                                <div class="outcome-left">
+                                    <span class="outcome-label">PREDICTED CLASSIFICATION</span>
+                                    <h3 class="outcome-title" id="ai-ct-pred">Analyzing...</h3>
+                                    <span class="outcome-quadrant" id="ai-ct-quadrant">--</span>
+                                </div>
+                                <div class="outcome-right">
+                                    <div class="conf-badge">
+                                        <strong id="ai-ct-conf">--%</strong>
+                                        <small>Confidence</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Radiological Viewer -->
+                            <div class="radiology-viewer-compact">
+                                <div class="view-toggles-bar">
+                                    <button type="button" class="view-pill active" data-view="overlay">Lesion Overlay</button>
+                                    <button type="button" class="view-pill" data-view="heatmap">Grad-CAM Heatmap</button>
+                                    <button type="button" class="view-pill" data-view="preprocessed">Cleaned Brain ROI</button>
+                                    <button type="button" class="view-pill" data-view="original">Original CT</button>
+                                </div>
+                                <div class="viewer-screen">
+                                    <img id="ai-viewer-img" src="" alt="Radiological View">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Prevention Agent + Emergency Agent Outputs -->
+                <div class="results-row-2">
+                    <!-- Prevention Guidance Card -->
+                    <div class="card agent-output-card" id="res-prevention-card">
+                        <div class="card-header">
+                            <div class="header-left">
+                                <span class="agent-icon-badge"><svg class="lucide-icon lucide-shield-check" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /> <path d="m9 12 2 2 4-4" /> </svg></span>
+                                <h3>Prevention Agent &bull; Clinical Recommendations</h3>
+                            </div>
+                            <span class="badge-guideline">AHA/ASA &bull; WHO &bull; NICE</span>
+                        </div>
+                        <div class="result-body">
+                            <div class="agent-narrative" id="ai-prev-interpretation">Loading clinical interpretation...</div>
+
+                            <div class="guidance-block">
+                                <h5>Blood Pressure & Metabolic Targets</h5>
+                                <p id="ai-prev-bp">--</p>
+                                <p id="ai-prev-glycemic">--</p>
+                            </div>
+
+                            <div class="guidance-block">
+                                <h5>Evidence-Based Lifestyle Interventions</h5>
+                                <ul class="clinical-checklist" id="ai-prev-recs"></ul>
+                            </div>
+
+                            <div class="guidance-block">
+                                <h5>Guideline Citations (Medical RAG Knowledge Base)</h5>
+                                <ul class="citations-list" id="ai-prev-citations"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Clinical Support Card -->
+                    <div class="card agent-output-card" id="res-emergency-card">
+                        <div class="card-header">
+                            <div class="header-left">
+                                <span class="agent-icon-badge"><svg class="lucide-icon lucide-siren" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M7 18v-6a5 5 0 1 1 10 0v6" /> <path d="M5 21a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2z" /> <path d="M21 12h1" /> <path d="M18.5 4.5 18 5" /> <path d="M2 12h1" /> <path d="M12 2v1" /> <path d="m4.929 4.929.707.707" /> <path d="M12 12v6" /> </svg></span>
+                                <h3>Emergency Agent &bull; Acute Stroke Pathways</h3>
+                            </div>
+                            <span class="badge-guideline">AIS &bull; ICH &bull; ESO Guidelines</span>
+                        </div>
+                        <div class="result-body">
+                            <div class="agent-narrative" id="ai-emerg-summary">Loading acute stroke guidance...</div>
+
+                            <div class="contraindication-alert" id="ai-emerg-contra-box" style="display: none;">
+                                <strong id="ai-emerg-contra-title"><svg class="lucide-icon lucide-alert-triangle" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /> <path d="M12 9v4" /> <path d="M12 17h.01" /> </svg> CLINICAL CONTRAINDICATION ALERT</strong>
+                                <p id="ai-emerg-contra-text">--</p>
+                            </div>
+
+                            <div class="guidance-block">
+                                <h5>Hyperacute Management Priorities</h5>
+                                <ul class="clinical-checklist" id="ai-emerg-actions"></ul>
+                            </div>
+
+                            <div class="guidance-block">
+                                <h5>Reperfusion & Blood Pressure Targets</h5>
+                                <p id="ai-emerg-thrombo">--</p>
+                                <p id="ai-emerg-bp">--</p>
+                            </div>
+
+                            <div class="guidance-block">
+                                <h5>Guideline Citations (Medical RAG Knowledge Base)</h5>
+                                <ul class="citations-list" id="ai-emerg-citations"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Validation Audit & Final Report Synthesis -->
+                <div class="card final-report-card" id="res-report-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <span class="stage-tag gold">FINAL REPORT</span>
+                            <h3>StrokeAegis AI Unified Clinical Decision Support Report</h3>
+                        </div>
+                        <div class="validation-status-pill" id="ai-val-badge">
+                            <span class="val-dot"></span>
+                            <span id="ai-val-text">Safety Audit Passed</span>
+                        </div>
+                    </div>
+                    <div class="result-body">
+                        <!-- Validation Audit Summary -->
+                        <div class="validation-audit-strip">
+                            <div class="val-item">
+                                <span class="v-label">Safety Clearance:</span>
+                                <strong id="ai-val-clearance">PASSED</strong>
+                            </div>
+                            <div class="val-item">
+                                <span class="v-label">Contradictions Detected:</span>
+                                <strong id="ai-val-contradictions">0 None</strong>
+                            </div>
+                            <div class="val-item">
+                                <span class="v-label">Non-Autonomous Stance:</span>
+                                <strong>VERIFIED (Decision Support)</strong>
+                            </div>
+                            <div class="val-item">
+                                <span class="v-label">Guideline Citations:</span>
+                                <strong>AUDITED & AUTHENTIC</strong>
+                            </div>
+                        </div>
+
+                        <!-- Executive Clinical Summary -->
+                        <div class="report-executive-summary">
+                            <h4>Executive Clinical Summary</h4>
+                            <p id="ai-report-summary">Synthesizing clinical findings...</p>
+                        </div>
+
+                        <!-- Top Prioritized Clinical Actions -->
+                        <div class="key-actions-box">
+                            <h4>Top Prioritized Clinical Actions:</h4>
+                            <ul class="key-actions-list" id="ai-report-key-actions"></ul>
+                        </div>
+
+                        <!-- PDF Download & Action Buttons -->
+                        <div class="report-download-bar">
+                            <div class="download-info">
+                                <strong>Hospital-Grade PDF Documentation Ready</strong>
+                                <small>Full multi-page clinical report with patient demographics, ML risk metrics, Grad-CAM overlays, guideline evidence, and physician sign-off block.</small>
+                            </div>
+                            <div class="download-btns">
+                                <a id="btn-download-pdf" href="#" target="_blank" class="btn btn-primary btn-lg">
+                                    <svg class="lucide-icon lucide-download" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 15V3" /> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /> <path d="m7 10 5 5 5-5" /> </svg> Download Official PDF Report
+                                </a>
+                                <button type="button" class="btn btn-secondary btn-lg" id="btn-return-home-from-report">
+                                    <svg class="lucide-icon lucide-home" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /> <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> </svg> Return to Home
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="clinical-disclaimer-box">
+                            <p><strong>STATUTORY CLINICAL DISCLAIMER:</strong> StrokeAegis AI is an AI-powered clinical decision-support platform intended to assist qualified healthcare professionals. It does not replace clinical judgment, diagnosis, or physician decision-making, and does not independently prescribe or order treatment. All recommendations must be validated by an attending neurologist or emergency physician.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SCREEN 3: OPTION 2 — REGULAR SYSTEM (PATH A & PATH B)          -->
+        <!-- ============================================================== -->
+        <section id="screen-regular-system" class="screen">
+            <!-- Top Navigation Bar -->
+            <div class="wizard-nav-bar">
+                <button type="button" class="btn btn-secondary btn-sm btn-back" id="btn-reg-back-home">
+                    <span>←</span> Return to System Selection
+                </button>
+                <div class="regular-subtabs">
+                    <button type="button" class="subtab-btn active" id="subtab-btn-risk" data-subtab="reg-risk">
+                        <svg class="lucide-icon lucide-bar-chart-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 3v16a2 2 0 0 0 2 2h16" /> <path d="M7 16h8" /> <path d="M7 11h12" /> <path d="M7 6h3" /> </svg> PATH A &mdash; Stroke Risk Assessment (ML Model)
+                    </button>
+                    <button type="button" class="subtab-btn" id="subtab-btn-ct" data-subtab="reg-ct">
+                        <svg class="lucide-icon lucide-brain" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 18V5" /> <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /> <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /> <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /> <path d="M18 18a4 4 0 0 0 2-7.464" /> <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /> <path d="M6 18a4 4 0 0 1-2-7.464" /> <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /> </svg> PATH B &mdash; Stroke CT Diagnosis (Door Gate + Classifier)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Path A: Tabular ML Risk Alone -->
+            <div id="subtab-reg-risk" class="subtab-pane active">
+                <div class="hero-subpath">
+                    <div>
+                        <h3>PATH A: Machine Learning Stroke Risk Stratification</h3>
+                        <p>Evaluate systemic vascular and lifestyle hazard markers using the blended gradient boosting ensemble. No CT scan upload required.</p>
+                    </div>
+                    <div class="presets-row">
+                        <span class="presets-label"><span class="icon-sparkle"><svg class="lucide-icon lucide-sparkles" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg></span> Examples:</span>
+                        <button type="button" class="preset-pill" id="reg-preset-high">High-Risk Case</button>
+                        <button type="button" class="preset-pill" id="reg-preset-mod">Moderate-Risk Case</button>
+                        <button type="button" class="preset-pill" id="reg-preset-low">Low-Risk Case</button>
+                        <button type="button" class="preset-pill btn-clear-pill" id="reg-preset-clear">Clear</button>
+                    </div>
+                </div>
+
+                <div class="regular-risk-grid">
+                    <!-- Form (Starts empty by default!) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Patient Clinical Parameters</h3>
+                            <span class="badge-blue">10 Variables</span>
+                        </div>
+                        <form id="reg-risk-form">
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="reg-gender">Gender *</label>
+                                    <select id="reg-gender" class="form-control" required>
+                                        <option value="" disabled selected>Select gender...</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="reg-age">Age (years) *</label>
+                                    <input type="number" id="reg-age" class="form-control" placeholder="e.g. 67" min="1" max="120" required>
+                                </div>
+                            </div>
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="reg-hypertension">Hypertension *</label>
+                                    <select id="reg-hypertension" class="form-control" required>
+                                        <option value="" disabled selected>Select status...</option>
+                                        <option value="1">Yes (Hypertensive)</option>
+                                        <option value="0">No (Normotensive)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="reg-heart">Heart Disease History *</label>
+                                    <select id="reg-heart" class="form-control" required>
+                                        <option value="" disabled selected>Select status...</option>
+                                        <option value="1">Yes (Cardiac History)</option>
+                                        <option value="0">No Known Heart Disease</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="reg-glucose">Average Glucose (mg/dL) *</label>
+                                    <input type="number" step="0.1" id="reg-glucose" class="form-control" placeholder="e.g. 145.0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="reg-bmi">BMI (kg/m²) *</label>
+                                    <input type="number" step="0.1" id="reg-bmi" class="form-control" placeholder="e.g. 28.5" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reg-smoking">Smoking Status *</label>
+                                <select id="reg-smoking" class="form-control" required>
+                                    <option value="" disabled selected>Select smoking status...</option>
+                                    <option value="formerly smoked">Formerly Smoked</option>
+                                    <option value="smokes">Current Smoker</option>
+                                    <option value="never smoked">Never Smoked</option>
+                                </select>
+                            </div>
+                            <div class="form-actions-row">
+                                <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-calc-reg-risk">
+                                    <svg class="lucide-icon lucide-bar-chart-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 3v16a2 2 0 0 0 2 2h16" /> <path d="M7 16h8" /> <path d="M7 11h12" /> <path d="M7 6h3" /> </svg> Calculate Stroke Danger Risk
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Result (Appears on same page after calculation) -->
+                    <div class="card" id="reg-risk-result-card">
+                        <div class="card-header">
+                            <h3>Stroke Risk Stratification Result</h3>
+                            <span class="badge-version">StrokePrediction-V2</span>
+                        </div>
+                        <div class="result-body">
+                            <div class="gauge-display-row" id="reg-risk-placeholder" style="text-align: center; padding: 2rem 0; width: 100%; display: block;">
+                                <p style="color: var(--text-muted); font-size: 0.9rem;">Fill in patient parameters above and click <strong>Calculate Stroke Danger Risk</strong> to see the ML evaluation.</p>
+                            </div>
+
+                            <div id="reg-risk-content" style="display: none;">
+                                <div class="gauge-display-row">
+                                    <div class="gauge-circle-compact" id="reg-gauge-circle">
+                                        <span class="gauge-pct" id="reg-gauge-pct">0%</span>
+                                        <small>Probability</small>
+                                    </div>
+                                    <div class="gauge-meta">
+                                        <div class="tier-pill" id="reg-tier-pill">RISK TIER</div>
+                                        <p class="tier-text" id="reg-tier-desc">--</p>
+                                    </div>
+                                </div>
+                                <div class="factors-mini-list">
+                                    <h5>Identified Clinical Contributors:</h5>
+                                    <div id="reg-factors-list" class="chips-container"></div>
+                                </div>
+                            </div>
+
+                            <div class="subpath-bottom-actions">
+                                <button type="button" class="btn btn-secondary btn-block" id="btn-reg-risk-home">
+                                    <svg class="lucide-icon lucide-home" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /> <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> </svg> Return to Home Page
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Path B: Brain CT Diagnosis Alone -->
+            <div id="subtab-reg-ct" class="subtab-pane">
+                <div class="hero-subpath">
+                    <div>
+                        <h3>PATH B: Standalone Neuroimaging CT Diagnosis</h3>
+                        <p>Upload a brain scan to test the ConvNeXt-Tiny Door Model safety gatekeeper and the EfficientNetV2-S classifier with Grad-CAM.</p>
+                    </div>
+                    <div class="presets-row">
+                        <span class="presets-label"><span class="icon-sparkle"><svg class="lucide-icon lucide-sparkles" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" /> </svg></span> Test Scans:</span>
+                        <div class="ct-presets-mini-list" id="reg-ct-presets-container"></div>
+                    </div>
+                </div>
+
+                <div class="regular-ct-grid">
+                    <!-- Upload Column (Starts clean without pre-loaded scan!) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Upload Brain CT Scan</h3>
+                            <span class="badge-blue">Door Gate + Classifier</span>
+                        </div>
+                        <div class="dropzone-compact" id="reg-dropzone">
+                            <input type="file" id="reg-ct-file-input" accept="image/*" class="file-input-hidden">
+                            <div class="dropzone-inner">
+                                <div class="upload-icon-circle"><svg class="lucide-icon lucide-brain" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 18V5" /> <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /> <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /> <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /> <path d="M18 18a4 4 0 0 0 2-7.464" /> <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /> <path d="M6 18a4 4 0 0 1-2-7.464" /> <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /> </svg></div>
+                                <div>
+                                    <h4>Drop brain CT scan here</h4>
+                                    <p>or click to browse from your computer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scan-preview-card" id="reg-scan-preview" style="display: none;">
+                            <div class="preview-meta">
+                                <span id="reg-preview-name">scan.png</span>
+                                <button type="button" class="btn-text-danger" id="reg-btn-clear-scan">Remove</button>
+                            </div>
+                            <div class="preview-img-wrap">
+                                <img id="reg-preview-img" src="" alt="Preview">
+                            </div>
+                            <button type="button" class="btn btn-primary btn-block" id="btn-run-reg-ct" style="margin-top: 0.85rem;">
+                                <svg class="lucide-icon lucide-zap" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /> </svg> Run CT Neuroimaging Analysis
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Result Column -->
+                    <div class="card" id="reg-ct-result-card">
+                        <div class="card-header">
+                            <h3>Diagnostic Outcome & Grad-CAM</h3>
+                            <span class="badge-calibrated">Calibrated (T=0.856)</span>
+                        </div>
+                        <div class="result-body">
+                            <div id="reg-ct-placeholder" style="text-align: center; padding: 2.5rem 1rem;">
+                                <div style="font-size: 2.5rem; margin-bottom: 0.5rem; display: flex; justify-content: center;"><svg class="lucide-icon lucide-icon-xl lucide-brain" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 18V5" /> <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /> <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /> <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /> <path d="M18 18a4 4 0 0 0 2-7.464" /> <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /> <path d="M6 18a4 4 0 0 1-2-7.464" /> <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /> </svg></div>
+                                <h4 style="color: var(--charcoal-slate); margin-bottom: 0.25rem;">Awaiting CT Neuroimaging Scan</h4>
+                                <p style="color: var(--text-muted); font-size: 0.82rem;">Upload a head CT scan or click a sample scan preset to perform gatekeeper verification and tri-class stroke diagnosis.</p>
+                            </div>
+
+                            <div id="reg-ct-content" style="display: none;">
+                                <div class="gate-strip" id="reg-gate-strip">
+                                    <span class="strip-icon" id="reg-gate-icon"><svg class="lucide-icon lucide-door-closed" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16" /> <path d="M2 21h20" /> <path d="M9 12h.01" /> </svg></span>
+                                    <div class="strip-info">
+                                        <strong id="reg-gate-title">Gatekeeper Status</strong>
+                                        <small id="reg-gate-desc">--</small>
+                                    </div>
+                                </div>
+                                <div class="ct-outcome-box" id="reg-ct-outcome">
+                                    <div>
+                                        <span class="outcome-label">DIAGNOSIS</span>
+                                        <h3 class="outcome-title" id="reg-ct-pred">Analyzing...</h3>
+                                        <span class="outcome-quadrant" id="reg-ct-quadrant">--</span>
+                                    </div>
+                                    <div class="conf-badge">
+                                        <strong id="reg-ct-conf">--%</strong>
+                                        <small>Confidence</small>
+                                    </div>
+                                </div>
+                                <div class="radiology-viewer-compact">
+                                    <div class="view-toggles-bar">
+                                        <button type="button" class="view-pill active" data-reg-view="overlay">Lesion Overlay</button>
+                                        <button type="button" class="view-pill" data-reg-view="heatmap">Grad-CAM</button>
+                                        <button type="button" class="view-pill" data-reg-view="original">Original</button>
+                                    </div>
+                                    <div class="viewer-screen">
+                                        <img id="reg-viewer-img" src="" alt="CT Result">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="subpath-bottom-actions">
+                                <button type="button" class="btn btn-secondary btn-block" id="btn-reg-ct-home">
+                                    <svg class="lucide-icon lucide-home" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /> <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> </svg> Return to Home Page
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: PATIENT CLINICAL HISTORY (LONGITUDINAL RECORD)          -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-patient-history" style="display: none;">
+        <div class="portal-modal-dialog">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title" id="history-modal-patient-name">Patient Longitudinal History</h3>
+                    <p class="modal-subtitle" id="history-modal-patient-mrn">MRN: -- &bull; Status: --</p>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-history-modal" aria-label="Close Modal">&times;</button>
+            </div>
+            <div class="portal-modal-body" id="history-modal-body">
+                <!-- Content loaded dynamically via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: NOTIFICATIONS DRAWER                                    -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-notifications-drawer" style="display: none;">
+        <div class="portal-modal-dialog notif-modal-dialog">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title"><svg class="lucide-icon lucide-bell" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M10.268 21a2 2 0 0 0 3.464 0" /> <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /> </svg> <span data-i18n="notifs.title">Clinical Notifications</span></h3>
+                    <p class="modal-subtitle" data-i18n="notifs.subtitle">Real-time alerts, reports, and messages from PostgreSQL</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <button type="button" class="btn btn-sm btn-secondary" id="btn-notifs-read-all" style="font-size: 0.78rem; padding: 0.35rem 0.75rem;" data-i18n="notifs.mark_all_read">Mark All Read</button>
+                    <button type="button" class="btn-close-modal" id="btn-close-notifs-modal" aria-label="Close Notifications">&times;</button>
+                </div>
+            </div>
+            <div class="portal-modal-body" id="notifs-list-container" style="max-height: 420px; overflow-y: auto; padding: 1.25rem;">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: ADD / ADMIT PATIENT (DOCTOR WORKSPACE)                  -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-admit-patient" style="display: none;">
+        <div class="portal-modal-dialog admit-modal-dialog">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title"><svg class="lucide-icon lucide-user-plus" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <circle cx="9" cy="7" r="4" /> <line x1="19" x2="19" y1="8" y2="14" /> <line x1="22" x2="16" y1="11" y2="11" /> </svg> <span>Add Patient to Clinical Care</span></h3>
+                    <p class="modal-subtitle">Invite registered patient by email or register a new walk-in patient</p>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-admit-modal" aria-label="Close Modal">&times;</button>
+            </div>
+            <div class="portal-modal-body" style="padding: 1.5rem;">
+                <div class="admit-tabs">
+                    <button type="button" class="admit-tab-btn active" id="tab-btn-invite-email">Invite by Email</button>
+                    <button type="button" class="admit-tab-btn" id="tab-btn-direct-admit">Direct Clinic Admission</button>
+                </div>
+
+                <!-- Tab 1: Invite by Email (Cases A, B, C) -->
+                <div id="admit-tab-content-invite">
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                        Enter the registered patient's email. A 48-hour connection request will be delivered to their portal. If the patient has no primary doctor, you will become their <strong>Primary Doctor</strong> upon acceptance; otherwise you will join their <strong>Care Team</strong>.
+                    </p>
+                    <form id="form-invite-patient">
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label for="admit-email-request"><strong>Patient Email Address</strong> *</label>
+                            <input type="email" id="admit-email-request" class="portal-search-input" placeholder="e.g. patient@example.com" style="width: 100%; margin-top: 0.35rem;" required>
+                        </div>
+                        <div id="admit-request-feedback" class="admit-feedback-box"></div>
+                        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                            <button type="button" class="btn btn-secondary" id="btn-cancel-invite" data-i18n="common.cancel">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="btn-submit-invite">
+                                <span id="admit-invite-spinner" class="spinner-sm" style="display: none;"></span>
+                                <span>Send Connection Request</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tab 2: Direct Admission Form -->
+                <div id="admit-tab-content-direct" style="display: none;">
+                    <form id="form-admit-patient">
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label for="admit-fullname"><span data-i18n="auth.fullname">Full Name</span> *</label>
+                                <input type="text" id="admit-fullname" placeholder="e.g. Sultan Al-Olayan" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admit-email"><span data-i18n="auth.email">Email Address</span> *</label>
+                                <input type="email" id="admit-email" placeholder="patient@hospital.local" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="admit-dob"><span data-i18n="auth.dob">Date of Birth</span></label>
+                                <input type="date" id="admit-dob">
+                            </div>
+                            <div class="form-group">
+                                <label for="admit-gender"><span data-i18n="form.gender">Gender</span></label>
+                                <select id="admit-gender">
+                                    <option value="Male" selected>Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="grid-column: 1/-1;">
+                                <label for="admit-emergency"><span data-i18n="auth.emergency_contact">Emergency Contact</span></label>
+                                <input type="text" id="admit-emergency" placeholder="Name &amp; Phone (e.g. Noura +966-50-111-2222)">
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                            <button type="button" class="btn btn-secondary" id="btn-cancel-admit" data-i18n="common.cancel">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="btn-submit-admit">
+                                <span id="admit-spinner" class="spinner-sm" style="display: none;"></span>
+                                <span data-i18n="doc.admit_modal.submit">Admit Patient</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: FIND A DOCTOR (PATIENT WORKSPACE)                       -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-find-doctor" style="display: none;">
+        <div class="portal-modal-dialog" style="max-width: 720px;">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title">
+                        <svg class="lucide-icon lucide-stethoscope" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M11 2v2" /> <path d="M5 2v2" /> <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" /> <path d="M8 15a6 6 0 0 0 12 0v-3" /> <circle cx="20" cy="10" r="2" /> </svg>
+                        <span>Find an Attending Physician</span>
+                    </h3>
+                    <p class="modal-subtitle">Browse verified stroke neurologists and request clinical supervision</p>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-find-doctor-modal" aria-label="Close Modal">&times;</button>
+            </div>
+            <div class="portal-modal-body" style="padding: 1.5rem;">
+                <div style="margin-bottom: 1.25rem;">
+                    <input type="text" id="find-doctor-search-input" class="portal-search-input" placeholder="Search physicians by name, specialization, or hospital..." style="width: 100%;">
+                </div>
+                <div id="find-doctor-feedback" class="admit-feedback-box" style="margin-bottom: 1rem;"></div>
+                <div id="find-doctor-list-container" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: LAUNCH AI SYSTEM MODE CHOOSER (DOCTOR WORKSPACE)        -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-launch-ai-choice" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="launch-choice-title">
+        <div class="portal-modal-dialog launch-choice-dialog">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title" id="launch-choice-title"><svg class="lucide-icon lucide-bot" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 8V4H8" /> <rect width="16" height="12" x="4" y="8" rx="2" /> <path d="M2 14h2" /> <path d="M20 14h2" /> <path d="M15 13v2" /> <path d="M9 13v2" /> </svg> <span data-i18n="doc.launch_choice.title">Launch AI Clinical System</span></h3>
+                    <p class="modal-subtitle" data-i18n="doc.launch_choice.subtitle">Choose how you wish to conduct this clinical AI evaluation session:</p>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-launch-choice" aria-label="Close Modal">&times;</button>
+            </div>
+            <div class="portal-modal-body" style="padding: 1.5rem 1.75rem;">
+                <div class="launch-choice-cards">
+                    <!-- Choice 1: Assign to Supervised Patient -->
+                    <div class="launch-choice-card assigned-card">
+                        <div class="choice-card-badge"><svg class="lucide-icon lucide-user" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" /> </svg> <span data-i18n="doc.launch_choice.assign_badge">Patient Assignment</span></div>
+                        <h4 class="choice-card-heading" data-i18n="doc.launch_choice.assign_title">Assign to an Active Patient</h4>
+                        <p class="choice-card-desc" data-i18n="doc.launch_choice.assign_desc">
+                            Select a patient from your clinical roster. Demographics will be pre-filled, and the diagnostic analysis and PDF report will be securely saved to their medical history.
+                        </p>
+                        <div class="form-group" style="margin: 1rem 0;">
+                            <label for="select-launch-ai-patient" style="font-weight: 700; font-size: 0.85rem;" data-i18n="doc.launch_choice.select_label">Select Patient from Roster:</label>
+                            <select id="select-launch-ai-patient" class="choice-patient-select">
+                                <!-- Populated dynamically with active patients -->
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="btn-launch-ai-assigned" style="width: 100%; border-radius: 10px; font-weight: 700; padding: 0.65rem 1rem;">
+                            <svg class="lucide-icon lucide-rocket" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" /> <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09" /> <path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z" /> <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05" /> </svg> <span data-i18n="doc.launch_choice.btn_assigned">Launch with Selected Patient</span>
+                        </button>
+                    </div>
+
+                    <!-- Choice 2: Standalone / Trial Mode -->
+                    <div class="launch-choice-card standalone-card">
+                        <div class="choice-card-badge standalone"><svg class="lucide-icon lucide-flask-conical" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /> <path d="M6.453 15h11.094" /> <path d="M8.5 2h7" /> </svg> <span data-i18n="doc.launch_choice.standalone_badge">Trial &amp; Simulation</span></div>
+                        <h4 class="choice-card-heading" data-i18n="doc.launch_choice.standalone_title">Standalone Evaluation (Unassigned)</h4>
+                        <p class="choice-card-desc" data-i18n="doc.launch_choice.standalone_desc">
+                            Test the multimodal AI diagnostic models freely. Evaluate custom vitals and CT scans without assigning to any patient or modifying any medical record.
+                        </p>
+                        <div class="choice-standalone-perks">
+                            <span><svg class="lucide-icon lucide-check" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20 6 9 17l-5-5" /> </svg> No patient record modified</span>
+                            <span><svg class="lucide-icon lucide-check" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20 6 9 17l-5-5" /> </svg> Custom vitals testing</span>
+                            <span><svg class="lucide-icon lucide-check" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20 6 9 17l-5-5" /> </svg> Free CT scan experimentation</span>
+                        </div>
+                        <button type="button" class="btn btn-secondary" id="btn-launch-ai-standalone" style="width: 100%; border-radius: 10px; font-weight: 700; padding: 0.65rem 1rem; margin-top: auto;">
+                            <svg class="lucide-icon lucide-zap" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /> </svg> <span data-i18n="doc.launch_choice.btn_standalone">Launch in Standalone Mode</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: VASCULAR HEALTH CHECK RESULT (PATIENT PORTAL)            -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop selfcheck-modal-backdrop" id="modal-selfcheck-result" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="selfcheck-modal-title">
+        <div class="portal-modal-dialog selfcheck-modal-dialog">
+            <div class="portal-modal-header">
+                <div>
+                    <span class="modal-pretitle" data-i18n="pat.selfcheck.assessment_result">Assessment Result</span>
+                    <h3 class="modal-title" id="selfcheck-modal-title"><svg class="lucide-icon lucide-brain" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 18V5" /> <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /> <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /> <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /> <path d="M18 18a4 4 0 0 0 2-7.464" /> <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /> <path d="M6 18a4 4 0 0 1-2-7.464" /> <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /> </svg> <span data-i18n="pat.selfcheck.modal_title">Vascular Health Assessment</span></h3>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-selfcheck-modal" aria-label="Close Assessment">&times;</button>
+            </div>
+            <div class="portal-modal-body" id="selfcheck-modal-body">
+                <!-- Content loaded dynamically via JS -->
+            </div>
+            <div class="selfcheck-modal-footer">
+                <button type="button" class="btn btn-primary btn-close-selfcheck-footer" id="btn-close-selfcheck-modal-footer">
+                    <span data-i18n="pat.selfcheck.close_modal">Close Assessment</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- SIMPLE APPLICATION FOOTER (RIGHTS & AUTHOR)                     -->
+    <!-- ============================================================== -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <span class="footer-rights-text" data-i18n="footer.rights">&copy; 2026 StrokeAegis AI All rights reserved.</span>
+            <span class="footer-sep">&bull;</span>
+            <span class="footer-author" data-i18n="footer.author">Mahmood Bamatraf</span>
+        </div>
+    </footer>
+
+    <!-- ============================================================== -->
+    <!-- FLOATING MEDICAL CHATBOT LAUNCHER & MODAL (CUTE ROBOT IDENTITY)-->
+    <!-- ============================================================== -->
+
+    <!-- Background Blur Overlay Backdrop -->
+    <div id="chatbot-backdrop" class="chatbot-backdrop"></div>
+
+    <!-- Floating Chatbot Window / Modal -->
+    <div id="chatbot-modal" class="chatbot-modal" role="dialog" aria-label="StrokeAegis Medical Assistant Chat">
+        <!-- App Bar / Header (Robot Centered) -->
+        <div class="chatbot-appbar">
+            <div class="chatbot-appbar-left">
+                <span class="status-indicator-sm online" title="Service Online"></span>
+            </div>
+            <div class="chatbot-appbar-center">
+                <div class="header-robot-avatar">
+                    <img src="/assets/robot_face_no_text.svg" alt="StrokeAegis Robot Assistant" class="appbar-robot-img" id="appbar-robot-img">
+                </div>
+                <div class="header-title-wrap">
+                    <h3 class="header-title"><span data-i18n="chatbot.title">StrokeAegis</span> <span class="brand-ai" data-i18n="chatbot.ai">AI</span></h3>
+                    <p class="header-subtitle" data-i18n="chatbot.sub">Medical Assistant &bull; Stroke Specialist</p>
+                </div>
+            </div>
+            <div class="chatbot-appbar-right">
+                <button type="button" class="btn-close-chatbot" id="btn-close-chatbot" aria-label="Close Chatbot">&times;</button>
+            </div>
+        </div>
+
+        <!-- Scrollable Messages Body -->
+        <div class="chatbot-body" id="chatbot-messages">
+            <!-- Initial Greeting Message (Requirement #12) -->
+            <div class="chat-message assistant">
+                <div class="msg-avatar">
+                    <img src="/assets/robot_face_no_text.svg" alt="StrokeAegis Assistant" class="msg-robot-icon">
+                </div>
+                <div class="msg-content">
+                    <div class="msg-sender">StrokeAegis Medical Assistant</div>
+                    <div class="msg-bubble">
+                        Hello! 👋 I'm StrokeAegis AI's medical assistant. I can help you with questions about stroke, stroke risk, symptoms, diagnosis, prevention, and other medical topics related to stroke. How can I help you?
+                    </div>
+                    <div class="chat-suggest-wrap">
+                        <span class="suggest-label" data-i18n="chatbot.suggest_label">Suggested Questions:</span>
+                        <div class="suggest-pills-list">
+                            <button type="button" class="chat-suggest-pill" data-i18n="chatbot.suggest_q1">What are the warning signs of stroke?</button>
+                            <button type="button" class="chat-suggest-pill" data-i18n="chatbot.suggest_q2">How does hypertension increase stroke risk?</button>
+                            <button type="button" class="chat-suggest-pill" data-i18n="chatbot.suggest_q3">What is the FAST protocol?</button>
+                        </div>
+                    </div>
+                    <div class="msg-time">Just now</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typing / Loading State Indicator (Requirement #18) -->
+        <div class="chatbot-typing-bar" id="chatbot-typing-bar" style="display: none;">
+            <div class="typing-robot-avatar">
+                <img src="/assets/robot_face_no_text.svg" alt="Consulting RAG" class="typing-robot-img">
+            </div>
+            <div class="typing-bubble">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span class="typing-label" data-i18n="chatbot.typing">Consulting Stroke Guidelines...</span>
+            </div>
+        </div>
+
+        <!-- Chat Input Footer -->
+        <div class="chatbot-footer">
+            <form id="chatbot-form" class="chatbot-form" autocomplete="off">
+                <div class="chat-input-wrap">
+                    <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Ask about stroke, symptoms, prevention..." data-i18n-placeholder="chatbot.placeholder" maxlength="500" required>
+                    <button type="submit" id="btn-send-chat" class="btn-send" aria-label="Send Message" title="Send message (Enter)">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            <div class="chatbot-disclaimer-sub">
+                <span data-i18n="chatbot.disclaimer">Clinical Decision Support &bull; For emergencies, dial 911 / EMS immediately.</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="/i18n.js?v=20260924_lucide"></script>
+    <script src="/icons.js?v=20260924_lucide"></script>
+    <script src="/app.js?v=20260929_auth_fix"></script>
+</body>
+</html>
