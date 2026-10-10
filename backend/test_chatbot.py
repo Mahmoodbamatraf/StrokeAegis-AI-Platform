@@ -21,8 +21,16 @@ sys.path.insert(0, str(ROOT / 'backend'))
 
 from fastapi.testclient import TestClient
 from backend.app import app
+import httpx
 
-client = TestClient(app)
+try:
+    _live_check = httpx.get("http://127.0.0.1:8000/api/chatbot/health", timeout=1.0)
+    if _live_check.status_code == 200:
+        client = httpx.Client(base_url="http://127.0.0.1:8000", timeout=25.0)
+    else:
+        client = TestClient(app)
+except Exception:
+    client = TestClient(app)
 
 def run_all_tests():
     print("=" * 72)

@@ -1,4 +1,4 @@
-﻿# Environment Variables & Secrets
+# Environment Variables & Secrets
 .env
 *.env
 !.env.example
@@ -31,3 +31,15 @@ $RECYCLE.BIN/
 *.log
 *.tmp
 *.bak
+
+# Scratch testing and browser automation artifacts
+scratch/
+!scratch/test_account_creation_fix.py
+!scratch/test_clinical_endpoints.py
+!scratch/test_clinical_portals.py
+!scratch/test_doctor_nav_fixes.py
+!scratch/test_e2e_frontend_html.py
+!scratch/test_full_system.py
+!scratch/test_landing_page.py
+!scratch/test_phase1_auth.py
+

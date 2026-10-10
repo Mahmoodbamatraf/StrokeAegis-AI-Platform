@@ -30,6 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
             showPatientPortal();
         }
     }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedScreen = urlParams.get('screen');
+    if (requestedScreen) {
+        showScreen(requestedScreen);
+    }
+    window.showScreen = showScreen;
 });
 
 // ==============================================================
@@ -944,7 +951,6 @@ async function initPresets() {
         const pMod = document.getElementById('ai-preset-mod');
         const pLow = document.getElementById('ai-preset-low');
         const pClear = document.getElementById('ai-preset-clear');
-        const pQuickFill = document.getElementById('btn-ai-step1-preset-fill');
 
         const rHigh = document.getElementById('reg-preset-high');
         const rMod = document.getElementById('reg-preset-mod');
@@ -955,7 +961,6 @@ async function initPresets() {
             if (pHigh) pHigh.addEventListener('click', () => { setPresetPillActive(pHigh); fillAIForm(data.patient_presets[0].data); });
             if (pMod) pMod.addEventListener('click', () => { setPresetPillActive(pMod); fillAIForm(data.patient_presets[1].data); });
             if (pLow) pLow.addEventListener('click', () => { setPresetPillActive(pLow); fillAIForm(data.patient_presets[2].data); });
-            if (pQuickFill) pQuickFill.addEventListener('click', () => { setPresetPillActive(pHigh); fillAIForm(data.patient_presets[0].data); });
 
             if (rHigh) rHigh.addEventListener('click', () => { setPresetPillActive(rHigh); fillRegForm(data.patient_presets[0].data); });
             if (rMod) rMod.addEventListener('click', () => { setPresetPillActive(rMod); fillRegForm(data.patient_presets[1].data); });
@@ -1941,7 +1946,7 @@ function updateRegRadiologyViewer() {
 let chatbotConversationId = null;
 
 function initChatbot() {
-    const headerRobotTrigger = document.getElementById('header-robot-trigger');
+    const floatingRobotTrigger = document.getElementById('floating-chatbot-trigger') || document.getElementById('header-robot-trigger');
     const modal = document.getElementById('chatbot-modal');
     const backdrop = document.getElementById('chatbot-backdrop');
     const btnClose = document.getElementById('btn-close-chatbot');
@@ -1956,6 +1961,7 @@ function initChatbot() {
     function openChatbot() {
         modal.classList.add('active');
         backdrop.classList.add('active');
+        document.body.classList.add('chatbot-open');
         if (input) {
             setTimeout(() => input.focus(), 150);
         }
@@ -1965,20 +1971,25 @@ function initChatbot() {
     function closeChatbot() {
         modal.classList.remove('active');
         backdrop.classList.remove('active');
+        document.body.classList.remove('chatbot-open');
     }
 
-    if (headerRobotTrigger) {
-        headerRobotTrigger.addEventListener('click', () => {
+    if (floatingRobotTrigger) {
+        floatingRobotTrigger.addEventListener('click', () => {
             if (modal.classList.contains('active')) {
                 closeChatbot();
             } else {
                 openChatbot();
             }
         });
-        headerRobotTrigger.addEventListener('keydown', (e) => {
+        floatingRobotTrigger.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                openChatbot();
+                if (modal.classList.contains('active')) {
+                    closeChatbot();
+                } else {
+                    openChatbot();
+                }
             }
         });
     }
@@ -2335,18 +2346,12 @@ function initClinicalPortals() {
         });
     }
 
-    // 11. Add / Admit Patient Modal (Doctor Workspace)
+    // 11. Add Patient Modal (Doctor Workspace - Invite by Email)
     const btnOpenAdmit = document.getElementById('btn-open-admit-modal');
     const btnCloseAdmit = document.getElementById('btn-close-admit-modal');
-    const btnCancelAdmit = document.getElementById('btn-cancel-admit');
     const btnCancelInvite = document.getElementById('btn-cancel-invite');
     const modalAdmit = document.getElementById('modal-admit-patient');
-    const formAdmit = document.getElementById('form-admit-patient');
     const formInvite = document.getElementById('form-invite-patient');
-    const tabInvite = document.getElementById('tab-btn-invite-email');
-    const tabDirect = document.getElementById('tab-btn-direct-admit');
-    const contentInvite = document.getElementById('admit-tab-content-invite');
-    const contentDirect = document.getElementById('admit-tab-content-direct');
 
     if (btnOpenAdmit) {
         btnOpenAdmit.addEventListener('click', () => {
@@ -2359,7 +2364,6 @@ function initClinicalPortals() {
         if (feedback) feedback.style.display = 'none';
     };
     if (btnCloseAdmit) btnCloseAdmit.addEventListener('click', closeAdmitModal);
-    if (btnCancelAdmit) btnCancelAdmit.addEventListener('click', closeAdmitModal);
     if (btnCancelInvite) btnCancelInvite.addEventListener('click', closeAdmitModal);
     if (modalAdmit) {
         modalAdmit.addEventListener('click', (e) => {
@@ -2367,32 +2371,10 @@ function initClinicalPortals() {
         });
     }
 
-    if (tabInvite && tabDirect) {
-        tabInvite.addEventListener('click', () => {
-            tabInvite.classList.add('active');
-            tabDirect.classList.remove('active');
-            if (contentInvite) contentInvite.style.display = 'block';
-            if (contentDirect) contentDirect.style.display = 'none';
-        });
-        tabDirect.addEventListener('click', () => {
-            tabDirect.classList.add('active');
-            tabInvite.classList.remove('active');
-            if (contentInvite) contentInvite.style.display = 'none';
-            if (contentDirect) contentDirect.style.display = 'block';
-        });
-    }
-
     if (formInvite) {
         formInvite.addEventListener('submit', async (e) => {
             e.preventDefault();
             await handleInvitePatientSubmit();
-        });
-    }
-
-    if (formAdmit) {
-        formAdmit.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await handleAdmitPatientSubmit();
         });
     }
 
@@ -3817,63 +3799,6 @@ async function sendPatientChatMessage() {
 }
 
 // -------------------------------------------------------------
-// Doctor Patient Admission Handler
-// -------------------------------------------------------------
-async function handleAdmitPatientSubmit() {
-    const spinner = document.getElementById('admit-spinner');
-    const submitBtn = document.getElementById('btn-submit-admit');
-    if (spinner) spinner.style.display = 'inline-block';
-    if (submitBtn) submitBtn.disabled = true;
-
-    const fullName = document.getElementById('admit-fullname').value.trim();
-    const email = document.getElementById('admit-email').value.trim();
-    const dob = document.getElementById('admit-dob').value || null;
-    const gender = document.getElementById('admit-gender').value;
-    const emergency = document.getElementById('admit-emergency').value.trim() || null;
-
-    try {
-        const res = await fetch('/api/clinical-portal/doctor/patients/admit', {
-            method: 'POST',
-            headers: getAuthHeaders(true),
-            body: JSON.stringify({
-                full_name: fullName,
-                email: email,
-                date_of_birth: dob,
-                gender: gender,
-                emergency_contact: emergency,
-                status: 'active'
-            })
-        });
-
-        if (handleAuthError(res)) return;
-        const data = await res.json();
-
-        if (!res.ok) {
-            alert('Admission failed: ' + (data.detail || 'Could not admit patient'));
-            return;
-        }
-
-        // Close modal
-        const modal = document.getElementById('modal-admit-patient');
-        if (modal) modal.style.display = 'none';
-
-        // Refresh doctor workspace
-        await Promise.all([
-            loadDoctorPatients(),
-            loadDoctorStats(),
-            loadNotifications()
-        ]);
-
-        alert(`✓ Patient ${data.patient.full_name} successfully admitted with MRN ${data.patient.mrn}!`);
-    } catch (err) {
-        alert('Admission error: ' + err.message);
-    } finally {
-        if (spinner) spinner.style.display = 'none';
-        if (submitBtn) submitBtn.disabled = false;
-    }
-}
-
-// -------------------------------------------------------------
 // Doctor & Patient Relationship / Care Team Handlers
 // -------------------------------------------------------------
 
@@ -3960,29 +3885,15 @@ function openAddPatientModal() {
     if (!modal) return;
     
     const formInvite = document.getElementById('form-invite-patient');
-    const formAdmit = document.getElementById('form-admit-patient');
     const feedback = document.getElementById('admit-request-feedback');
     const inviteEmailInput = document.getElementById('admit-email-request');
 
     if (formInvite) formInvite.reset();
-    if (formAdmit) formAdmit.reset();
     if (feedback) {
         feedback.style.display = 'none';
         feedback.className = 'admit-feedback-box';
         feedback.innerHTML = '';
     }
-
-    const tabInvite = document.getElementById('tab-btn-invite-email');
-    const tabDirect = document.getElementById('tab-btn-direct-admit');
-    const contentInvite = document.getElementById('admit-tab-content-invite');
-    const contentDirect = document.getElementById('admit-tab-content-direct');
-
-    if (tabInvite && tabDirect) {
-        tabInvite.classList.add('active');
-        tabDirect.classList.remove('active');
-    }
-    if (contentInvite) contentInvite.style.display = 'block';
-    if (contentDirect) contentDirect.style.display = 'none';
 
     modal.style.display = 'flex';
     if (inviteEmailInput) {
