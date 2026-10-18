@@ -7,6 +7,7 @@ from sqlalchemy import (
     Boolean,
     DateTime,
     Date,
+    Integer,
     Numeric,
     Text,
     ForeignKey,
@@ -41,7 +42,7 @@ class User(Base):
     )
 
     # Relationships
-    doctor_profile = relationship("DoctorProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    doctor_profile = relationship("DoctorProfile", back_populates="user", uselist=False, cascade="all, delete-orphan", foreign_keys="[DoctorProfile.user_id]")
     patient_profile = relationship("PatientProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
     notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
 
@@ -61,11 +62,23 @@ class DoctorProfile(Base):
     specialization = Column(String(150), nullable=False, default="Stroke Neurology")
     hospital_affiliation = Column(String(200), nullable=True)
     contact_phone = Column(String(50), nullable=True)
+    approval_status = Column(String(30), nullable=False, default="approved", server_default="approved", index=True)
+    rejection_reason = Column(Text, nullable=True)
+    verification_reference = Column(String(100), nullable=True)
+    verification_notes = Column(Text, nullable=True)
+    more_info_request = Column(Text, nullable=True)
+    reviewed_by = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    reviewed_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
 
+    __table_args__ = (
+        CheckConstraint("approval_status IN ('pending', 'approved', 'rejected', 'suspended', 'more_info_required')", name="chk_doctor_approval_status"),
+    )
+
     # Relationships
-    user = relationship("User", back_populates="doctor_profile")
+    user = relationship("User", back_populates="doctor_profile", foreign_keys=[user_id])
+    reviewer = relationship("User", foreign_keys=[reviewed_by])
 
     def __repr__(self) -> str:
         return f"<DoctorProfile id={self.id} license={self.license_number} spec={self.specialization}>"
@@ -146,6 +159,10 @@ class Assessment(Base):
     ml_risk_probability = Column(Numeric(5, 4), nullable=True)
     ml_risk_tier = Column(String(30), nullable=True)  # 'Low' | 'Moderate' | 'High'
     agent_findings = Column(JSONB, nullable=True)
+    safety_status = Column(String(30), nullable=False, default="awaiting_assignment", server_default="awaiting_assignment", index=True)
+    assigned_by_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    assigned_at = Column(DateTime(timezone=True), nullable=True)
+    safety_notes = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), index=True)
     updated_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
 
@@ -155,15 +172,17 @@ class Assessment(Base):
         CheckConstraint("ct_diagnosis IS NULL OR ct_diagnosis IN ('Normal', 'Bleeding', 'Ischemia', 'Rejected', 'Uncertain', 'N/A')", name="chk_ct_diagnosis"),
         CheckConstraint("ct_confidence IS NULL OR (ct_confidence >= 0 AND ct_confidence <= 1)", name="chk_ct_confidence"),
         CheckConstraint("ml_risk_probability IS NULL OR (ml_risk_probability >= 0 AND ml_risk_probability <= 1)", name="chk_ml_risk_probability"),
+        CheckConstraint("safety_status IN ('awaiting_assignment', 'assigned', 'under_review', 'resolved')", name="chk_assessment_safety_status"),
     )
 
     # Relationships
     patient = relationship("User", foreign_keys=[patient_id])
     doctor = relationship("User", foreign_keys=[doctor_id])
+    assigned_by = relationship("User", foreign_keys=[assigned_by_id])
     report = relationship("Report", back_populates="assessment", uselist=False, cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
-        return f"<Assessment id={self.id} type={self.assessment_type} pat={self.patient_id}>"
+        return f"<Assessment id={self.id} type={self.assessment_type} pat={self.patient_id} safety={self.safety_status}>"
 
 
 # =============================================================================
@@ -181,6 +200,9 @@ class Report(Base):
     report_summary = Column(JSONB, nullable=True)
     validation_status = Column(String(30), nullable=False, default="PASSED")  # 'PASSED' | 'FLAGGED' | 'PENDING_REVIEW'
     physician_signed_off = Column(Boolean, nullable=False, default=False)
+    signed_by_doctor_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    signed_at = Column(DateTime(timezone=True), nullable=True)
+    sign_off_notes = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), index=True)
     updated_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
 
@@ -192,6 +214,7 @@ class Report(Base):
     assessment = relationship("Assessment", back_populates="report")
     patient = relationship("User", foreign_keys=[patient_id])
     doctor = relationship("User", foreign_keys=[doctor_id])
+    signed_by = relationship("User", foreign_keys=[signed_by_doctor_id])
 
     def __repr__(self) -> str:
         return f"<Report id={self.id} file={self.pdf_filename} status={self.validation_status}>"
@@ -271,3 +294,71 @@ class Notification(Base):
 
     def __repr__(self) -> str:
         return f"<Notification id={self.id} user={self.user_id} title={self.title} read={self.is_read}>"
+
+
+# =============================================================================
+# 10. AUDIT LOG MODEL (Append-Only Administrative Event Log)
+# =============================================================================
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()"))
+    actor_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    actor_role = Column(String(30), nullable=True)
+    actor_email = Column(String(255), nullable=True)
+    action = Column(String(100), nullable=False, index=True)
+    target_resource = Column(String(100), nullable=True, index=True)
+    outcome = Column(String(20), nullable=False, default="SUCCESS")  # 'SUCCESS', 'FAILURE'
+    reason = Column(Text, nullable=True)
+    details = Column(JSONB, nullable=True)
+    client_ip = Column(String(50), nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), index=True)
+
+    # Relationships
+    actor = relationship("User", foreign_keys=[actor_id])
+
+    def __repr__(self) -> str:
+        return f"<AuditLog id={self.id} action={self.action} actor={self.actor_email} outcome={self.outcome}>"
+
+
+# =============================================================================
+# 11. MODEL REGISTRY MODEL (AI Model Inventory & Inference Tracking)
+# =============================================================================
+class ModelRegistry(Base):
+    __tablename__ = "model_registry"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()"))
+    model_key = Column(String(50), unique=True, nullable=False, index=True)
+    display_name = Column(String(100), nullable=False)
+    model_version = Column(String(50), nullable=False)
+    architecture = Column(String(100), nullable=False)
+    status = Column(String(30), nullable=False, default="active")  # 'active', 'degraded', 'offline'
+    total_inferences = Column(Integer, nullable=False, default=0)
+    failed_inferences = Column(Integer, nullable=False, default=0)
+    last_inference_at = Column(DateTime(timezone=True), nullable=True)
+    metadata_info = Column(JSONB, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    def __repr__(self) -> str:
+        return f"<ModelRegistry key={self.model_key} ver={self.model_version} status={self.status}>"
+
+
+# =============================================================================
+# 12. SYSTEM INCIDENT MODEL (Operational Events & Outages)
+# =============================================================================
+class SystemIncident(Base):
+    __tablename__ = "system_incidents"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, server_default=text("gen_random_uuid()"))
+    service_name = Column(String(50), nullable=False, index=True)
+    incident_type = Column(String(50), nullable=False)  # 'outage', 'degraded_performance', 'error_spike', 'maintenance'
+    severity = Column(String(20), nullable=False, default="low")  # 'low', 'medium', 'high', 'critical'
+    description = Column(Text, nullable=False)
+    status = Column(String(20), nullable=False, default="open", index=True)  # 'open', 'investigating', 'resolved'
+    resolved_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), index=True)
+
+    def __repr__(self) -> str:
+        return f"<SystemIncident id={self.id} service={self.service_name} severity={self.severity} status={self.status}>"
+

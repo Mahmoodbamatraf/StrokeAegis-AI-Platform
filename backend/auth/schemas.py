@@ -119,6 +119,18 @@ class UserLoginInput(BaseModel):
 
 
 # =============================================================================
+# DOCTOR RESUBMISSION SCHEMA
+# =============================================================================
+
+class DoctorResubmitInfoInput(BaseModel):
+    license_number: Optional[str] = Field(None, min_length=2, max_length=100)
+    specialization: Optional[str] = Field(None, max_length=150)
+    hospital_affiliation: Optional[str] = Field(None, max_length=200)
+    contact_phone: Optional[str] = Field(None, max_length=50)
+    clarification_notes: str = Field(..., min_length=5, description="Response or notes clarifying the requested credential information")
+
+
+# =============================================================================
 # RESPONSE SCHEMAS
 # =============================================================================
 
@@ -128,6 +140,12 @@ class DoctorProfileResponse(BaseModel):
     specialization: str
     hospital_affiliation: Optional[str] = None
     contact_phone: Optional[str] = None
+    approval_status: Optional[str] = "approved"
+    rejection_reason: Optional[str] = None
+    verification_reference: Optional[str] = None
+    verification_notes: Optional[str] = None
+    more_info_request: Optional[str] = None
+    reviewed_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
 
@@ -149,6 +167,8 @@ class TokenResponse(BaseModel):
     email: str
     full_name: str
     role: str
+    approval_status: Optional[str] = None
+    is_active: bool = True
 
 
 class CurrentUserResponse(BaseModel):
@@ -158,6 +178,9 @@ class CurrentUserResponse(BaseModel):
     role: str
     is_active: bool
     created_at: datetime
+    approval_status: Optional[str] = None
+    rejection_reason: Optional[str] = None
+    more_info_request: Optional[str] = None
     doctor_profile: Optional[DoctorProfileResponse] = None
     patient_profile: Optional[PatientProfileResponse] = None
 

@@ -11,12 +11,14 @@ from backend.database.models import (
     DoctorPatient,
     Conversation,
     Message,
-    Notification
+    Notification,
+    AuditLog
 )
 from backend.auth.schemas import (
     DoctorRegisterInput,
     PatientRegisterInput,
     UserLoginInput,
+    DoctorResubmitInfoInput,
     TokenResponse,
     CurrentUserResponse,
     DoctorProfileResponse,
@@ -88,12 +90,32 @@ def register_doctor(data: DoctorRegisterInput, db: Session = Depends(get_db)):
             license_number=data.license_number.strip(),
             specialization=data.specialization.strip() if data.specialization else "Stroke Neurology",
             hospital_affiliation=data.hospital_affiliation.strip() if data.hospital_affiliation else None,
-            contact_phone=data.contact_phone.strip() if data.contact_phone else None
+            contact_phone=data.contact_phone.strip() if data.contact_phone else None,
+            approval_status="pending"
         )
         db.add(doctor_profile)
+        db.flush()
+
+        # Audit event for application submission
+        audit_event = AuditLog(
+            actor_id=new_user.id,
+            actor_role="doctor",
+            actor_email=new_user.email,
+            action="clinician_application_submitted",
+            target_resource=f"doctor_profile:{doctor_profile.id}",
+            outcome="SUCCESS",
+            reason="Clinician registration submitted for administrative credential verification.",
+            details={
+                "license_number": doctor_profile.license_number,
+                "specialization": doctor_profile.specialization,
+                "hospital": doctor_profile.hospital_affiliation
+            }
+        )
+        db.add(audit_event)
 
         db.commit()
         db.refresh(new_user)
+        db.refresh(doctor_profile)
     except Exception as exc:
         db.rollback()
         raise HTTPException(
@@ -114,7 +136,9 @@ def register_doctor(data: DoctorRegisterInput, db: Session = Depends(get_db)):
         user_id=str(new_user.id),
         email=new_user.email,
         full_name=new_user.full_name,
-        role=new_user.role
+        role=new_user.role,
+        approval_status=doctor_profile.approval_status,
+        is_active=new_user.is_active
     )
 
 
@@ -225,6 +249,10 @@ def login(data: UserLoginInput, db: Session = Depends(get_db)):
             detail="Your account has been deactivated. Please contact administration."
         )
 
+    approval_status = None
+    if user.doctor_profile:
+        approval_status = getattr(user.doctor_profile, "approval_status", "approved")
+
     token = create_access_token({
         "sub": str(user.id),
         "email": user.email,
@@ -238,7 +266,9 @@ def login(data: UserLoginInput, db: Session = Depends(get_db)):
         user_id=str(user.id),
         email=user.email,
         full_name=user.full_name,
-        role=user.role
+        role=user.role,
+        approval_status=approval_status,
+        is_active=user.is_active
     )
 
 
@@ -263,7 +293,13 @@ def get_current_user_profile(current_user: User = Depends(get_current_user)):
             license_number=current_user.doctor_profile.license_number,
             specialization=current_user.doctor_profile.specialization,
             hospital_affiliation=current_user.doctor_profile.hospital_affiliation,
-            contact_phone=current_user.doctor_profile.contact_phone
+            contact_phone=current_user.doctor_profile.contact_phone,
+            approval_status=getattr(current_user.doctor_profile, "approval_status", "approved"),
+            rejection_reason=getattr(current_user.doctor_profile, "rejection_reason", None),
+            verification_reference=getattr(current_user.doctor_profile, "verification_reference", None),
+            verification_notes=getattr(current_user.doctor_profile, "verification_notes", None),
+            more_info_request=getattr(current_user.doctor_profile, "more_info_request", None),
+            reviewed_at=getattr(current_user.doctor_profile, "reviewed_at", None)
         )
 
     if current_user.patient_profile:
@@ -282,6 +318,95 @@ def get_current_user_profile(current_user: User = Depends(get_current_user)):
         role=current_user.role,
         is_active=current_user.is_active,
         created_at=current_user.created_at,
+        approval_status=doc_profile.approval_status if doc_profile else None,
+        rejection_reason=doc_profile.rejection_reason if doc_profile else None,
+        more_info_request=doc_profile.more_info_request if doc_profile else None,
         doctor_profile=doc_profile,
         patient_profile=pat_profile
     )
+
+
+# =============================================================================
+# 5. DOCTOR RESUBMISSION WORKFLOW
+# =============================================================================
+@router.post(
+    "/doctor/resubmit-info",
+    response_model=CurrentUserResponse,
+    summary="Resubmit doctor credentials or clarifications when more information is requested"
+)
+def resubmit_doctor_info(
+    data: DoctorResubmitInfoInput,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Allows a doctor whose application requires additional information
+    (status 'more_info_required' or 'pending') to update their details,
+    attach clarification notes, and place the application back into
+    the administrative review queue with 'pending' status.
+    """
+    if current_user.role != "doctor" or not current_user.doctor_profile:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only registered clinician accounts can resubmit credential information."
+        )
+
+    profile = current_user.doctor_profile
+    if profile.approval_status not in ("more_info_required", "pending"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot resubmit credentials while account status is '{profile.approval_status}'."
+        )
+
+    # License uniqueness check if changing license number
+    if data.license_number and data.license_number.strip() != profile.license_number:
+        clean_license = data.license_number.strip()
+        existing = db.query(DoctorProfile).filter(
+            DoctorProfile.license_number == clean_license,
+            DoctorProfile.id != profile.id
+        ).first()
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="A clinician with this license number already exists in the system."
+            )
+        profile.license_number = clean_license
+
+    if data.specialization and data.specialization.strip():
+        profile.specialization = data.specialization.strip()
+    if data.hospital_affiliation is not None:
+        profile.hospital_affiliation = data.hospital_affiliation.strip() or None
+    if data.contact_phone is not None:
+        profile.contact_phone = data.contact_phone.strip() or None
+
+    # Append clarification notes to verification_notes
+    existing_notes = profile.verification_notes or ""
+    timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M UTC")
+    clarification = data.clarification_notes.strip()
+    profile.verification_notes = f"{existing_notes}\n[{timestamp_str}] Clinician Resubmission: {clarification}".strip()
+
+    # Reset status to pending for administrative re-review
+    profile.approval_status = "pending"
+
+    # Log immutable audit event
+    audit_event = AuditLog(
+        actor_id=current_user.id,
+        actor_role="doctor",
+        actor_email=current_user.email,
+        action="clinician_info_resubmitted",
+        target_resource=f"doctor_profile:{profile.id}",
+        outcome="SUCCESS",
+        reason="Clinician submitted requested credential information and clarifications.",
+        details={
+            "license_number": profile.license_number,
+            "clarification_notes": clarification
+        }
+    )
+    db.add(audit_event)
+
+    db.commit()
+    db.refresh(current_user)
+    db.refresh(profile)
+
+    return get_current_user_profile(current_user=current_user)
+

@@ -300,7 +300,61 @@ const translations = {
         "chat.doc_placeholder": "Type a clinical instruction or response...",
         "chat.pat_placeholder": "Type a message or question for your doctor...",
         "common.refresh": "Refresh",
-        "common.cancel": "Cancel"
+        "common.cancel": "Cancel",
+
+        // Admin Dashboard Modules & Navigation
+        "admin.role_tag": "CLINICAL SYSTEM GOVERNANCE & SUPERVISION",
+        "admin.default_name": "System Administrator",
+        "admin.sub_details": "Unified Multi-Agent Platform Oversight • Security & Compliance Console",
+        "admin.stats.active_doctors": "Active Clinicians",
+        "admin.stats.pending_clinicians": "Pending Approvals",
+        "admin.stats.registered_patients": "Registered Patients",
+        "admin.stats.assessments_today": "Assessments Today",
+        "admin.stats.safety_flags": "Safety Alerts",
+        "admin.stats.open_incidents": "Open Incidents",
+
+        "admin.tabs.overview": "Overview & KPIs",
+        "admin.tabs.clinicians": "Clinician Approvals",
+        "admin.tabs.safety": "Clinical Safety Queue",
+        "admin.tabs.users": "Users & Access",
+        "admin.tabs.models": "AI Model Monitoring",
+        "admin.tabs.audit": "Audit Log",
+        "admin.tabs.health": "System Health",
+
+        "admin.actions.refresh": "Refresh Live Data",
+        "admin.actions.log_incident": "Log Incident",
+        "admin.actions.approve": "Approve",
+        "admin.actions.request_info": "Request Info",
+        "admin.actions.reject": "Reject",
+        "admin.actions.suspend": "Suspend",
+        "admin.actions.activate": "Activate",
+        "admin.actions.deactivate": "Deactivate",
+        "admin.actions.investigate": "Investigate / Assign",
+        "admin.actions.export_csv": "Export CSV",
+        "admin.actions.resolve": "Resolve Incident",
+
+        "admin.status.approved": "Approved",
+        "admin.status.pending": "Pending Review",
+        "admin.status.more_info_required": "More Info Required",
+        "admin.status.rejected": "Rejected",
+        "admin.status.suspended": "Suspended",
+        "admin.status.active": "Active",
+        "admin.status.deactivated": "Deactivated",
+        "admin.status.healthy": "Healthy",
+        "admin.status.degraded": "Degraded",
+        "admin.status.unavailable": "Unavailable",
+
+        // Pending & Restricted Screens
+        "pending.title": "Clinician Application Under Review",
+        "pending.subtitle": "Your medical credentials have been securely submitted and are currently awaiting administrative review.",
+        "pending.desc": "To ensure patient safety, full access to diagnostic AI engines, clinical reporting, and patient data is activated upon medical license verification by our clinical administration team.",
+        "pending.btn_refresh": "Check Verification Status",
+        "pending.btn_signout": "Sign Out Safely",
+
+        "restricted.title": "Account Access Restricted",
+        "restricted.subtitle": "This account is currently restricted or deactivated by clinical administration.",
+        "restricted.desc": "If you believe this is in error or require administrative assistance, please contact clinical support.",
+        "restricted.btn_signout": "Return to Sign In"
     },
 
     ar: {
@@ -599,7 +653,61 @@ const translations = {
         "chat.doc_placeholder": "اكتب تعليمات سريرية أو رداً للمريض...",
         "chat.pat_placeholder": "اكتب رسالة أو استفساراً لطبيبك...",
         "common.refresh": "تحديث",
-        "common.cancel": "إلغاء"
+        "common.cancel": "إلغاء",
+
+        // لوحة تحكم المسؤول والإشراف السريري
+        "admin.role_tag": "حوكمة النظام السريري والإشراف التشغيلي",
+        "admin.default_name": "مسؤول النظام",
+        "admin.sub_details": "إشراف شامل على منصة الوكلاء السريرية متعددة النماذج • وحدة الأمان والامتثال",
+        "admin.stats.active_doctors": "أطباء سريريون نشطون",
+        "admin.stats.pending_clinicians": "طلبات قيد الاعتماد",
+        "admin.stats.registered_patients": "مرضى مسجلون",
+        "admin.stats.assessments_today": "تقييمات أنجزت اليوم",
+        "admin.stats.safety_flags": "تنبيهات السلامة",
+        "admin.stats.open_incidents": "حوادث تشغيلية مفتوحة",
+
+        "admin.tabs.overview": "نظرة عامة والمؤشرات",
+        "admin.tabs.clinicians": "اعتماد الأطباء",
+        "admin.tabs.safety": "طابور السلامة السريرية",
+        "admin.tabs.users": "المستخدمون والصلاحيات",
+        "admin.tabs.models": "مراقبة نماذج الذكاء الاصطناعي",
+        "admin.tabs.audit": "سجل التدقيق",
+        "admin.tabs.health": "صحة النظام",
+
+        "admin.actions.refresh": "تحديث البيانات المباشرة",
+        "admin.actions.log_incident": "تسجيل حادث تشغيلي",
+        "admin.actions.approve": "اعتماد",
+        "admin.actions.request_info": "طلب معلومات إضافية",
+        "admin.actions.reject": "رفض",
+        "admin.actions.suspend": "تعليق",
+        "admin.actions.activate": "تفعيل الحساب",
+        "admin.actions.deactivate": "تعطيل الحساب",
+        "admin.actions.investigate": "تحقيق / إسناد",
+        "admin.actions.export_csv": "تصدير سجل التدقيق (CSV)",
+        "admin.actions.resolve": "حل الحادث التشغيلي",
+
+        "admin.status.approved": "معتمد",
+        "admin.status.pending": "قيد المراجعة",
+        "admin.status.more_info_required": "يتطلب معلومات إضافية",
+        "admin.status.rejected": "مرفوض",
+        "admin.status.suspended": "معلق",
+        "admin.status.active": "نشط",
+        "admin.status.deactivated": "معطل",
+        "admin.status.healthy": "سليم وتعمل بكفاءة",
+        "admin.status.degraded": "أداء متأثر",
+        "admin.status.unavailable": "غير متاح",
+
+        // شاشات الانتظار والتقييد
+        "pending.title": "طلب الطبيب قيد المراجعة السريرية",
+        "pending.subtitle": "تم استلام بياناتك وترخيصك الطبي بنجاح وهي قيد التحقق من قبل إدارة المستشفى.",
+        "pending.desc": "لضمان أعلى معايير السلامة السريرية وخصوصية المرضى، يتم تفعيل الوصول إلى نماذج الذكاء الاصطناعي والتقارير الطبية بعد اعتماد وثائق الترخيص.",
+        "pending.btn_refresh": "التحقق من حالة الاعتماد",
+        "pending.btn_signout": "تسجيل الخروج بأمان",
+
+        "restricted.title": "تم تقييد الوصول إلى الحساب",
+        "restricted.subtitle": "هذا الحساب معلق أو معطل حالياً من قِبل إدارة النظام السريري.",
+        "restricted.desc": "إذا كنت تعتقد أن هذا الإجراء تم عن طريق الخطأ، يُرجى التواصل مع الدعم الإداري والتقني.",
+        "restricted.btn_signout": "العودة لتسجيل الدخول"
     }
 };
 

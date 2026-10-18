@@ -132,6 +132,10 @@ app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 from backend.clinical.router import router as clinical_router
 app.include_router(clinical_router, prefix="/api/clinical-portal", tags=["Clinical Portal"])
 
+# Administrator Governance & Management Router (Phase 3)
+from backend.admin.router import router as admin_router
+app.include_router(admin_router, prefix="/api/admin", tags=["Admin Dashboard"])
+
 print("[Server] Initializing deterministic AI models...")
 gate_engine = GateEngine()
 stroke_cls_engine = StrokeClsEngine()

@@ -18,6 +18,21 @@ def run_tests():
     print("RUNNING DOCTOR-PATIENT RELATIONSHIP & PRIVACY TEST SUITE")
     print("=" * 60)
 
+    # Obtain Admin token to approve test doctors
+    admin_login = requests.post(f"{BASE_URL}/api/auth/login", json={
+        "email": "admin@strokeaegis.local",
+        "password": "AdminSecure2026!"
+    })
+    admin_token = admin_login.json().get("access_token") if admin_login.status_code == 200 else None
+
+    def approve_doctor(email):
+        if not admin_token:
+            return
+        r = requests.get(f"{BASE_URL}/api/admin/clinicians?search={email}", headers={"Authorization": f"Bearer {admin_token}"})
+        if r.status_code == 200 and r.json():
+            cand_id = r.json()[0]["id"]
+            requests.post(f"{BASE_URL}/api/admin/clinicians/{cand_id}/approve", headers={"Authorization": f"Bearer {admin_token}"})
+
     # -------------------------------------------------------------
     # Scenario 1: Register new doctor -> My Patients is empty (0)
     # -------------------------------------------------------------
@@ -33,6 +48,7 @@ def run_tests():
         "contact_phone": "+966-50-000-0001"
     })
     assert reg_doc1.status_code in [200, 201], f"Doc1 registration failed: {reg_doc1.text}"
+    approve_doctor(doc1_email)
     doc1_token = reg_doc1.json()["access_token"]
     doc1_headers = {"Authorization": f"Bearer {doc1_token}"}
 
@@ -140,6 +156,7 @@ def run_tests():
         "contact_phone": "+966-50-000-0002"
     })
     assert reg_doc2.status_code in [200, 201], f"Doc2 registration failed: {reg_doc2.text}"
+    approve_doctor(doc2_email)
     doc2_token = reg_doc2.json()["access_token"]
     doc2_headers = {"Authorization": f"Bearer {doc2_token}"}
 
@@ -179,6 +196,7 @@ def run_tests():
         "contact_phone": "+966-50-000-0003"
     })
     assert reg_doc3.status_code in [200, 201], f"Doc3 registration failed: {reg_doc3.text}"
+    approve_doctor(doc3_email)
     doc3_token = reg_doc3.json()["access_token"]
     doc3_headers = {"Authorization": f"Bearer {doc3_token}"}
     doc3_id = reg_doc3.json()["user_id"]
@@ -274,6 +292,7 @@ def run_tests():
         "license_number": f"LIC-{uuid.uuid4().hex[:6].upper()}"
     })
     assert reg_unassigned.status_code in [200, 201]
+    approve_doctor(unassigned_doc_email)
     unassigned_headers = {"Authorization": f"Bearer {reg_unassigned.json()['access_token']}"}
 
     # Attempt to access Pat1 history

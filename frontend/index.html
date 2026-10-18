@@ -355,6 +355,10 @@
                                     <span class="demo-badge"><svg class="lucide-icon lucide-user" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" /> </svg> Fast Patient</span>
                                     <span class="demo-sub">Ahmed (Patient Portal)</span>
                                 </button>
+                                <button type="button" class="demo-pill-btn admin-demo" id="btn-demo-admin" title="1-Click Login as Demo Administrator">
+                                    <span class="demo-badge"><svg class="lucide-icon lucide-shield-check" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg> Fast Admin</span>
+                                    <span class="demo-sub">Admin (Governance Console)</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -850,6 +854,415 @@
                             <span>Send</span> <svg class="lucide-icon lucide-send" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" /> <path d="m21.854 2.147-10.94 10.939" /> </svg>
                         </button>
                     </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SCREEN 0.7: ADMINISTRATOR WORKSPACE & GOVERNANCE CONSOLE        -->
+        <!-- ============================================================== -->
+        <section id="screen-admin-dashboard" class="screen">
+            <!-- Admin Top Hero / Welcome Banner -->
+            <div class="portal-hero admin-hero">
+                <div class="portal-hero-main">
+                    <div class="portal-hero-avatar"><svg class="lucide-icon lucide-shield-check" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg></div>
+                    <div class="portal-hero-info">
+                        <div class="portal-role-tag" data-i18n="admin.role_tag">CLINICAL SYSTEM GOVERNANCE &amp; SUPERVISION</div>
+                        <h1 class="portal-welcome-name" id="admin-welcome-name" data-i18n="admin.default_name">System Administrator</h1>
+                        <p class="portal-sub-details" id="admin-sub-details" data-i18n="admin.sub_details">Unified Multi-Agent Platform Oversight &bull; Security &amp; Compliance Console</p>
+                    </div>
+                </div>
+                <!-- Admin Fast Stats Counter Grid -->
+                <div class="portal-stats-grid">
+                    <div class="portal-stat-card">
+                        <span class="stat-num" id="admin-stat-doctors">--</span>
+                        <span class="stat-label" data-i18n="admin.stats.active_doctors">Active Clinicians</span>
+                    </div>
+                    <div class="portal-stat-card pending-card">
+                        <span class="stat-num" id="admin-stat-pending">--</span>
+                        <span class="stat-label" data-i18n="admin.stats.pending_clinicians">Pending Approvals</span>
+                    </div>
+                    <div class="portal-stat-card">
+                        <span class="stat-num" id="admin-stat-patients">--</span>
+                        <span class="stat-label" data-i18n="admin.stats.registered_patients">Registered Patients</span>
+                    </div>
+                    <div class="portal-stat-card">
+                        <span class="stat-num" id="admin-stat-today">--</span>
+                        <span class="stat-label" data-i18n="admin.stats.assessments_today">Assessments Today</span>
+                    </div>
+                    <div class="portal-stat-card warning-card">
+                        <span class="stat-num" id="admin-stat-flagged">--</span>
+                        <span class="stat-label" data-i18n="admin.stats.safety_flags">Safety Alerts</span>
+                    </div>
+                    <div class="portal-stat-card">
+                        <span class="stat-num" id="admin-stat-incidents">0</span>
+                        <span class="stat-label" data-i18n="admin.stats.open_incidents">Open Incidents</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Navigation Bar -->
+            <div class="portal-subnav-bar admin-subnav-bar">
+                <div class="portal-subnav-tabs admin-subnav-tabs">
+                    <button type="button" class="portal-subnav-btn admin-subnav-btn active" id="admin-tab-overview" data-tab="admin-pane-overview">
+                        <svg class="lucide-icon lucide-activity" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg> <span data-i18n="admin.tabs.overview">Overview &amp; KPIs</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn admin-subnav-btn" id="admin-tab-clinicians" data-tab="admin-pane-clinicians">
+                        <svg class="lucide-icon lucide-user-check" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m16 11 2 2 4-4"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> <span data-i18n="admin.tabs.clinicians">Clinician Approvals</span>
+                        <span class="portal-badge-count" id="admin-badge-pending-clinicians" style="display: none;">0</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn admin-subnav-btn" id="admin-tab-safety" data-tab="admin-pane-safety">
+                        <svg class="lucide-icon lucide-shield-alert" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg> <span data-i18n="admin.tabs.safety">Clinical Safety Queue</span>
+                        <span class="portal-badge-count alert" id="admin-badge-safety-alerts" style="display: none;">0</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn admin-subnav-btn" id="admin-tab-users" data-tab="admin-pane-users">
+                        <svg class="lucide-icon lucide-users" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/></svg> <span data-i18n="admin.tabs.users">Users &amp; Access</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn admin-subnav-btn" id="admin-tab-models" data-tab="admin-pane-models">
+                        <svg class="lucide-icon lucide-brain" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 18V5"/><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"/><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg> <span data-i18n="admin.tabs.models">AI Model Monitoring</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn admin-subnav-btn" id="admin-tab-audit" data-tab="admin-pane-audit">
+                        <svg class="lucide-icon lucide-history" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg> <span data-i18n="admin.tabs.audit">Audit Log</span>
+                    </button>
+                    <button type="button" class="portal-subnav-btn admin-subnav-btn" id="admin-tab-health" data-tab="admin-pane-health">
+                        <svg class="lucide-icon lucide-zap" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></svg> <span data-i18n="admin.tabs.health">System Health</span>
+                    </button>
+                </div>
+                <div class="portal-subnav-actions">
+                    <button type="button" class="btn-portal-action secondary" id="btn-admin-refresh-all" title="Refresh Live Data">
+                        <svg class="lucide-icon lucide-refresh-cw" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg> <span data-i18n="admin.actions.refresh">Refresh Live Data</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pane 1: Overview -->
+            <div class="portal-pane active" id="admin-pane-overview">
+                <!-- Attention Alerts Container -->
+                <div id="admin-attention-alerts-container" class="admin-alerts-box" style="display: none; margin-bottom: 1.25rem;"></div>
+
+                <div class="admin-overview-grid">
+                    <!-- Column 1: Operational Trends & Volume -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3 class="admin-card-title"><svg class="lucide-icon lucide-bar-chart-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 16h8"/><path d="M7 11h12"/><path d="M7 6h3"/></svg> Workflow Volume Breakdown</h3>
+                            <span class="admin-timestamp-pill" id="admin-overview-last-updated">Updated: --</span>
+                        </div>
+                        <div class="admin-card-body" id="admin-overview-volume-breakdown">
+                            <!-- Dynamic stats bars -->
+                        </div>
+                    </div>
+
+                    <!-- Column 2: System Health Highlights -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3 class="admin-card-title"><svg class="lucide-icon lucide-zap" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></svg> Core Subsystems Live State</h3>
+                            <span class="badge-status badge-healthy" id="admin-overview-system-badge">ALL HEALTHY</span>
+                        </div>
+                        <div class="admin-card-body" id="admin-overview-services-summary">
+                            <!-- Dynamic service status items -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Administrative Events -->
+                <div class="admin-card" style="margin-top: 1.25rem;">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title"><svg class="lucide-icon lucide-history" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg> Recent Administrative &amp; Operational Events</h3>
+                        <button type="button" class="btn-text-action" id="btn-goto-audit-tab">View Complete Audit Log &rarr;</button>
+                    </div>
+                    <div class="admin-card-body no-padding table-responsive">
+                        <table class="admin-table" id="admin-overview-recent-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Actor</th>
+                                    <th>Action</th>
+                                    <th>Target Resource</th>
+                                    <th>Outcome</th>
+                                    <th>Reason / Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-overview-recent-tbody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pane 2: Clinician Approvals -->
+            <div class="portal-pane" id="admin-pane-clinicians">
+                <div class="portal-pane-header">
+                    <div class="search-filter-box">
+                        <span class="search-icon"><svg class="lucide-icon lucide-search" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></span>
+                        <input type="text" id="admin-clinicians-search" class="portal-search-input" placeholder="Search by doctor name, email, license number, hospital...">
+                    </div>
+                    <div class="pane-header-actions">
+                        <div class="filter-pill-group" id="admin-clinicians-status-filters">
+                            <button type="button" class="filter-pill active" data-status="all">All</button>
+                            <button type="button" class="filter-pill" data-status="pending">Pending</button>
+                            <button type="button" class="filter-pill" data-status="more_info_required">More Info</button>
+                            <button type="button" class="filter-pill" data-status="approved">Approved</button>
+                            <button type="button" class="filter-pill" data-status="suspended">Suspended</button>
+                            <button type="button" class="filter-pill" data-status="rejected">Rejected</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin-card no-padding table-responsive">
+                    <table class="admin-table" id="admin-clinicians-table">
+                        <thead>
+                            <tr>
+                                <th>Clinician Name</th>
+                                <th>Email</th>
+                                <th>License Number</th>
+                                <th>Specialization &amp; Hospital</th>
+                                <th>Application Date</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Administrative Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-clinicians-tbody">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pane 3: Clinical Safety Queue -->
+            <div class="portal-pane" id="admin-pane-safety">
+                <div class="portal-pane-header">
+                    <div class="filter-pill-group" id="admin-safety-type-filters">
+                        <button type="button" class="filter-pill active" data-type="all">All Safety Cases</button>
+                        <button type="button" class="filter-pill" data-type="flagged">Flagged Validation</button>
+                        <button type="button" class="filter-pill" data-type="rejected_gate">Gatekeeper Rejections</button>
+                        <button type="button" class="filter-pill" data-type="unsigned">Awaiting Physician Sign-Off</button>
+                    </div>
+                </div>
+                <div class="admin-card no-padding table-responsive">
+                    <table class="admin-table" id="admin-safety-table">
+                        <thead>
+                            <tr>
+                                <th>Assessment ID</th>
+                                <th>Date / Time</th>
+                                <th>Patient Info</th>
+                                <th>Primary Alert Reason</th>
+                                <th>CT Scan Gate &amp; Diagnosis</th>
+                                <th>ML Risk Tier</th>
+                                <th>Assigned Clinician</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-safety-tbody">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pane 4: Users & Access -->
+            <div class="portal-pane" id="admin-pane-users">
+                <div class="portal-pane-header">
+                    <div class="search-filter-box">
+                        <span class="search-icon"><svg class="lucide-icon lucide-search" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></span>
+                        <input type="text" id="admin-users-search" class="portal-search-input" placeholder="Search users by name, email, MRN, license...">
+                    </div>
+                    <div class="pane-header-actions">
+                        <div class="filter-pill-group" id="admin-users-role-filters">
+                            <button type="button" class="filter-pill active" data-role="all">All Roles</button>
+                            <button type="button" class="filter-pill" data-role="doctor">Doctors</button>
+                            <button type="button" class="filter-pill" data-role="patient">Patients</button>
+                            <button type="button" class="filter-pill" data-role="admin">Admins</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin-card no-padding table-responsive">
+                    <table class="admin-table" id="admin-users-table">
+                        <thead>
+                            <tr>
+                                <th>Name &amp; Email</th>
+                                <th>Role</th>
+                                <th>Identifier (License / MRN)</th>
+                                <th>Account Status</th>
+                                <th>Connections</th>
+                                <th>Created At</th>
+                                <th style="text-align: right;">Status Toggle</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-tbody">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pane 5: AI Model Monitoring -->
+            <div class="portal-pane" id="admin-pane-models">
+                <div class="admin-models-grid" id="admin-models-container">
+                    <!-- Dynamic Model Cards -->
+                </div>
+            </div>
+
+            <!-- Pane 6: Persistent Append-Only Audit Log -->
+            <div class="portal-pane" id="admin-pane-audit">
+                <div class="portal-pane-header">
+                    <div class="search-filter-box">
+                        <span class="search-icon"><svg class="lucide-icon lucide-search" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></span>
+                        <input type="text" id="admin-audit-search" class="portal-search-input" placeholder="Search audit logs by actor, action, resource, reason...">
+                    </div>
+                    <div class="pane-header-actions">
+                        <button type="button" class="btn-portal-action secondary" id="btn-export-audit-csv">
+                            <svg class="lucide-icon lucide-download" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg> <span data-i18n="admin.actions.export_csv">Export CSV</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="admin-card no-padding table-responsive">
+                    <table class="admin-table" id="admin-audit-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Actor Email &amp; Role</th>
+                                <th>Action Performed</th>
+                                <th>Target Resource</th>
+                                <th>Outcome</th>
+                                <th>Reason / Clinical Justification</th>
+                                <th style="text-align: right;">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-audit-tbody">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pane 8: System Health & Incidents -->
+            <div class="portal-pane" id="admin-pane-health">
+                <div class="admin-health-header-card">
+                    <div class="health-overall-info">
+                        <span class="health-overall-badge" id="admin-health-overall-badge">SYSTEM STATUS: HEALTHY</span>
+                        <h2 class="health-overall-title">All Core Clinical &amp; AI Subsystems Operating Reliably</h2>
+                        <p class="health-overall-sub" id="admin-health-checked-at">Last verified: --</p>
+                    </div>
+                    <button type="button" class="btn-portal-action primary" id="btn-open-incident-modal">
+                        <svg class="lucide-icon lucide-alert-triangle" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> <span data-i18n="admin.actions.log_incident">Log Incident</span>
+                    </button>
+                </div>
+
+                <div class="admin-services-grid" id="admin-health-services-container">
+                    <!-- Dynamic service cards -->
+                </div>
+
+                <div class="admin-card" style="margin-top: 1.5rem;">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title"><svg class="lucide-icon lucide-siren" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 18v-6a5 5 0 1 1 10 0v6"/><path d="M5 21a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2z"/><path d="M21 12h1"/><path d="M18.5 4.5 18 5"/><path d="M2 12h1"/><path d="M12 2v1"/><path d="m4.929 4.929.707.707"/><path d="M12 12v6"/></svg> Operational Incidents &amp; Outage Log</h3>
+                    </div>
+                    <div class="admin-card-body no-padding table-responsive">
+                        <table class="admin-table" id="admin-incidents-table">
+                            <thead>
+                                <tr>
+                                    <th>Logged At</th>
+                                    <th>Subsystem</th>
+                                    <th>Incident Type</th>
+                                    <th>Severity</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-incidents-tbody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SCREEN 0.8: CLINICIAN PENDING APPROVAL SCREEN                   -->
+        <!-- ============================================================== -->
+        <section id="screen-doctor-pending" class="screen">
+            <div class="notice-screen-container">
+                <div class="notice-card pending-notice-card">
+                    <div class="notice-icon-wrapper pending-icon-wrapper">
+                        <svg class="lucide-icon lucide-clock" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <h2 class="notice-card-title" id="pending-notice-title" data-i18n="pending.title">Clinician Application Under Review</h2>
+                    <p class="notice-card-subtitle" id="pending-notice-subtitle" data-i18n="pending.subtitle">Your medical credentials have been securely submitted and are currently awaiting administrative review.</p>
+                    <div class="notice-meta-box">
+                        <div class="notice-meta-row">
+                            <span class="meta-label">Clinician Name:</span>
+                            <span class="meta-val" id="pending-doc-name">--</span>
+                        </div>
+                        <div class="notice-meta-row">
+                            <span class="meta-label">License Number:</span>
+                            <span class="meta-val" id="pending-doc-license">--</span>
+                        </div>
+                        <div class="notice-meta-row">
+                            <span class="meta-label">Verification Status:</span>
+                            <span class="badge-status badge-pending" id="pending-status-badge">PENDING ADMINISTRATIVE APPROVAL</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Info Request & Resubmit Section -->
+                    <div id="pending-more-info-container" style="display: none; margin: 1.25rem 0; text-align: left; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 1.25rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; color: #2563EB;">
+                            <svg class="lucide-icon lucide-alert-circle" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                            <strong style="font-size: 0.95rem;">Action Required: Administrator Information Request</strong>
+                        </div>
+                        <p id="pending-more-info-text" style="font-size: 0.88rem; color: var(--text-main); margin-bottom: 1rem; line-height: 1.5;"></p>
+                        
+                        <form id="form-doctor-resubmit">
+                            <div class="form-group" style="margin-bottom: 0.85rem;">
+                                <label for="resubmit-license" style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 0.25rem;">Updated License Number (Optional)</label>
+                                <input type="text" id="resubmit-license" class="portal-search-input" style="width: 100%;" placeholder="Leave empty if unchanged">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.85rem;">
+                                <label for="resubmit-hospital" style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 0.25rem;">Updated Hospital Affiliation (Optional)</label>
+                                <input type="text" id="resubmit-hospital" class="portal-search-input" style="width: 100%;" placeholder="e.g. King Fahad Stroke Center">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0.85rem;">
+                                <label for="resubmit-notes" style="font-weight: 600; font-size: 0.82rem; display: block; margin-bottom: 0.25rem;">Clarification &amp; Credential Documentation Details *</label>
+                                <textarea id="resubmit-notes" class="portal-search-input" rows="3" style="width: 100%;" placeholder="Provide requested documentation reference or details..." required></textarea>
+                            </div>
+                            <div id="resubmit-feedback" class="admit-feedback-box" style="display: none; margin-bottom: 0.85rem;"></div>
+                            <button type="submit" class="btn btn-primary" id="btn-submit-resubmit" style="width: 100%; border-radius: 9999px; padding: 0.65rem 1.5rem; font-weight: 600;">
+                                <span id="resubmit-spinner" class="spinner-sm" style="display: none;"></span>
+                                <span>Resubmit Updated Information for Review</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <p class="notice-card-desc" id="pending-card-desc" data-i18n="pending.desc">To ensure patient safety, full access to diagnostic AI engines, clinical reporting, and patient data is activated upon medical license verification by our clinical administration team.</p>
+                    <div class="notice-actions-group">
+                        <button type="button" class="btn btn-primary" id="btn-check-pending-status" style="border-radius: 9999px; padding: 0.65rem 1.75rem;">
+                            <svg class="lucide-icon lucide-refresh-cw" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg> <span data-i18n="pending.btn_refresh">Check Verification Status</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="btn-pending-signout" style="border-radius: 9999px; padding: 0.65rem 1.75rem;">
+                            <span data-i18n="pending.btn_signout">Sign Out Safely</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SCREEN 0.9: RESTRICTED ACCESS SCREEN                            -->
+        <!-- ============================================================== -->
+        <section id="screen-restricted-access" class="screen">
+            <div class="notice-screen-container">
+                <div class="notice-card restricted-notice-card">
+                    <div class="notice-icon-wrapper restricted-icon-wrapper">
+                        <svg class="lucide-icon lucide-shield-alert" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                    </div>
+                    <h2 class="notice-card-title" data-i18n="restricted.title">Account Access Restricted</h2>
+                    <p class="notice-card-subtitle" data-i18n="restricted.subtitle">This account is currently restricted or deactivated by clinical administration.</p>
+                    <p class="notice-card-desc" id="restricted-reason-text" data-i18n="restricted.desc">If you believe this is in error or require administrative assistance, please contact clinical support.</p>
+                    <div class="notice-actions-group">
+                        <button type="button" class="btn btn-secondary" id="btn-restricted-signout" style="border-radius: 9999px; padding: 0.65rem 1.75rem;">
+                            <span data-i18n="restricted.btn_signout">Return to Sign In</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1913,6 +2326,253 @@
     </div>
 
     <!-- ============================================================== -->
+    <!-- MODAL: ADMIN APPROVE CLINICIAN WITH ATTESTATION                -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-admin-approve-clinician" style="display: none;" role="dialog" aria-modal="true">
+        <div class="portal-modal-dialog" style="max-width: 580px;">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title"><svg class="lucide-icon lucide-user-check" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 11 2 2 4-4"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Verify &amp; Approve Clinician</h3>
+                    <p class="modal-subtitle" id="admin-approve-modal-subtitle">Document medical board verification and grant clinical access</p>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-admin-approve-modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="portal-modal-body" style="padding: 1.5rem;">
+                <div id="admin-approve-summary-box" style="margin-bottom: 1.25rem; padding: 0.85rem 1rem; border-radius: 8px; background: var(--bg-hover); border: 1px solid var(--border-color); font-size: 0.88rem;"></div>
+                <form id="form-admin-approve-clinician">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="admin-approve-ref-input" style="font-weight: 600; margin-bottom: 0.4rem; display: block;">Medical Board Verification Reference *</label>
+                        <input type="text" id="admin-approve-ref-input" class="portal-search-input" style="width: 100%;" placeholder="e.g. MDC-VERIF-2026-8912 or State License Registry ID" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="admin-approve-notes-input" style="font-weight: 600; margin-bottom: 0.4rem; display: block;">Verification Notes &amp; Administrative Attestation *</label>
+                        <textarea id="admin-approve-notes-input" class="portal-search-input" rows="3" style="width: 100%;" placeholder="State database lookup verified active status, no sanctions recorded..." required></textarea>
+                    </div>
+                    <div id="admin-approve-feedback" class="admit-feedback-box" style="margin-bottom: 1rem; display: none;"></div>
+                    <div class="admit-modal-actions">
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-admin-approve">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btn-confirm-admin-approve">
+                            <span id="admin-approve-spinner" class="spinner-sm" style="display: none;"></span>
+                            <span>Verify &amp; Activate Clinician</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: ADMIN ACTION WITH MANDATORY REASON                      -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-admin-action-reason" style="display: none;" role="dialog" aria-modal="true">
+        <div class="portal-modal-dialog" style="max-width: 540px;">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title" id="admin-reason-modal-title">Action Justification</h3>
+                    <p class="modal-subtitle" id="admin-reason-modal-subtitle">Provide mandatory administrative rationale</p>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-admin-reason-modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="portal-modal-body" style="padding: 1.5rem;">
+                <form id="form-admin-action-reason">
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="admin-action-reason-input" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Administrative Justification / Reason *</label>
+                        <textarea id="admin-action-reason-input" class="portal-search-input" rows="4" style="width: 100%; resize: vertical;" placeholder="Enter clear, verifiable reason for this action..." required></textarea>
+                    </div>
+                    <div id="admin-reason-feedback" class="admit-feedback-box" style="margin-bottom: 1rem; display: none;"></div>
+                    <div class="admit-modal-actions">
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-admin-reason">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btn-confirm-admin-reason">
+                            <span id="admin-reason-spinner" class="spinner-sm" style="display: none;"></span>
+                            <span id="btn-confirm-admin-reason-text">Confirm Action</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: SAFETY CASE DETAILS & CLINICAL AUDIT                     -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-admin-safety-details" style="display: none;" role="dialog" aria-modal="true">
+        <div class="portal-modal-dialog" style="max-width: 760px; max-height: 90vh; overflow-y: auto;">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title"><svg class="lucide-icon lucide-file-text" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg> Clinical Safety Case Details</h3>
+                    <p class="modal-subtitle" id="safety-details-subtitle">Comprehensive diagnostic outputs, gatekeeper decision, and validation trail</p>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-safety-details-modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="portal-modal-body" style="padding: 1.5rem;">
+                <div id="safety-details-content">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+                <div class="admit-modal-actions" style="margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" id="btn-dismiss-safety-details">Close</button>
+                    <button type="button" class="btn btn-primary" id="btn-safety-details-assign-shortcut">Assign Clinician &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: ASSIGN CASE TO QUALIFIED CLINICIAN                       -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-admin-safety-assign" style="display: none;" role="dialog" aria-modal="true">
+        <div class="portal-modal-dialog" style="max-width: 600px;">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title"><svg class="lucide-icon lucide-user-plus" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg> Assign Case to Qualified Clinician</h3>
+                    <p class="modal-subtitle">Designate an approved attending physician for clinical verification and review</p>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-safety-assign-modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="portal-modal-body" style="padding: 1.5rem;">
+                <div id="safety-assign-case-summary" class="admin-investigate-info-box" style="margin-bottom: 1.25rem;"></div>
+                <form id="form-admin-safety-assign">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="safety-assign-doctor-select" style="font-weight: 600; margin-bottom: 0.35rem; display: block;">Select Qualified Clinician *</label>
+                        <select id="safety-assign-doctor-select" class="choice-patient-select" style="width: 100%;" required>
+                            <option value="">Loading qualified clinicians...</option>
+                        </select>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Only active and medical board-verified clinicians are eligible for case assignment.</div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="safety-assign-notes" style="font-weight: 600; margin-bottom: 0.35rem; display: block;">Clinical Handover / Review Instructions</label>
+                        <textarea id="safety-assign-notes" class="portal-search-input" rows="3" style="width: 100%;" placeholder="Specify clinical priority, contraindication notes, or verification reasons..."></textarea>
+                    </div>
+                    <div id="safety-assign-feedback" class="admit-feedback-box" style="margin-bottom: 1rem; display: none;"></div>
+                    <div class="admit-modal-actions">
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-safety-assign">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btn-submit-safety-assign">
+                            <span id="safety-assign-spinner" class="spinner-sm" style="display: none;"></span>
+                            <span>Confirm Case Assignment</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: ADMIN SAFETY INCIDENT INVESTIGATION                     -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-admin-investigate" style="display: none;" role="dialog" aria-modal="true">
+        <div class="portal-modal-dialog" style="max-width: 640px;">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title"><svg class="lucide-icon lucide-shield-alert" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg> Clinical Safety Investigation</h3>
+                    <p class="modal-subtitle">Record clinical resolution or quality note for flagged evaluation</p>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-admin-investigate-modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="portal-modal-body" style="padding: 1.5rem;">
+                <div id="admin-investigate-summary" class="admin-investigate-info-box" style="margin-bottom: 1.25rem;"></div>
+                <form id="form-admin-investigate">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="admin-investigate-status" style="font-weight: 600; margin-bottom: 0.35rem; display: block;">Resolution Status *</label>
+                        <select id="admin-investigate-status" class="choice-patient-select" style="width: 100%;">
+                            <option value="resolved">Resolved (Acceptable Finding / Clinician Reviewed)</option>
+                            <option value="false_positive">False Positive (Artifact / Motion Blurriness)</option>
+                            <option value="escalated">Escalated to Engineering / Model Retraining</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="admin-investigate-notes" style="font-weight: 600; margin-bottom: 0.35rem; display: block;">Investigation &amp; Resolution Notes *</label>
+                        <textarea id="admin-investigate-notes" class="portal-search-input" rows="3" style="width: 100%;" placeholder="Detail the root cause, clinical verification, or corrective action..." required></textarea>
+                    </div>
+                    <div id="admin-investigate-feedback" class="admit-feedback-box" style="margin-bottom: 1rem; display: none;"></div>
+                    <div class="admit-modal-actions">
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-admin-investigate">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btn-submit-admin-investigate">
+                            <span id="admin-investigate-spinner" class="spinner-sm" style="display: none;"></span>
+                            <span>Save Resolution</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: DECLARE SYSTEM INCIDENT                                 -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-admin-incident" style="display: none;" role="dialog" aria-modal="true">
+        <div class="portal-modal-dialog" style="max-width: 580px;">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title"><svg class="lucide-icon lucide-alert-triangle" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Declare Operational Incident</h3>
+                    <p class="modal-subtitle">Log a service disruption, model anomaly, or dependency degradation</p>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-admin-incident-modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="portal-modal-body" style="padding: 1.5rem;">
+                <form id="form-admin-incident">
+                    <div class="form-row-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="admin-incident-service" style="font-weight: 600; margin-bottom: 0.35rem; display: block;">Service / Component *</label>
+                            <select id="admin-incident-service" class="choice-patient-select" style="width: 100%;">
+                                <option value="ConvNeXt CT Gatekeeper">ConvNeXt CT Gatekeeper</option>
+                                <option value="EfficientNetV2 CT Classifier">EfficientNetV2 CT Classifier</option>
+                                <option value="Tabular ML Risk Engine">Tabular ML Risk Engine</option>
+                                <option value="CrewAI Clinical Agents">CrewAI Clinical Agents</option>
+                                <option value="Medical RAG & Guidelines">Medical RAG &amp; Guidelines</option>
+                                <option value="PostgreSQL Database">PostgreSQL Database</option>
+                                <option value="PDF Generation Service">PDF Generation Service</option>
+                                <option value="Gemini API External">Gemini API External</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-incident-severity" style="font-weight: 600; margin-bottom: 0.35rem; display: block;">Severity Level *</label>
+                            <select id="admin-incident-severity" class="choice-patient-select" style="width: 100%;">
+                                <option value="low">Low (Minor Warning)</option>
+                                <option value="medium" selected>Medium (Degraded Performance)</option>
+                                <option value="high">High (Service Impairment)</option>
+                                <option value="critical">Critical (Outage / Patient Safety Impact)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="admin-incident-type" style="font-weight: 600; margin-bottom: 0.35rem; display: block;">Incident Type *</label>
+                        <input type="text" id="admin-incident-type" class="portal-search-input" style="width: 100%;" placeholder="e.g. latency_spike, out_of_memory, rate_limit, calibration_drift" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="admin-incident-desc" style="font-weight: 600; margin-bottom: 0.35rem; display: block;">Description &amp; Observed Symptoms *</label>
+                        <textarea id="admin-incident-desc" class="portal-search-input" rows="3" style="width: 100%;" placeholder="Describe the incident details, affected routes, or error traces..." required></textarea>
+                    </div>
+                    <div id="admin-incident-feedback" class="admit-feedback-box" style="margin-bottom: 1rem; display: none;"></div>
+                    <div class="admit-modal-actions">
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-admin-incident">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btn-submit-admin-incident">
+                            <span id="admin-incident-spinner" class="spinner-sm" style="display: none;"></span>
+                            <span>Declare Incident</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: AUDIT LOG DETAIL & JSON METADATA                        -->
+    <!-- ============================================================== -->
+    <div class="portal-modal-backdrop" id="modal-admin-audit-detail" style="display: none;" role="dialog" aria-modal="true">
+        <div class="portal-modal-dialog" style="max-width: 680px;">
+            <div class="portal-modal-header">
+                <div>
+                    <h3 class="modal-title"><svg class="lucide-icon lucide-file-code" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12.5 8 15l2 2.5"/><path d="m14 12.5 2 2.5-2 2.5"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/></svg> Audit Record Integrity Detail</h3>
+                    <p class="modal-subtitle" id="admin-audit-detail-id">ID: --</p>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-admin-audit-detail" aria-label="Close">&times;</button>
+            </div>
+            <div class="portal-modal-body" style="padding: 1.5rem;">
+                <div id="admin-audit-detail-content" style="font-size: 0.88rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
     <!-- SIMPLE APPLICATION FOOTER (RIGHTS & AUTHOR)                     -->
     <!-- ============================================================== -->
     <footer class="app-footer">
@@ -2023,8 +2683,8 @@
         </div>
     </div>
 
-    <script src="/i18n.js?v=20260924_lucide"></script>
-    <script src="/icons.js?v=20260924_lucide"></script>
-    <script src="/app.js?v=20260929_auth_fix"></script>
+    <script src="/i18n.js?v=20261013_remove_reports"></script>
+    <script src="/icons.js?v=20261013_tab_fix"></script>
+    <script src="/app.js?v=20261013_remove_reports"></script>
 </body>
 </html>

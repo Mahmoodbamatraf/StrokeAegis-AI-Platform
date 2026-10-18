@@ -59,16 +59,59 @@ def get_current_user(
     return user
 
 
+def require_admin(current_user: User = Depends(get_current_user)) -> User:
+    """
+    Dependency that enforces administrator role access.
+    Raises 403 Forbidden for non-administrators.
+    """
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: Administrator privileges required."
+        )
+    return current_user
+
+
 def require_doctor(current_user: User = Depends(get_current_user)) -> User:
     """
-    Dependency that enforces doctor role access.
-    Raises 403 Forbidden for patients or non-doctors.
+    Dependency that enforces doctor role access and verifies approved clinical status.
+    Raises 403 Forbidden for patients, non-doctors, or unapproved doctors.
     """
     if current_user.role != "doctor":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access forbidden: Doctor role required."
         )
+    if current_user.doctor_profile:
+        status_val = getattr(current_user.doctor_profile, "approval_status", "approved")
+        if status_val == "pending":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Clinician credentials under review. Access to clinical workspace will be activated upon administrative verification."
+            )
+        elif status_val == "more_info_required":
+            detail_msg = "Clinician credential verification requires additional information."
+            if current_user.doctor_profile.more_info_request:
+                detail_msg += f" Details requested: {current_user.doctor_profile.more_info_request}"
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=detail_msg
+            )
+        elif status_val == "suspended":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Clinician account is currently suspended. Please contact clinical administration."
+            )
+        elif status_val == "rejected":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Clinician application was not approved. Please contact clinical administration."
+            )
+        elif status_val != "approved":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Clinician account is not approved for clinical workspace access."
+            )
     return current_user
 
 

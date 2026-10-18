@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScreenNavigation();
     initAuthPortal();
     initClinicalPortals();
+    initAdminDashboard();
     initPresets();
     initAIPipeline();
     initRegularSystem();
@@ -24,10 +25,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedUser = JSON.parse(localStorage.getItem('strokeaegis_user') || '{}');
     if (savedToken && savedUser && savedUser.role) {
         updateHeaderUserBadge(savedUser);
-        if (savedUser.role === 'doctor') {
-            showDoctorPortal();
+        if (savedUser.role === 'admin') {
+            showAdminDashboard();
+        } else if (savedUser.role === 'doctor') {
+            if (savedUser.approval_status === 'pending' || savedUser.approval_status === 'more_info_required') {
+                showDoctorPendingScreen(savedUser);
+            } else if (savedUser.approval_status === 'suspended' || savedUser.approval_status === 'rejected' || savedUser.is_active === false) {
+                showRestrictedAccessScreen(savedUser.rejection_reason || 'Clinician account restricted or suspended by administrator.');
+            } else {
+                showDoctorPortal();
+            }
         } else if (savedUser.role === 'patient') {
-            showPatientPortal();
+            if (savedUser.is_active === false) {
+                showRestrictedAccessScreen('Patient account deactivated by administrator.');
+            } else {
+                showPatientPortal();
+            }
         }
     }
 
@@ -213,10 +226,22 @@ function showScreen(screenId) {
 
 function returnToUserHome() {
     const user = JSON.parse(localStorage.getItem('strokeaegis_user') || '{}');
-    if (user && user.role === 'doctor') {
-        showDoctorPortal();
+    if (user && user.role === 'admin') {
+        showAdminDashboard();
+    } else if (user && user.role === 'doctor') {
+        if (user.approval_status === 'pending') {
+            showDoctorPendingScreen(user);
+        } else if (user.approval_status === 'suspended' || user.is_active === false) {
+            showRestrictedAccessScreen(user.rejection_reason || 'Clinician account suspended by administrator.');
+        } else {
+            showDoctorPortal();
+        }
     } else if (user && user.role === 'patient') {
-        showPatientPortal();
+        if (user.is_active === false) {
+            showRestrictedAccessScreen('Patient account deactivated by administrator.');
+        } else {
+            showPatientPortal();
+        }
     } else {
         const token = localStorage.getItem('strokeaegis_token');
         if (token) {
@@ -229,6 +254,7 @@ function returnToUserHome() {
 
 function updateDynamicReturnLabels() {
     const user = JSON.parse(localStorage.getItem('strokeaegis_user') || '{}');
+    const isAdm = user && user.role === 'admin';
     const isDoc = user && user.role === 'doctor';
     const isPat = user && user.role === 'patient';
     const lang = (typeof currentLang !== 'undefined') ? currentLang : (localStorage.getItem('strokeaegis_lang') || 'en');
@@ -238,7 +264,11 @@ function updateDynamicReturnLabels() {
     let regBackKey = 'reg.return';
     let homeKey = 'btn.return_home';
 
-    if (isDoc) {
+    if (isAdm) {
+        backKey = 'stepper.return_admin';
+        regBackKey = 'reg.return_admin';
+        homeKey = 'btn.return_admin';
+    } else if (isDoc) {
         backKey = 'stepper.return_doctor';
         regBackKey = 'reg.return_doctor';
         homeKey = 'btn.return_doctor';
@@ -438,12 +468,22 @@ function updateHeaderUserBadge(user) {
     if (user && (user.full_name || user.email)) {
         if (btnAuth) btnAuth.style.display = 'none';
         if (userBadge) userBadge.style.display = 'inline-flex';
-        if (avatarEl) avatarEl.innerHTML = (user.role === 'doctor') ? getLucideIcon('stethoscope') : getLucideIcon('user');
+        if (avatarEl) {
+            avatarEl.innerHTML = (user.role === 'admin')
+                ? getLucideIcon('shield-check')
+                : ((user.role === 'doctor') ? getLucideIcon('stethoscope') : getLucideIcon('user'));
+        }
         if (nameEl) nameEl.textContent = user.full_name || user.email.split('@')[0];
-        if (roleEl) roleEl.textContent = (user.role === 'doctor') ? 'Doctor' : 'Patient';
+        if (roleEl) {
+            roleEl.textContent = (user.role === 'admin') ? 'Admin' : ((user.role === 'doctor') ? 'Doctor' : 'Patient');
+        }
         if (btnNotifs) {
-            btnNotifs.style.display = 'inline-flex';
-            loadNotifications();
+            if (user.role === 'admin') {
+                btnNotifs.style.display = 'none';
+            } else {
+                btnNotifs.style.display = 'inline-flex';
+                loadNotifications();
+            }
         }
     } else {
         if (btnAuth) btnAuth.style.display = 'inline-flex';
@@ -601,10 +641,22 @@ async function performAuthLogin(email, password) {
 
         showAuthAlert(`Welcome back, ${data.full_name}! Redirecting to workspace...`, 'success');
         setTimeout(() => {
-            if (data.role === 'doctor') {
-                showDoctorPortal();
+            if (data.role === 'admin') {
+                showAdminDashboard();
+            } else if (data.role === 'doctor') {
+                if (data.approval_status === 'pending' || data.approval_status === 'more_info_required') {
+                    showDoctorPendingScreen(data);
+                } else if (data.approval_status === 'suspended' || data.approval_status === 'rejected' || data.is_active === false) {
+                    showRestrictedAccessScreen(data.rejection_reason || 'Clinician account restricted or suspended by administrator.');
+                } else {
+                    showDoctorPortal();
+                }
             } else if (data.role === 'patient') {
-                showPatientPortal();
+                if (data.is_active === false) {
+                    showRestrictedAccessScreen('Patient account deactivated by administrator.');
+                } else {
+                    showPatientPortal();
+                }
             } else {
                 showScreen('screen-home');
             }
@@ -781,7 +833,11 @@ async function initAuthPortal() {
                     showAuthAlert(`Account created successfully! Welcome to StrokeAegis, ${data.full_name}.`, 'success');
                     setTimeout(() => {
                         if (data.role === 'doctor') {
-                            showDoctorPortal();
+                            if (data.approval_status === 'pending') {
+                                showDoctorPendingScreen(data);
+                            } else {
+                                showDoctorPortal();
+                            }
                         } else if (data.role === 'patient') {
                             showPatientPortal();
                         } else {
@@ -822,6 +878,19 @@ async function initAuthPortal() {
             document.getElementById('auth-input-email').value = 'patient@strokeaegis.local';
             document.getElementById('auth-input-password').value = 'PatientSecure2026!';
             await performAuthLogin('patient@strokeaegis.local', 'PatientSecure2026!');
+        });
+    }
+
+    const btnDemoAdm = document.getElementById('btn-demo-admin');
+    if (btnDemoAdm) {
+        btnDemoAdm.addEventListener('click', async () => {
+            currentAuthTab = 'signin';
+            updateAuthUI();
+            const emailInput = document.getElementById('auth-input-email');
+            const passInput = document.getElementById('auth-input-password');
+            if (emailInput) emailInput.value = 'admin@strokeaegis.local';
+            if (passInput) passInput.value = 'AdminSecure2026!';
+            await performAuthLogin('admin@strokeaegis.local', 'AdminSecure2026!');
         });
     }
 
@@ -879,10 +948,22 @@ async function initAuthPortal() {
                 const meData = await meRes.json();
                 localStorage.setItem('strokeaegis_user', JSON.stringify(meData));
                 updateHeaderUserBadge(meData);
-                if (meData.role === 'doctor') {
-                    showDoctorPortal();
+                if (meData.role === 'admin') {
+                    showAdminDashboard();
+                } else if (meData.role === 'doctor') {
+                    if (meData.approval_status === 'pending') {
+                        showDoctorPendingScreen(meData);
+                    } else if (meData.approval_status === 'suspended' || meData.is_active === false) {
+                        showRestrictedAccessScreen(meData.rejection_reason || 'Clinician account suspended by administrator.');
+                    } else {
+                        showDoctorPortal();
+                    }
                 } else if (meData.role === 'patient') {
-                    showPatientPortal();
+                    if (meData.is_active === false) {
+                        showRestrictedAccessScreen('Patient account deactivated by administrator.');
+                    } else {
+                        showPatientPortal();
+                    }
                 } else {
                     showScreen('screen-home');
                 }
@@ -4443,6 +4524,1715 @@ async function markAllNotificationsRead() {
         console.warn('Mark all read error:', err);
     }
 }
+
+// ==============================================================
+// 12. NOTICE SCREENS CONTROLLER (PENDING & RESTRICTED ACCESS)
+// ==============================================================
+function showDoctorPendingScreen(docData = {}) {
+    showScreen('screen-doctor-pending');
+    const nameEl = document.getElementById('pending-doc-name');
+    const licEl = document.getElementById('pending-doc-license');
+    const statusBadge = document.getElementById('pending-status-badge');
+    const titleEl = document.getElementById('pending-notice-title');
+    const subtitleEl = document.getElementById('pending-notice-subtitle');
+    const moreInfoContainer = document.getElementById('pending-more-info-container');
+    const moreInfoText = document.getElementById('pending-more-info-text');
+
+    if (nameEl) {
+        let name = docData.full_name || (docData.email ? docData.email.split('@')[0] : 'Clinician');
+        if (!name.toLowerCase().startsWith('dr.') && !name.toLowerCase().startsWith('dr ')) {
+            name = 'Dr. ' + name;
+        }
+        nameEl.textContent = name;
+    }
+    const lic = docData.license_number || (docData.doctor_profile && docData.doctor_profile.license_number) || 'LIC-PENDING';
+    if (licEl) licEl.textContent = lic;
+
+    const status = (docData.approval_status || (docData.doctor_profile && docData.doctor_profile.approval_status) || 'pending').toLowerCase();
+    const infoRequest = docData.more_info_request || (docData.doctor_profile && docData.doctor_profile.more_info_request);
+
+    if (status === 'more_info_required') {
+        if (statusBadge) {
+            statusBadge.textContent = 'MORE INFORMATION REQUIRED';
+            statusBadge.className = 'badge-status badge-more-info';
+        }
+        if (titleEl) titleEl.textContent = 'Additional Verification Information Required';
+        if (subtitleEl) subtitleEl.textContent = 'Please review the administrative request below and resubmit the requested details.';
+        if (moreInfoContainer) {
+            moreInfoContainer.style.display = 'block';
+            if (moreInfoText) moreInfoText.textContent = infoRequest || 'Clinical administration has requested additional credential verification documentation.';
+        }
+    } else {
+        if (statusBadge) {
+            statusBadge.textContent = 'PENDING ADMINISTRATIVE APPROVAL';
+            statusBadge.className = 'badge-status badge-pending';
+        }
+        if (titleEl) titleEl.textContent = 'Clinician Application Under Review';
+        if (subtitleEl) subtitleEl.textContent = 'Your medical credentials have been securely submitted and are currently awaiting administrative review.';
+        if (moreInfoContainer) moreInfoContainer.style.display = 'none';
+    }
+}
+
+function showRestrictedAccessScreen(reason = '') {
+    showScreen('screen-restricted-access');
+    const reasonEl = document.getElementById('restricted-reason-text');
+    if (reasonEl && reason) {
+        reasonEl.textContent = reason;
+    }
+}
+
+function initNoticeScreens() {
+    const btnCheckPending = document.getElementById('btn-check-pending-status');
+    if (btnCheckPending) {
+        btnCheckPending.addEventListener('click', async () => {
+            const token = localStorage.getItem('strokeaegis_token');
+            if (!token) {
+                showScreen('screen-landing');
+                return;
+            }
+            try {
+                btnCheckPending.disabled = true;
+                const res = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('strokeaegis_user', JSON.stringify(data));
+                    updateHeaderUserBadge(data);
+                    const appStatus = (data.approval_status || (data.doctor_profile && data.doctor_profile.approval_status) || '').toLowerCase();
+                    if (appStatus === 'approved') {
+                        showDoctorPortal();
+                        return;
+                    } else if (appStatus === 'more_info_required') {
+                        showDoctorPendingScreen(data);
+                        return;
+                    } else if (appStatus === 'rejected' || appStatus === 'suspended') {
+                        showRestrictedAccessScreen(data.rejection_reason || 'Application status updated.');
+                        return;
+                    }
+                }
+                alert('Your medical credentials application is still under review by the clinical administrator.');
+            } catch (err) {
+                console.warn('Check pending status error:', err);
+            } finally {
+                btnCheckPending.disabled = false;
+            }
+        });
+    }
+
+    // Doctor Resubmit Form
+    const formResubmit = document.getElementById('form-doctor-resubmit');
+    if (formResubmit) {
+        formResubmit.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const licInput = document.getElementById('resubmit-license');
+            const hospInput = document.getElementById('resubmit-hospital');
+            const notesInput = document.getElementById('resubmit-notes');
+            const feedback = document.getElementById('resubmit-feedback');
+            const spinner = document.getElementById('resubmit-spinner');
+
+            const clarification_notes = (notesInput?.value || '').trim();
+            if (clarification_notes.length < 5) {
+                if (feedback) {
+                    feedback.textContent = 'Please provide detailed clarification notes (at least 5 characters).';
+                    feedback.style.display = 'block';
+                    feedback.className = 'admit-feedback-box error';
+                }
+                return;
+            }
+
+            const payload = { clarification_notes };
+            const cleanLic = (licInput?.value || '').trim();
+            const cleanHosp = (hospInput?.value || '').trim();
+            if (cleanLic) payload.license_number = cleanLic;
+            if (cleanHosp) payload.hospital_affiliation = cleanHosp;
+
+            try {
+                if (spinner) spinner.style.display = 'inline-block';
+                const res = await fetch('/api/auth/doctor/resubmit-info', {
+                    method: 'POST',
+                    headers: getAuthHeaders(true),
+                    body: JSON.stringify(payload)
+                });
+                if (handleAuthError(res)) return;
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Resubmission failed');
+                }
+                const updatedUser = await res.json();
+                localStorage.setItem('strokeaegis_user', JSON.stringify(updatedUser));
+                if (feedback) {
+                    feedback.textContent = 'Credentials resubmitted successfully! Your application has returned to pending review.';
+                    feedback.style.display = 'block';
+                    feedback.className = 'admit-feedback-box success';
+                }
+                setTimeout(() => {
+                    showDoctorPendingScreen(updatedUser);
+                }, 1200);
+            } catch (err) {
+                if (feedback) {
+                    feedback.textContent = err.message;
+                    feedback.style.display = 'block';
+                    feedback.className = 'admit-feedback-box error';
+                }
+            } finally {
+                if (spinner) spinner.style.display = 'none';
+            }
+        });
+    }
+
+    const btnPendingSignout = document.getElementById('btn-pending-signout');
+    if (btnPendingSignout) {
+        btnPendingSignout.addEventListener('click', () => {
+            localStorage.removeItem('strokeaegis_token');
+            localStorage.removeItem('strokeaegis_user');
+            updateHeaderUserBadge(null);
+            showScreen('screen-landing');
+        });
+    }
+
+    const btnRestrictedSignout = document.getElementById('btn-restricted-signout');
+    if (btnRestrictedSignout) {
+        btnRestrictedSignout.addEventListener('click', () => {
+            localStorage.removeItem('strokeaegis_token');
+            localStorage.removeItem('strokeaegis_user');
+            updateHeaderUserBadge(null);
+            showScreen('screen-landing');
+        });
+    }
+}
+
+// ==============================================================
+// 13. ADMIN DASHBOARD & CLINICAL GOVERNANCE CONTROLLER
+// ==============================================================
+let currentAdminTab = 'admin-pane-overview';
+let pendingClinicianAction = null; // { doctorId, action: 'reject'|'suspend' }
+let activeInvestigateItem = null;
+let cachedAuditLogs = [];
+
+function showAdminDashboard(targetTabId = 'admin-pane-overview') {
+    const user = JSON.parse(localStorage.getItem('strokeaegis_user') || '{}');
+    if (user.role !== 'admin') {
+        showScreen('screen-landing');
+        return;
+    }
+    showScreen('screen-admin-dashboard');
+    const welcomeName = document.getElementById('admin-welcome-name');
+    if (welcomeName) {
+        welcomeName.textContent = user.full_name || 'System Administrator';
+    }
+    switchAdminTab(targetTabId);
+    loadAdminOverview();
+    updateDynamicReturnLabels();
+}
+
+function switchAdminTab(targetPaneId) {
+    currentAdminTab = targetPaneId;
+    document.querySelectorAll('#screen-admin-dashboard .portal-subnav-btn, .admin-subnav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === targetPaneId);
+    });
+    document.querySelectorAll('#screen-admin-dashboard .portal-pane').forEach(pane => {
+        pane.classList.toggle('active', pane.id === targetPaneId);
+    });
+
+    if (targetPaneId === 'admin-pane-overview') {
+        loadAdminOverview();
+    } else if (targetPaneId === 'admin-pane-clinicians') {
+        loadAdminClinicians();
+    } else if (targetPaneId === 'admin-pane-safety') {
+        loadAdminSafetyQueue();
+    } else if (targetPaneId === 'admin-pane-users') {
+        loadAdminUsers();
+    } else if (targetPaneId === 'admin-pane-models') {
+        loadAdminModels();
+    } else if (targetPaneId === 'admin-pane-audit') {
+        loadAdminAuditLogs();
+    } else if (targetPaneId === 'admin-pane-health') {
+        loadAdminHealth();
+    }
+}
+
+function formatAdminDateTime(isoStr) {
+    if (!isoStr) return '--';
+    try {
+        const d = new Date(isoStr);
+        return d.toLocaleDateString(undefined, {
+            month: 'short', day: 'numeric', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+    } catch {
+        return isoStr;
+    }
+}
+
+async function loadAdminOverview() {
+    try {
+        const res = await fetch('/api/admin/overview', {
+            headers: getAuthHeaders(true)
+        });
+        if (handleAuthError(res)) return;
+        if (!res.ok) throw new Error(`Overview fetch failed (${res.status})`);
+        const data = await res.json();
+
+        // Update top KPI cards
+        const elDocs = document.getElementById('admin-stat-doctors');
+        const elPending = document.getElementById('admin-stat-pending');
+        const elPatients = document.getElementById('admin-stat-patients');
+        const elToday = document.getElementById('admin-stat-today');
+        const elFlagged = document.getElementById('admin-stat-flagged');
+        const elIncidents = document.getElementById('admin-stat-incidents');
+
+        if (elDocs) elDocs.textContent = data.active_doctors ?? '--';
+        if (elPending) elPending.textContent = data.pending_clinicians ?? '--';
+        if (elPatients) elPatients.textContent = data.registered_patients ?? '--';
+        if (elToday) elToday.textContent = data.assessments_today ?? '--';
+        if (elFlagged) elFlagged.textContent = data.safety_flags ?? '--';
+        if (elIncidents) elIncidents.textContent = data.open_incidents ?? '0';
+
+        // Update tab badges
+        const badgePending = document.getElementById('admin-badge-pending-clinicians');
+        if (badgePending) {
+            const count = data.pending_clinicians || 0;
+            badgePending.textContent = count;
+            badgePending.style.display = count > 0 ? 'inline-flex' : 'none';
+        }
+        const badgeSafety = document.getElementById('admin-badge-safety-alerts');
+        if (badgeSafety) {
+            const count = data.safety_flags || 0;
+            badgeSafety.textContent = count;
+            badgeSafety.style.display = count > 0 ? 'inline-flex' : 'none';
+        }
+
+        const elUpdated = document.getElementById('admin-overview-last-updated');
+        if (elUpdated) {
+            elUpdated.textContent = 'Updated: ' + new Date().toLocaleTimeString();
+        }
+
+        // Render Volume Breakdown
+        const vb = data.volume_breakdown || {};
+        const volumeBox = document.getElementById('admin-overview-volume-breakdown');
+        if (volumeBox) {
+            const total = vb.total_assessments || 0;
+            const ctTotal = vb.ct_scans_total || 0;
+            const highRisk = vb.high_risk_count || 0;
+            const ischemic = vb.ischemic_count || 0;
+            const hemorrhagic = vb.hemorrhagic_count || 0;
+            const normal = vb.normal_count || 0;
+
+            const calcPct = (v, tot) => tot > 0 ? Math.round((v / tot) * 100) : 0;
+
+            volumeBox.innerHTML = `
+                <div class="volume-stat-item">
+                    <div class="volume-stat-head">
+                        <span>Total Clinical Evaluations</span>
+                        <strong>${total}</strong>
+                    </div>
+                    <div class="volume-progress-track">
+                        <div class="volume-progress-fill" style="width: 100%; background: #0284C7;"></div>
+                    </div>
+                </div>
+                <div class="volume-stat-item">
+                    <div class="volume-stat-head">
+                        <span>High-Risk Vascular Stratifications</span>
+                        <strong>${highRisk} (${vb.high_risk_rate_pct || calcPct(highRisk, total)}%)</strong>
+                    </div>
+                    <div class="volume-progress-track">
+                        <div class="volume-progress-fill" style="width: ${vb.high_risk_rate_pct || calcPct(highRisk, total)}%; background: #EF4444;"></div>
+                    </div>
+                </div>
+                <div class="volume-stat-item">
+                    <div class="volume-stat-head">
+                        <span>Brain CT Diagnostic Scans</span>
+                        <strong>${ctTotal}</strong>
+                    </div>
+                    <div class="volume-progress-track">
+                        <div class="volume-progress-fill" style="width: ${calcPct(ctTotal, total)}%; background: #6366F1;"></div>
+                    </div>
+                </div>
+                <div class="volume-stat-item">
+                    <div class="volume-stat-head">
+                        <span>Acute Ischemic Infarctions</span>
+                        <strong>${ischemic} (${calcPct(ischemic, ctTotal)}%)</strong>
+                    </div>
+                    <div class="volume-progress-track">
+                        <div class="volume-progress-fill" style="width: ${calcPct(ischemic, ctTotal)}%; background: #F59E0B;"></div>
+                    </div>
+                </div>
+                <div class="volume-stat-item">
+                    <div class="volume-stat-head">
+                        <span>Intracranial Hemorrhages</span>
+                        <strong>${hemorrhagic} (${calcPct(hemorrhagic, ctTotal)}%)</strong>
+                    </div>
+                    <div class="volume-progress-track">
+                        <div class="volume-progress-fill" style="width: ${calcPct(hemorrhagic, ctTotal)}%; background: #DC2626;"></div>
+                    </div>
+                </div>
+                <div class="volume-stat-item">
+                    <div class="volume-stat-head">
+                        <span>Normal Non-Pathological Scans</span>
+                        <strong>${normal} (${calcPct(normal, ctTotal)}%)</strong>
+                    </div>
+                    <div class="volume-progress-track">
+                        <div class="volume-progress-fill" style="width: ${calcPct(normal, ctTotal)}%; background: #10B981;"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Subsystems status
+        const servicesBox = document.getElementById('admin-overview-services-summary');
+        const systemBadge = document.getElementById('admin-overview-system-badge');
+        if (servicesBox && data.subsystem_health) {
+            const allHealthy = data.subsystem_health.every(s => s.status === 'HEALTHY');
+            if (systemBadge) {
+                systemBadge.textContent = allHealthy ? 'ALL HEALTHY' : 'SYSTEM DEGRADED';
+                systemBadge.className = `badge-status ${allHealthy ? 'badge-healthy' : 'badge-degraded'}`;
+            }
+
+            servicesBox.innerHTML = data.subsystem_health.map(s => {
+                const isHealthy = s.status === 'HEALTHY';
+                return `
+                    <div class="admin-service-card" style="margin-bottom: 0.65rem;">
+                        <div>
+                            <span class="admin-service-name">${escapeHTML(s.service_name)}</span>
+                            <span class="admin-service-type">${escapeHTML(s.details || '')}</span>
+                        </div>
+                        <span class="badge-status ${isHealthy ? 'badge-healthy' : 'badge-degraded'}">${s.status}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Attention alerts
+        const alertsBox = document.getElementById('admin-attention-alerts-container');
+        if (alertsBox) {
+            if (data.attention_alerts && data.attention_alerts.length > 0) {
+                alertsBox.style.display = 'block';
+                alertsBox.innerHTML = data.attention_alerts.map(a => `
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.65rem;">
+                            <span style="color: #D97706;">${getLucideIcon('alert-triangle')}</span>
+                            <div>
+                                <strong style="font-size: 0.9rem;">${escapeHTML(a.title)}</strong>
+                                <p style="margin: 0; font-size: 0.82rem; color: var(--text-muted);">${escapeHTML(a.message)}</p>
+                            </div>
+                        </div>
+                        ${a.action_tab ? `<button type="button" class="btn btn-sm btn-secondary" onclick="switchAdminTab('${a.action_tab}')" style="font-size: 0.78rem; padding: 0.3rem 0.75rem;">Review Now &rarr;</button>` : ''}
+                    </div>
+                `).join('');
+            } else {
+                alertsBox.style.display = 'none';
+            }
+        }
+
+        // Recent events table (6 columns)
+        const recentTbody = document.getElementById('admin-overview-recent-tbody');
+        if (recentTbody && data.recent_events) {
+            if (data.recent_events.length === 0) {
+                recentTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No recent audit events recorded.</td></tr>`;
+            } else {
+                recentTbody.innerHTML = data.recent_events.map(ev => `
+                    <tr>
+                        <td style="white-space: nowrap;">${formatAdminDateTime(ev.created_at)}</td>
+                        <td><strong>${escapeHTML(ev.actor || 'System')}</strong></td>
+                        <td><code>${escapeHTML(ev.action)}</code></td>
+                        <td>${escapeHTML(ev.target || '--')}</td>
+                        <td><span class="badge-status ${ev.outcome === 'SUCCESS' ? 'badge-approved' : 'badge-rejected'}">${ev.outcome}</span></td>
+                        <td><div style="font-size: 0.8rem; color: var(--text-muted); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHTML(ev.reason || '')}">${escapeHTML(ev.reason || '--')}</div></td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+    } catch (err) {
+        console.warn('Error loading admin overview:', err);
+    }
+}
+
+// --------------------------------------------------------------
+// Clinician Approvals Module
+// --------------------------------------------------------------
+let currentClinicianFilter = 'all';
+let cachedClinicians = {};
+let pendingApproveClinician = null;
+
+async function loadAdminClinicians(filter = currentClinicianFilter, search = '') {
+    currentClinicianFilter = filter;
+    const tbody = document.getElementById('admin-clinicians-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem;"><span class="spinner-sm" style="display: inline-block;"></span> Loading clinicians...</td></tr>`;
+
+    try {
+        const query = new URLSearchParams();
+        if (filter && filter !== 'all') query.set('status', filter);
+        if (search) query.set('search', search);
+
+        const res = await fetch(`/api/admin/clinicians?${query.toString()}`, {
+            headers: getAuthHeaders(true)
+        });
+        if (handleAuthError(res)) return;
+        if (!res.ok) throw new Error(`Clinicians fetch failed (${res.status})`);
+        const clinicians = await res.json();
+
+        cachedClinicians = {};
+        clinicians.forEach(c => { cachedClinicians[c.id] = c; });
+
+        if (clinicians.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No clinicians found matching filter.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = clinicians.map(doc => {
+            const status = (doc.approval_status || 'approved').toLowerCase();
+            let badgeClass = 'badge-approved';
+            let statusText = status.toUpperCase();
+
+            if (status === 'pending') {
+                badgeClass = 'badge-pending';
+                statusText = 'PENDING';
+            } else if (status === 'more_info_required') {
+                badgeClass = 'badge-more-info';
+                statusText = 'MORE INFO REQUIRED';
+            } else if (status === 'rejected') {
+                badgeClass = 'badge-rejected';
+                statusText = 'REJECTED';
+            } else if (status === 'suspended') {
+                badgeClass = 'badge-suspended';
+                statusText = 'SUSPENDED';
+            }
+
+            const isPending = status === 'pending';
+            const isMoreInfo = status === 'more_info_required';
+            const isApproved = status === 'approved';
+            const isSuspended = status === 'suspended';
+
+            return `
+                <tr>
+                    <td>
+                        <strong>${escapeHTML(doc.full_name)}</strong>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">${escapeHTML(doc.email)}</div>
+                    </td>
+                    <td>${escapeHTML(doc.specialization || 'Stroke Neurology')}</td>
+                    <td>${escapeHTML(doc.hospital_affiliation || '--')}</td>
+                    <td>
+                        <code>${escapeHTML(doc.license_number || '--')}</code>
+                        ${doc.verification_reference ? `<div style="font-size: 0.72rem; color: #059669; margin-top: 0.2rem;">Ref: <strong>${escapeHTML(doc.verification_reference)}</strong></div>` : ''}
+                    </td>
+                    <td>
+                        <span class="badge-status ${badgeClass}">${statusText}</span>
+                        ${doc.rejection_reason ? `<div style="font-size: 0.72rem; color: #DC2626; margin-top: 0.2rem;" title="${escapeHTML(doc.rejection_reason)}">${escapeHTML(doc.rejection_reason.slice(0, 32))}...</div>` : ''}
+                        ${doc.more_info_request ? `<div style="font-size: 0.72rem; color: #2563EB; margin-top: 0.2rem;" title="${escapeHTML(doc.more_info_request)}">Req: ${escapeHTML(doc.more_info_request.slice(0, 32))}...</div>` : ''}
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <div>${formatAdminDateTime(doc.created_at)}</div>
+                        ${doc.reviewed_at ? `<div style="font-size: 0.72rem; color: var(--text-muted);">Reviewed: ${formatAdminDateTime(doc.reviewed_at)}</div>` : ''}
+                    </td>
+                    <td>
+                        <div class="admin-actions-cell">
+                            ${(isPending || isMoreInfo) ? `
+                                <button type="button" class="btn btn-sm btn-primary" onclick="openApproveModal('${doc.id}')" title="Verify & Approve Medical License">Approve</button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="openReasonModal('${doc.id}', 'request-info')" style="color: #2563EB;" title="Request Additional Documentation">Request Info</button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="openReasonModal('${doc.id}', 'reject')" style="color: #DC2626;" title="Reject Medical Application">Reject</button>
+                            ` : ''}
+                            ${isApproved ? `
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="openReasonModal('${doc.id}', 'suspend')" style="color: #D97706;" title="Suspend Active Privileges">Suspend</button>
+                            ` : ''}
+                            ${isSuspended ? `
+                                <button type="button" class="btn btn-sm btn-primary" onclick="openApproveModal('${doc.id}')" title="Reinstate Clinician Privileges">Reinstate</button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #DC2626; padding: 2rem;">Failed to load clinicians: ${escapeHTML(err.message)}</td></tr>`;
+    }
+}
+
+function openApproveModal(docId) {
+    const doc = cachedClinicians[docId];
+    if (!doc) return;
+    pendingApproveClinician = doc;
+
+    const modal = document.getElementById('modal-admin-approve-clinician');
+    const summaryBox = document.getElementById('admin-approve-summary-box');
+    const refInput = document.getElementById('admin-approve-ref-input');
+    const notesInput = document.getElementById('admin-approve-notes-input');
+    const feedback = document.getElementById('admin-approve-feedback');
+
+    if (summaryBox) {
+        summaryBox.innerHTML = `
+            <div><strong>Clinician:</strong> ${escapeHTML(doc.full_name)} &bull; ${escapeHTML(doc.email)}</div>
+            <div style="margin-top: 0.25rem;"><strong>License:</strong> <code>${escapeHTML(doc.license_number)}</code> &bull; <strong>Specialty:</strong> ${escapeHTML(doc.specialization || 'Stroke Neurology')}</div>
+            <div style="margin-top: 0.25rem;"><strong>Hospital Affiliation:</strong> ${escapeHTML(doc.hospital_affiliation || 'Not specified')}</div>
+        `;
+    }
+
+    if (refInput) {
+        refInput.value = doc.verification_reference || `MDC-VERIF-2026-${(doc.license_number || '').replace(/[^a-zA-Z0-9]/g, '')}`;
+    }
+    if (notesInput) {
+        notesInput.value = doc.verification_notes || 'Verified against official state medical registry. License active with no disciplinary sanctions.';
+    }
+    if (feedback) feedback.style.display = 'none';
+
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeApproveModal() {
+    const modal = document.getElementById('modal-admin-approve-clinician');
+    if (modal) modal.style.display = 'none';
+    pendingApproveClinician = null;
+}
+
+function openReasonModal(doctorId, action) {
+    pendingClinicianAction = { doctorId, action };
+    const modal = document.getElementById('modal-admin-action-reason');
+    const title = document.getElementById('admin-reason-modal-title');
+    const subtitle = document.getElementById('admin-reason-modal-subtitle');
+    const input = document.getElementById('admin-action-reason-input');
+    const feedback = document.getElementById('admin-reason-feedback');
+    const confirmBtnText = document.getElementById('btn-confirm-admin-reason-text');
+
+    if (input) input.value = '';
+    if (feedback) feedback.style.display = 'none';
+
+    if (action === 'reject') {
+        if (title) title.textContent = 'Reject Clinician Application';
+        if (subtitle) subtitle.textContent = 'Provide a medical verification or compliance rationale for this rejection';
+        if (confirmBtnText) confirmBtnText.textContent = 'Reject Application';
+        if (input) input.placeholder = 'Provide specific reason for rejection (at least 5 characters)...';
+    } else if (action === 'request-info') {
+        if (title) title.textContent = 'Request Additional Clinician Information';
+        if (subtitle) subtitle.textContent = 'Specify the missing records or documentation requested from the clinician';
+        if (confirmBtnText) confirmBtnText.textContent = 'Send Information Request';
+        if (input) input.placeholder = 'e.g. Please provide state medical board license renewal certificate and hospital credentialing letter...';
+    } else {
+        if (title) title.textContent = 'Suspend Clinician Account';
+        if (subtitle) subtitle.textContent = 'Provide a clinical justification or safety reason to suspend privileges';
+        if (confirmBtnText) confirmBtnText.textContent = 'Suspend Privileges';
+        if (input) input.placeholder = 'Provide justification for account suspension (at least 5 characters)...';
+    }
+
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeReasonModal() {
+    const modal = document.getElementById('modal-admin-action-reason');
+    if (modal) modal.style.display = 'none';
+    pendingClinicianAction = null;
+}
+
+// --------------------------------------------------------------
+// Clinical Safety Queue Module
+// --------------------------------------------------------------
+let currentSafetyFilter = 'all';
+let cachedSafetyItems = [];
+let currentAssignAssessmentId = null;
+
+async function loadAdminSafetyQueue(filter = currentSafetyFilter) {
+    currentSafetyFilter = filter;
+    const tbody = document.getElementById('admin-safety-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 2rem;"><span class="spinner-sm" style="display: inline-block;"></span> Inspecting clinical safety logs...</td></tr>`;
+
+    try {
+        const query = new URLSearchParams();
+        if (filter && filter !== 'all') query.set('filter_type', filter);
+
+        const res = await fetch(`/api/admin/safety-queue?${query.toString()}`, {
+            headers: getAuthHeaders(true)
+        });
+        if (handleAuthError(res)) return;
+        if (!res.ok) throw new Error(`Safety queue fetch failed (${res.status})`);
+        const items = await res.json();
+        cachedSafetyItems = items || [];
+
+        if (!items || items.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2.5rem;">No safety alert cases requiring review. All models and validations operating within normal parameters.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = items.map((item, idx) => {
+            const assessmentId = item.assessment_id || item.id || '';
+            const shortId = assessmentId ? assessmentId.slice(0, 8) : '--------';
+            const patientName = item.patient_name || 'Anonymous Patient';
+            const patientMrn = item.patient_mrn || 'N/A';
+            const alertReason = item.alert_reason || item.flag_reason || 'Clinical Review Required';
+
+            // Priority badge
+            const priority = (item.priority || 'NORMAL').toUpperCase();
+            let pBadgeClass = 'badge-approved';
+            if (priority === 'HIGH') pBadgeClass = 'badge-rejected';
+            else if (priority === 'MEDIUM') pBadgeClass = 'badge-pending';
+
+            // CT & Gatekeeper details safely parsed
+            const gateStatus = (item.gatekeeper_status || 'skipped').toLowerCase();
+            let gateBadgeClass = 'badge-pending';
+            let gateText = 'Gate: Skipped';
+            if (gateStatus === 'verified' || gateStatus === 'passed') {
+                gateBadgeClass = 'badge-approved';
+                gateText = 'Gate: Verified';
+            } else if (gateStatus === 'rejected') {
+                gateBadgeClass = 'badge-rejected';
+                gateText = 'Gate: Rejected';
+            }
+
+            const ctDiag = item.ct_diagnosis || 'N/A';
+            const confPct = item.confidence_pct != null ? `${item.confidence_pct}%` : (item.ct_confidence != null ? `${Math.round(item.ct_confidence * 100)}%` : '');
+
+            // ML Risk tier
+            const riskTier = item.ml_risk_tier || 'N/A';
+            let riskBadgeClass = 'badge-approved';
+            if (riskTier === 'High') riskBadgeClass = 'badge-rejected';
+            else if (riskTier === 'Moderate') riskBadgeClass = 'badge-pending';
+            else if (riskTier === 'N/A') riskBadgeClass = '';
+
+            // Clinician & Safety Status
+            const doctorName = item.doctor_name || 'Unassigned Clinician';
+            const safetyStatus = (item.safety_status || 'awaiting_assignment').toLowerCase();
+            let sBadge = 'badge-pending';
+            let sText = 'Awaiting Assignment';
+            if (safetyStatus === 'assigned') { sBadge = 'badge-more-info'; sText = 'Assigned'; }
+            else if (safetyStatus === 'under_review') { sBadge = 'badge-more-info'; sText = 'Under Review'; }
+            else if (safetyStatus === 'resolved') { sBadge = 'badge-approved'; sText = 'Resolved'; }
+
+            return `
+                <tr>
+                    <td>
+                        <strong style="font-family: monospace; font-size: 0.85rem;" title="${escapeHTML(assessmentId)}">#${escapeHTML(shortId)}</strong>
+                        <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHTML(item.assessment_type || 'ai_flow')}</div>
+                    </td>
+                    <td style="white-space: nowrap; font-size: 0.82rem;">
+                        ${formatAdminDateTime(item.created_at)}
+                    </td>
+                    <td>
+                        <strong>${escapeHTML(patientName)}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">MRN: <strong>${escapeHTML(patientMrn)}</strong></div>
+                    </td>
+                    <td>
+                        <div style="margin-bottom: 0.25rem;">
+                            <span class="badge-status ${pBadgeClass}" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;">${priority}</span>
+                        </div>
+                        <div style="font-size: 0.82rem; font-weight: 500; line-height: 1.35; max-width: 250px;">
+                            ${escapeHTML(alertReason)}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="margin-bottom: 0.2rem;">
+                            <span class="badge-status ${gateBadgeClass}" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;">${gateText}</span>
+                        </div>
+                        <div style="font-size: 0.82rem;">
+                            <strong>${escapeHTML(ctDiag)}</strong>
+                            ${confPct ? `<small style="color: var(--text-muted); font-size: 0.75rem;">(${confPct})</small>` : ''}
+                        </div>
+                    </td>
+                    <td>
+                        ${riskBadgeClass ? `<span class="badge-status ${riskBadgeClass}" style="font-size: 0.72rem; padding: 0.15rem 0.45rem;">${escapeHTML(riskTier)} Risk</span>` : '<span style="color: var(--text-muted); font-size: 0.8rem;">N/A</span>'}
+                        ${item.ml_risk_probability != null ? `<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem;">${Math.round(item.ml_risk_probability * 100)}% prob</div>` : ''}
+                    </td>
+                    <td>
+                        <div style="font-size: 0.82rem;"><strong>${escapeHTML(doctorName)}</strong></div>
+                        <div style="margin-top: 0.2rem;">
+                            <span class="badge-status ${sBadge}" style="font-size: 0.68rem; padding: 0.1rem 0.4rem;">${sText}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="admin-actions-cell" style="justify-content: flex-end; gap: 0.35rem;">
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="openSafetyDetailsModal('${escapeHTML(assessmentId)}')" title="View Case Details & Diagnostic Trail">Details</button>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="openSafetyAssignModal('${escapeHTML(assessmentId)}')" title="Assign to Qualified Clinician">Assign</button>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="openInvestigateModal(${idx})" title="Record Investigation Note" style="color: #6B7280;">Log</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #DC2626; padding: 2rem;">Failed to load safety queue: ${escapeHTML(err.message)}</td></tr>`;
+    }
+}
+
+async function openSafetyDetailsModal(assessmentId) {
+    const modal = document.getElementById('modal-admin-safety-details');
+    const content = document.getElementById('safety-details-content');
+    const subtitle = document.getElementById('safety-details-subtitle');
+    const btnAssignShortcut = document.getElementById('btn-safety-details-assign-shortcut');
+
+    if (!modal || !content) return;
+    modal.style.display = 'flex';
+    content.innerHTML = `<div style="text-align: center; padding: 3rem;"><span class="spinner-sm" style="display: inline-block;"></span> Loading comprehensive clinical case record...</div>`;
+
+    if (btnAssignShortcut) {
+        btnAssignShortcut.onclick = () => {
+            closeSafetyDetailsModal();
+            openSafetyAssignModal(assessmentId);
+        };
+    }
+
+    try {
+        const res = await fetch(`/api/admin/safety-queue/${assessmentId}`, {
+            headers: getAuthHeaders(true)
+        });
+        if (handleAuthError(res)) return;
+        if (!res.ok) throw new Error(`Failed to load safety case details (${res.status})`);
+        const c = await res.json();
+
+        if (subtitle) {
+            subtitle.textContent = `Case #${(c.assessment_id || '').slice(0, 8)} • Patient: ${c.patient?.full_name || '--'} (MRN: ${c.patient?.mrn || '--'}) • Created: ${formatAdminDateTime(c.created_at)}`;
+        }
+
+        const vitals = c.vitals || {};
+        const gate = c.gatekeeper || {};
+        const ct = c.ct_classifier || {};
+        const ml = c.ml_risk || {};
+        const rep = c.report || {};
+        const st = c.safety_tracking || {};
+        const audits = c.audit_history || [];
+
+        let auditRows = audits.map(a => `
+            <tr>
+                <td style="white-space: nowrap; font-size: 0.75rem;">${formatAdminDateTime(a.created_at)}</td>
+                <td><strong>${escapeHTML(a.actor_name || 'System Admin')}</strong><div style="font-size: 0.7rem; color: var(--text-muted);">${escapeHTML(a.actor_role || 'admin')}</div></td>
+                <td><code>${escapeHTML(a.action || '--')}</code></td>
+                <td><span class="badge-status ${a.outcome === 'SUCCESS' ? 'badge-approved' : 'badge-rejected'}" style="font-size: 0.7rem;">${escapeHTML(a.outcome || '--')}</span></td>
+                <td style="font-size: 0.75rem;">${escapeHTML(a.reason || '--')}</td>
+            </tr>
+        `).join('');
+
+        if (audits.length === 0) {
+            auditRows = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 0.75rem; font-size: 0.8rem;">No administrative audit events recorded for this assessment.</td></tr>`;
+        }
+
+        content.innerHTML = `
+            <!-- Patient & Clinician Overview Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="admin-investigate-info-box">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.4rem;">Patient Information</div>
+                    <div><strong>${escapeHTML(c.patient?.full_name || 'Anonymous')}</strong></div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">MRN: <strong>${escapeHTML(c.patient?.mrn || '--')}</strong> • DOB: ${escapeHTML(c.patient?.dob || '--')}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">Gender: ${escapeHTML(c.patient?.gender || '--')} • Email: ${escapeHTML(c.patient?.email || '--')}</div>
+                </div>
+                <div class="admin-investigate-info-box">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.4rem;">Assigned Clinician & Oversight</div>
+                    <div><strong>${escapeHTML(c.assigned_doctor?.full_name || 'Unassigned')}</strong></div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">${escapeHTML(c.assigned_doctor?.specialization || '')} ${c.assigned_doctor?.hospital_affiliation ? '• ' + escapeHTML(c.assigned_doctor.hospital_affiliation) : ''}</div>
+                    <div style="margin-top: 0.35rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <span class="badge-status ${st.status === 'resolved' ? 'badge-approved' : (st.status === 'assigned' ? 'badge-more-info' : 'badge-pending')}" style="font-size: 0.72rem;">Status: ${escapeHTML(st.status || 'awaiting_assignment')}</span>
+                        ${st.assigned_by_name ? `<span style="font-size: 0.75rem; color: var(--text-muted);">By: ${escapeHTML(st.assigned_by_name)}</span>` : ''}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diagnostics Matrix -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                <!-- CT Neuroimaging Gate & Classifier -->
+                <div style="background: var(--card-bg, #fff); border: 1px solid var(--border-color, #E5E7EB); border-radius: 8px; padding: 1rem;">
+                    <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                        <span>CT Neuroimaging</span>
+                        <span class="badge-status ${gate.status === 'rejected' ? 'badge-rejected' : (gate.status === 'verified' || gate.status === 'passed' ? 'badge-approved' : 'badge-pending')}" style="font-size: 0.7rem;">Gate: ${escapeHTML(gate.status || 'skipped')}</span>
+                    </div>
+                    <div style="margin-bottom: 0.35rem; font-size: 0.85rem;">Diagnosis: <strong>${escapeHTML(ct.diagnosis || 'N/A')}</strong></div>
+                    <div style="margin-bottom: 0.35rem; font-size: 0.82rem; color: var(--text-muted);">Model Confidence: <strong>${ct.confidence_pct != null ? ct.confidence_pct + '%' : '--'}</strong></div>
+                    ${gate.ct_scan_path ? `<div style="font-size: 0.72rem; color: var(--text-muted); word-break: break-all;">Scan: <code>${escapeHTML(gate.ct_scan_path)}</code></div>` : ''}
+                </div>
+
+                <!-- Predictive ML Risk Engine -->
+                <div style="background: var(--card-bg, #fff); border: 1px solid var(--border-color, #E5E7EB); border-radius: 8px; padding: 1rem;">
+                    <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                        <span>Predictive ML Risk</span>
+                        <span class="badge-status ${ml.tier === 'High' ? 'badge-rejected' : (ml.tier === 'Moderate' ? 'badge-pending' : 'badge-approved')}" style="font-size: 0.7rem;">${escapeHTML(ml.tier || 'N/A')} Risk</span>
+                    </div>
+                    <div style="margin-bottom: 0.35rem; font-size: 0.85rem;">Probability: <strong>${ml.probability_pct != null ? ml.probability_pct + '%' : '--'}</strong></div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">
+                        Age: ${vitals.age ?? '--'} • Glucose: ${vitals.avg_glucose_level ?? '--'} mg/dL • BMI: ${vitals.bmi ?? '--'}
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">
+                        HTN: ${vitals.hypertension === 1 ? 'Yes' : 'No'} • Heart: ${vitals.heart_disease === 1 ? 'Yes' : 'No'}
+                    </div>
+                </div>
+
+                <!-- Clinical Safety & Validation Status -->
+                <div style="background: var(--card-bg, #fff); border: 1px solid var(--border-color, #E5E7EB); border-radius: 8px; padding: 1rem;">
+                    <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                        <span>Validation & Sign-Off</span>
+                        <span class="badge-status ${rep.validation_status === 'FLAGGED' ? 'badge-rejected' : (rep.validation_status === 'VALIDATED' ? 'badge-approved' : 'badge-pending')}" style="font-size: 0.7rem;">${escapeHTML(rep.validation_status || 'N/A')}</span>
+                    </div>
+                    <div style="margin-bottom: 0.35rem; font-size: 0.85rem;">Physician Signed: <strong>${rep.physician_signed_off ? '<span style="color: #059669;">Signed</span>' : '<span style="color: #DC2626;">Unsigned (Pending)</span>'}</strong></div>
+                    ${rep.signed_at ? `<div style="font-size: 0.75rem; color: var(--text-muted);">Signed: ${formatAdminDateTime(rep.signed_at)}</div>` : ''}
+                    ${rep.pdf_filename ? `<div style="margin-top: 0.35rem;"><a href="/reports/${encodeURIComponent(rep.pdf_filename)}" target="_blank" class="btn btn-sm btn-secondary" style="font-size: 0.72rem; padding: 0.2rem 0.5rem;">View PDF Report &rarr;</a></div>` : ''}
+                </div>
+            </div>
+
+            <!-- Notes & Report Summary -->
+            ${(rep.report_summary || rep.sign_off_notes || st.notes) ? `
+                <div style="background: rgba(37, 99, 235, 0.04); border-left: 3px solid #2563EB; border-radius: 4px; padding: 0.75rem 1rem; margin-bottom: 1.25rem;">
+                    ${st.notes ? `<div style="margin-bottom: 0.35rem; font-size: 0.82rem;"><strong>Safety Assignment Note:</strong> ${escapeHTML(st.notes)}</div>` : ''}
+                    ${rep.sign_off_notes ? `<div style="margin-bottom: 0.35rem; font-size: 0.82rem;"><strong>Physician Sign-Off Notes:</strong> ${escapeHTML(rep.sign_off_notes)}</div>` : ''}
+                    ${rep.report_summary ? `<div style="font-size: 0.82rem;"><strong>Clinical Report Summary:</strong> <span style="color: var(--text-muted);">${escapeHTML(rep.report_summary)}</span></div>` : ''}
+                </div>
+            ` : ''}
+
+            <!-- Immutable Case Audit History -->
+            <div style="margin-top: 1.25rem;">
+                <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span>Administrative Case Audit Log</span>
+                    <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">(Immutable PostgreSQL Trail)</span>
+                </div>
+                <div class="table-responsive" style="max-height: 180px; overflow-y: auto; border: 1px solid var(--border-color, #E5E7EB); border-radius: 6px;">
+                    <table class="admin-table" style="font-size: 0.78rem; margin: 0;">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Actor</th>
+                                <th>Action</th>
+                                <th>Outcome</th>
+                                <th>Reason / Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${auditRows}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Administrative Governance Advisory Notice -->
+            <div style="margin-top: 1.25rem; padding: 0.75rem; background: rgba(245, 158, 11, 0.08); border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 0.78rem; color: #92400E;">
+                <strong>Clinical Governance Rule:</strong> Administrative personnel supervise operational workflows and assign clinicians. Diagnostic inferences, AI model overrides, and clinical report sign-offs remain strictly restricted to licensed attending physicians.
+            </div>
+        `;
+    } catch (err) {
+        content.innerHTML = `<div style="text-align: center; color: #DC2626; padding: 2rem;">Error retrieving case details: ${escapeHTML(err.message)}</div>`;
+    }
+}
+
+function closeSafetyDetailsModal() {
+    const modal = document.getElementById('modal-admin-safety-details');
+    if (modal) modal.style.display = 'none';
+}
+
+async function openSafetyAssignModal(assessmentId) {
+    currentAssignAssessmentId = assessmentId;
+    const modal = document.getElementById('modal-admin-safety-assign');
+    const summary = document.getElementById('safety-assign-case-summary');
+    const select = document.getElementById('safety-assign-doctor-select');
+    const notes = document.getElementById('safety-assign-notes');
+    const feedback = document.getElementById('safety-assign-feedback');
+
+    if (!modal) return;
+    if (notes) notes.value = '';
+    if (feedback) feedback.style.display = 'none';
+
+    const item = cachedSafetyItems.find(x => x.assessment_id === assessmentId || x.id === assessmentId);
+    if (summary) {
+        summary.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.35rem; font-size: 0.85rem;">
+                <div><strong>Assessment:</strong> <code>#${escapeHTML(assessmentId.slice(0, 8))}...</code></div>
+                <div><strong>Patient:</strong> ${escapeHTML(item?.patient_name || '--')} (${escapeHTML(item?.patient_mrn || 'N/A')})</div>
+                <div><strong>Current Doctor:</strong> ${escapeHTML(item?.doctor_name || 'Unassigned')}</div>
+                <div><strong>CT Diagnosis:</strong> ${escapeHTML(item?.ct_diagnosis || '--')}</div>
+            </div>
+            <div style="padding: 0.4rem 0.6rem; background: rgba(239, 68, 68, 0.08); border-left: 3px solid #EF4444; border-radius: 4px; font-size: 0.8rem; margin-top: 0.35rem;">
+                <strong>Alert:</strong> ${escapeHTML(item?.alert_reason || item?.flag_reason || 'Clinical Review Required')}
+            </div>
+        `;
+    }
+
+    modal.style.display = 'flex';
+
+    if (select) {
+        select.innerHTML = `<option value="">Loading qualified clinicians...</option>`;
+        try {
+            const res = await fetch('/api/admin/qualified-clinicians', {
+                headers: getAuthHeaders(true)
+            });
+            if (handleAuthError(res)) return;
+            if (!res.ok) throw new Error('Failed to load qualified clinicians');
+            const clinicians = await res.json();
+
+            if (!clinicians || clinicians.length === 0) {
+                select.innerHTML = `<option value="" disabled>No active and approved clinicians available</option>`;
+                return;
+            }
+
+            select.innerHTML = `
+                <option value="" disabled selected>Select an approved clinician...</option>
+                ${clinicians.map(doc => `
+                    <option value="${escapeHTML(doc.id)}">
+                        Dr. ${escapeHTML(doc.full_name)} — ${escapeHTML(doc.specialization || 'Stroke Neurology')} (${escapeHTML(doc.hospital_affiliation || 'Hospital')})
+                    </option>
+                `).join('')}
+            `;
+        } catch (err) {
+            select.innerHTML = `<option value="" disabled>Error loading clinicians: ${escapeHTML(err.message)}</option>`;
+        }
+    }
+}
+
+function closeSafetyAssignModal() {
+    const modal = document.getElementById('modal-admin-safety-assign');
+    if (modal) modal.style.display = 'none';
+    currentAssignAssessmentId = null;
+}
+
+function openInvestigateModal(index) {
+    const item = cachedSafetyItems[index];
+    if (!item) return;
+    activeInvestigateItem = item;
+
+    const modal = document.getElementById('modal-admin-investigate');
+    const summary = document.getElementById('admin-investigate-summary');
+    const notesInput = document.getElementById('admin-investigate-notes');
+    const feedback = document.getElementById('admin-investigate-feedback');
+
+    if (notesInput) notesInput.value = '';
+    if (feedback) feedback.style.display = 'none';
+
+    if (summary) {
+        summary.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <div><strong>Patient MRN:</strong> ${escapeHTML(item.patient_mrn || '--')}</div>
+                <div><strong>Scan Pipeline:</strong> ${escapeHTML(item.scan_type || '--')}</div>
+                <div><strong>Model Confidence:</strong> ${item.confidence_pct != null ? item.confidence_pct + '%' : '--'}</div>
+                <div><strong>Attending Doctor:</strong> ${escapeHTML(item.doctor_name || '--')}</div>
+            </div>
+            <div style="padding: 0.5rem; background: rgba(239, 68, 68, 0.08); border-left: 3px solid #EF4444; border-radius: 4px;">
+                <strong>Safety Alert Reason:</strong> ${escapeHTML(item.alert_reason || item.flag_reason || '--')}
+            </div>
+        `;
+    }
+
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeInvestigateModal() {
+    const modal = document.getElementById('modal-admin-investigate');
+    if (modal) modal.style.display = 'none';
+    activeInvestigateItem = null;
+}
+
+// --------------------------------------------------------------
+// Users & Access Control Module
+// --------------------------------------------------------------
+let currentUserRoleFilter = 'all';
+
+async function loadAdminUsers(role = currentUserRoleFilter, search = '') {
+    currentUserRoleFilter = role;
+    const tbody = document.getElementById('admin-users-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem;"><span class="spinner-sm" style="display: inline-block;"></span> Loading users directory...</td></tr>`;
+
+    try {
+        const query = new URLSearchParams();
+        if (role && role !== 'all') query.set('role', role);
+        if (search) query.set('search', search);
+
+        const res = await fetch(`/api/admin/users?${query.toString()}`, {
+            headers: getAuthHeaders(true)
+        });
+        if (handleAuthError(res)) return;
+        if (!res.ok) throw new Error(`Users fetch failed (${res.status})`);
+        const users = await res.json();
+
+        if (users.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No registered users found.</td></tr>`;
+            return;
+        }
+
+        const currentUser = JSON.parse(localStorage.getItem('strokeaegis_user') || '{}');
+
+        tbody.innerHTML = users.map(u => {
+            const isSelf = u.id === currentUser.id;
+            return `
+                <tr>
+                    <td>
+                        <strong>${escapeHTML(u.full_name)}</strong>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">${escapeHTML(u.email)}</div>
+                    </td>
+                    <td><span class="badge-role ${u.role}">${u.role.toUpperCase()}</span></td>
+                    <td>
+                        <span class="badge-status ${u.is_active ? 'badge-approved' : 'badge-rejected'}">
+                            ${u.is_active ? 'ACTIVE' : 'DEACTIVATED'}
+                        </span>
+                    </td>
+                    <td><code>${escapeHTML(u.mrn || u.license_number || '--')}</code></td>
+                    <td style="white-space: nowrap;">${formatAdminDateTime(u.created_at)}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm ${u.is_active ? 'btn-secondary' : 'btn-primary'}" 
+                                onclick="toggleAdminUserStatus('${u.id}', ${!u.is_active})" 
+                                ${isSelf ? 'disabled title="Cannot deactivate own account"' : ''}>
+                            ${u.is_active ? 'Deactivate' : 'Activate'}
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #DC2626; padding: 2rem;">Failed to load users: ${escapeHTML(err.message)}</td></tr>`;
+    }
+}
+
+async function toggleAdminUserStatus(userId, activate) {
+    const actionText = activate ? 'activate' : 'deactivate';
+    if (!confirm(`Are you sure you want to ${actionText} this user's account?`)) return;
+
+    try {
+        const res = await fetch(`/api/admin/users/${userId}/toggle-status`, {
+            method: 'POST',
+            headers: getAuthHeaders(true)
+        });
+        if (handleAuthError(res)) return;
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || 'Status toggle failed');
+        }
+        loadAdminUsers();
+        loadAdminOverview();
+    } catch (err) {
+        alert('Action error: ' + err.message);
+    }
+}
+
+// --------------------------------------------------------------
+// AI Model Monitoring Module
+// --------------------------------------------------------------
+async function loadAdminModels() {
+    const container = document.getElementById('admin-models-container');
+    if (!container) return;
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 2rem;"><span class="spinner-sm" style="display: inline-block;"></span> Auditing AI model weights and operational telemetry...</div>`;
+
+    try {
+        const res = await fetch('/api/admin/models', {
+            headers: getAuthHeaders(true)
+        });
+        if (handleAuthError(res)) return;
+        if (!res.ok) throw new Error(`Model inventory fetch failed (${res.status})`);
+        const models = await res.json();
+
+        container.innerHTML = models.map(m => {
+            const isHealthy = m.status === 'HEALTHY';
+            return `
+                <div class="admin-model-card">
+                    <div class="admin-model-header">
+                        <div>
+                            <h4 class="admin-model-title">${escapeHTML(m.display_name)}</h4>
+                            <span class="admin-model-arch">${escapeHTML(m.architecture)} &bull; ${escapeHTML(m.version)}</span>
+                        </div>
+                        <span class="badge-status ${isHealthy ? 'badge-healthy' : 'badge-degraded'}">${m.status}</span>
+                    </div>
+                    <div class="admin-model-stats-row">
+                        <div>
+                            <span class="model-stat-val">${m.total_inferences}</span>
+                            <span class="model-stat-lbl">Inferences</span>
+                        </div>
+                        <div>
+                            <span class="model-stat-val" style="color: ${m.failed_inferences > 0 ? '#EF4444' : 'inherit'};">${m.failed_inferences}</span>
+                            <span class="model-stat-lbl">Failures</span>
+                        </div>
+                        <div>
+                            <span class="model-stat-val" style="color: ${m.error_rate_pct > 5 ? '#EF4444' : '#10B981'};">${m.error_rate_pct}%</span>
+                            <span class="model-stat-lbl">Error Rate</span>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+                        <span>Last Execution:</span>
+                        <span>${formatAdminDateTime(m.last_inference_at)}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+    } catch (err) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #DC2626; padding: 2rem;">Error fetching models: ${escapeHTML(err.message)}</div>`;
+    }
+}
+
+// --------------------------------------------------------------
+// Append-Only Audit Trail Module
+// --------------------------------------------------------------
+async function loadAdminAuditLogs(search = '') {
+    const tbody = document.getElementById('admin-audit-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem;"><span class="spinner-sm" style="display: inline-block;"></span> Verifying cryptographic audit trail...</td></tr>`;
+
+    try {
+        const query = new URLSearchParams();
+        if (search) query.set('search', search);
+
+        const res = await fetch(`/api/admin/audit-logs?${query.toString()}`, {
+            headers: getAuthHeaders(true)
+        });
+        if (handleAuthError(res)) return;
+        if (!res.ok) throw new Error(`Audit log fetch failed (${res.status})`);
+        const logs = await res.json();
+        cachedAuditLogs = logs;
+
+        if (logs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No audit entries found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = logs.map((log, idx) => `
+            <tr>
+                <td style="white-space: nowrap;">${formatAdminDateTime(log.created_at)}</td>
+                <td>
+                    <strong>${escapeHTML(log.actor_email || 'System Daemon')}</strong>
+                    <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHTML(log.actor_role || 'SYSTEM')}</div>
+                </td>
+                <td><code>${escapeHTML(log.action)}</code></td>
+                <td>${escapeHTML(log.target_resource || '--')}</td>
+                <td><span class="badge-status ${log.outcome === 'SUCCESS' ? 'badge-approved' : 'badge-rejected'}">${log.outcome}</span></td>
+                <td><span style="font-size: 0.8rem; color: var(--text-muted);">${escapeHTML(log.reason || '--')}</span></td>
+                <td style="text-align: right;">
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="openAuditDetailModal(${idx})">Inspect</button>
+                </td>
+            </tr>
+        `).join('');
+
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #DC2626; padding: 2rem;">Failed to load audit logs: ${escapeHTML(err.message)}</td></tr>`;
+    }
+}
+
+function openAuditDetailModal(index) {
+    const log = cachedAuditLogs[index];
+    if (!log) return;
+
+    const modal = document.getElementById('modal-admin-audit-detail');
+    const idEl = document.getElementById('admin-audit-detail-id');
+    const content = document.getElementById('admin-audit-detail-content');
+
+    if (idEl) idEl.textContent = `Event UUID: ${log.id}`;
+    if (content) {
+        content.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; background: rgba(82, 114, 153, 0.05); padding: 0.85rem; border-radius: 8px;">
+                <div><strong>Timestamp:</strong> ${formatAdminDateTime(log.created_at)}</div>
+                <div><strong>Actor Role:</strong> ${escapeHTML(log.actor_role || '--')}</div>
+                <div><strong>Actor Email:</strong> ${escapeHTML(log.actor_email || '--')}</div>
+                <div><strong>Action:</strong> <code>${escapeHTML(log.action)}</code></div>
+                <div><strong>Target:</strong> ${escapeHTML(log.target_resource || '--')}</div>
+                <div><strong>Outcome:</strong> <span class="badge-status ${log.outcome === 'SUCCESS' ? 'badge-approved' : 'badge-rejected'}">${log.outcome}</span></div>
+            </div>
+            ${log.reason ? `<div style="margin-bottom: 1rem;"><strong>Mandatory Justification / Rationale:</strong><div style="background: rgba(82, 114, 153, 0.08); padding: 0.5rem 0.75rem; border-radius: 6px; margin-top: 0.25rem;">${escapeHTML(log.reason)}</div></div>` : ''}
+            <div>
+                <strong>Structured Context &amp; Metadata (JSON):</strong>
+                <pre style="background: #0F172A; color: #E2E8F0; padding: 1rem; border-radius: 8px; font-size: 0.78rem; overflow-x: auto; max-height: 250px; margin-top: 0.35rem;">${escapeHTML(JSON.stringify(log.details || {}, null, 2))}</pre>
+            </div>
+        `;
+    }
+
+    if (modal) modal.style.display = 'flex';
+}
+
+function exportAuditLogsCSV() {
+    if (!cachedAuditLogs || cachedAuditLogs.length === 0) {
+        alert('No audit logs available to export.');
+        return;
+    }
+    const headers = ['id', 'created_at', 'actor_email', 'actor_role', 'action', 'target_resource', 'outcome', 'reason'];
+    const rows = cachedAuditLogs.map(l => headers.map(h => `"${String(l[h] || '').replace(/"/g, '""')}"`).join(','));
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `strokeaegis-audit-log-${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// --------------------------------------------------------------
+// System Health & Incident Log Module
+// --------------------------------------------------------------
+async function loadAdminHealth() {
+    const servicesContainer = document.getElementById('admin-health-services-container');
+    const incidentsTbody = document.getElementById('admin-incidents-tbody');
+    const overallBadge = document.getElementById('admin-health-overall-badge');
+    const checkedAt = document.getElementById('admin-health-checked-at');
+
+    try {
+        const res = await fetch('/api/admin/health', {
+            headers: getAuthHeaders(true)
+        });
+        if (handleAuthError(res)) return;
+        if (!res.ok) throw new Error(`Health fetch failed (${res.status})`);
+        const data = await res.json();
+
+        if (overallBadge) {
+            overallBadge.textContent = `SYSTEM STATUS: ${data.status}`;
+            overallBadge.className = `health-overall-badge ${data.status === 'HEALTHY' ? 'badge-healthy' : 'badge-degraded'}`;
+        }
+        if (checkedAt) {
+            checkedAt.textContent = 'Last verified: ' + formatAdminDateTime(data.checked_at);
+        }
+
+        if (servicesContainer && data.services) {
+            servicesContainer.innerHTML = data.services.map(s => {
+                const isHealthy = s.status === 'HEALTHY';
+                return `
+                    <div class="admin-service-card">
+                        <div>
+                            <span class="admin-service-name">${escapeHTML(s.name)}</span>
+                            <span class="admin-service-type">${escapeHTML(s.type)} &bull; ${s.latency_ms || 0}ms</span>
+                        </div>
+                        <span class="badge-status ${isHealthy ? 'badge-healthy' : 'badge-degraded'}">${s.status}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        if (incidentsTbody && data.incidents) {
+            if (data.incidents.length === 0) {
+                incidentsTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No active operational incidents recorded.</td></tr>`;
+            } else {
+                incidentsTbody.innerHTML = data.incidents.map(inc => `
+                    <tr>
+                        <td style="white-space: nowrap;">${formatAdminDateTime(inc.created_at)}</td>
+                        <td><strong>${escapeHTML(inc.service_name)}</strong></td>
+                        <td><code>${escapeHTML(inc.incident_type)}</code></td>
+                        <td><span class="badge-status ${inc.severity === 'critical' || inc.severity === 'high' ? 'badge-critical' : 'badge-pending'}">${inc.severity.toUpperCase()}</span></td>
+                        <td>${escapeHTML(inc.description)}</td>
+                        <td><span class="badge-status ${inc.status === 'resolved' ? 'badge-approved' : 'badge-pending'}">${inc.status.toUpperCase()}</span></td>
+                        <td style="text-align: right;">--</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+    } catch (err) {
+        console.warn('Health check error:', err);
+    }
+}
+
+// --------------------------------------------------------------
+// Initialization of Admin Dashboard Listeners & Modals
+// --------------------------------------------------------------
+function initAdminDashboard() {
+    initNoticeScreens();
+
+    // 1. Tab switches
+    document.querySelectorAll('#screen-admin-dashboard .portal-subnav-btn, .admin-subnav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            if (tabId) switchAdminTab(tabId);
+        });
+    });
+
+    // Fast Stats Counter Cards Quick Jump
+    const cardDocs = document.getElementById('admin-stat-doctors')?.closest('.portal-stat-card');
+    if (cardDocs) {
+        cardDocs.style.cursor = 'pointer';
+        cardDocs.title = 'View Clinician Approvals & Directory';
+        cardDocs.addEventListener('click', () => switchAdminTab('admin-pane-clinicians'));
+    }
+    const cardPending = document.getElementById('admin-stat-pending')?.closest('.portal-stat-card');
+    if (cardPending) {
+        cardPending.style.cursor = 'pointer';
+        cardPending.title = 'View Pending Clinician Approvals';
+        cardPending.addEventListener('click', () => switchAdminTab('admin-pane-clinicians'));
+    }
+    const cardSafety = document.getElementById('admin-stat-flagged')?.closest('.portal-stat-card');
+    if (cardSafety) {
+        cardSafety.style.cursor = 'pointer';
+        cardSafety.title = 'View Clinical Safety Queue';
+        cardSafety.addEventListener('click', () => switchAdminTab('admin-pane-safety'));
+    }
+    const cardIncidents = document.getElementById('admin-stat-incidents')?.closest('.portal-stat-card');
+    if (cardIncidents) {
+        cardIncidents.style.cursor = 'pointer';
+        cardIncidents.title = 'View System Health & Incidents';
+        cardIncidents.addEventListener('click', () => switchAdminTab('admin-pane-health'));
+    }
+
+    // 2. Global refresh
+    const btnRefresh = document.getElementById('btn-admin-refresh-all');
+    if (btnRefresh) {
+        btnRefresh.addEventListener('click', () => {
+            loadAdminOverview();
+            if (currentAdminTab !== 'admin-pane-overview') {
+                switchAdminTab(currentAdminTab);
+            }
+        });
+    }
+
+    const btnGotoAudit = document.getElementById('btn-goto-audit-tab');
+    if (btnGotoAudit) {
+        btnGotoAudit.addEventListener('click', () => switchAdminTab('admin-pane-audit'));
+    }
+
+    // 3. Clinicians Filters & Search
+    document.querySelectorAll('#admin-clinicians-status-filters .filter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('#admin-clinicians-status-filters .filter-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            const status = pill.getAttribute('data-status') || 'all';
+            const search = (document.getElementById('admin-clinicians-search')?.value || '').trim();
+            loadAdminClinicians(status, search);
+        });
+    });
+
+    const clinicianSearch = document.getElementById('admin-clinicians-search');
+    if (clinicianSearch) {
+        let debounceTimer;
+        clinicianSearch.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                loadAdminClinicians(currentClinicianFilter, clinicianSearch.value.trim());
+            }, 300);
+        });
+    }
+
+    // 4. Safety Queue Filters
+    document.querySelectorAll('#admin-safety-type-filters .filter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('#admin-safety-type-filters .filter-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            const type = pill.getAttribute('data-type') || 'all';
+            loadAdminSafetyQueue(type);
+        });
+    });
+
+    // 5. Users Filters & Search
+    document.querySelectorAll('#admin-users-role-filters .filter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('#admin-users-role-filters .filter-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            const role = pill.getAttribute('data-role') || 'all';
+            const search = (document.getElementById('admin-users-search')?.value || '').trim();
+            loadAdminUsers(role, search);
+        });
+    });
+
+    const userSearch = document.getElementById('admin-users-search');
+    if (userSearch) {
+        let debounceTimer;
+        userSearch.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                loadAdminUsers(currentUserRoleFilter, userSearch.value.trim());
+            }, 300);
+        });
+    }
+
+    // 6. Audit Log Search & CSV Export
+    const auditSearch = document.getElementById('admin-audit-search');
+    if (auditSearch) {
+        let debounceTimer;
+        auditSearch.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                loadAdminAuditLogs(auditSearch.value.trim());
+            }, 300);
+        });
+    }
+
+    const btnExportAudit = document.getElementById('btn-export-audit-csv');
+    if (btnExportAudit) {
+        btnExportAudit.addEventListener('click', exportAuditLogsCSV);
+    }
+
+    // 8. Modals
+    // Approve Modal (Verify & Attest)
+    const btnCancelApprove = document.getElementById('btn-cancel-admin-approve');
+    const btnCloseApprove = document.getElementById('btn-close-admin-approve-modal');
+    if (btnCancelApprove) btnCancelApprove.addEventListener('click', closeApproveModal);
+    if (btnCloseApprove) btnCloseApprove.addEventListener('click', closeApproveModal);
+
+    const formApprove = document.getElementById('form-admin-approve-clinician');
+    if (formApprove) {
+        formApprove.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!pendingApproveClinician) return;
+
+            const refInput = document.getElementById('admin-approve-ref-input');
+            const notesInput = document.getElementById('admin-approve-notes-input');
+            const feedback = document.getElementById('admin-approve-feedback');
+            const spinner = document.getElementById('admin-approve-spinner');
+
+            const verification_reference = (refInput?.value || '').trim();
+            const verification_notes = (notesInput?.value || '').trim();
+
+            if (!verification_reference || verification_reference.length < 2) {
+                if (feedback) {
+                    feedback.textContent = 'Please provide a valid medical board verification reference ID.';
+                    feedback.style.display = 'block';
+                }
+                return;
+            }
+
+            try {
+                if (spinner) spinner.style.display = 'inline-block';
+                const endpoint = `/api/admin/clinicians/${pendingApproveClinician.id}/approve`;
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: getAuthHeaders(true),
+                    body: JSON.stringify({ verification_reference, verification_notes })
+                });
+                if (handleAuthError(res)) return;
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Approval failed');
+                }
+                closeApproveModal();
+                loadAdminClinicians();
+                loadAdminOverview();
+            } catch (err) {
+                if (feedback) {
+                    feedback.textContent = err.message;
+                    feedback.style.display = 'block';
+                }
+            } finally {
+                if (spinner) spinner.style.display = 'none';
+            }
+        });
+    }
+
+    // Reason Modal (Reject / Suspend / Request Info)
+    const btnCancelReason = document.getElementById('btn-cancel-admin-reason');
+    const btnCloseReason = document.getElementById('btn-close-admin-reason-modal');
+    if (btnCancelReason) btnCancelReason.addEventListener('click', closeReasonModal);
+    if (btnCloseReason) btnCloseReason.addEventListener('click', closeReasonModal);
+
+    const formReason = document.getElementById('form-admin-action-reason');
+    if (formReason) {
+        formReason.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!pendingClinicianAction) return;
+
+            const reasonInput = document.getElementById('admin-action-reason-input');
+            const feedback = document.getElementById('admin-reason-feedback');
+            const spinner = document.getElementById('admin-reason-spinner');
+            const reason = (reasonInput?.value || '').trim();
+
+            if (!reason || reason.length < 5) {
+                if (feedback) {
+                    feedback.textContent = 'Please provide a valid administrative rationale (at least 5 characters).';
+                    feedback.style.display = 'block';
+                }
+                return;
+            }
+
+            try {
+                if (spinner) spinner.style.display = 'inline-block';
+                let bodyPayload = { reason };
+                let endpointAction = pendingClinicianAction.action;
+                if (endpointAction === 'request-info') {
+                    bodyPayload = { request_notes: reason };
+                }
+
+                const endpoint = `/api/admin/clinicians/${pendingClinicianAction.doctorId}/${endpointAction}`;
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: getAuthHeaders(true),
+                    body: JSON.stringify(bodyPayload)
+                });
+                if (handleAuthError(res)) return;
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Action failed');
+                }
+                closeReasonModal();
+                loadAdminClinicians();
+                loadAdminOverview();
+            } catch (err) {
+                if (feedback) {
+                    feedback.textContent = err.message;
+                    feedback.style.display = 'block';
+                }
+            } finally {
+                if (spinner) spinner.style.display = 'none';
+            }
+        });
+    }
+
+    // Safety Investigate Modal
+    const btnCancelInvestigate = document.getElementById('btn-cancel-admin-investigate');
+    const btnCloseInvestigate = document.getElementById('btn-close-admin-investigate-modal');
+    if (btnCancelInvestigate) btnCancelInvestigate.addEventListener('click', closeInvestigateModal);
+    if (btnCloseInvestigate) btnCloseInvestigate.addEventListener('click', closeInvestigateModal);
+
+    const formInvestigate = document.getElementById('form-admin-investigate');
+    if (formInvestigate) {
+        formInvestigate.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!activeInvestigateItem) return;
+
+            const targetId = activeInvestigateItem.assessment_id || activeInvestigateItem.id;
+            const status = document.getElementById('admin-investigate-status')?.value || 'resolved';
+            const notes = (document.getElementById('admin-investigate-notes')?.value || '').trim();
+            const spinner = document.getElementById('admin-investigate-spinner');
+            const feedback = document.getElementById('admin-investigate-feedback');
+
+            if (!notes) {
+                if (feedback) {
+                    feedback.textContent = 'Please enter resolution notes.';
+                    feedback.style.display = 'block';
+                }
+                return;
+            }
+
+            try {
+                if (spinner) spinner.style.display = 'inline-block';
+                const res = await fetch(`/api/admin/safety-queue/${targetId}/investigate`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(true),
+                    body: JSON.stringify({ status, notes })
+                });
+                if (handleAuthError(res)) return;
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Resolution recording failed');
+                }
+                closeInvestigateModal();
+                loadAdminSafetyQueue();
+                loadAdminOverview();
+            } catch (err) {
+                if (feedback) {
+                    feedback.textContent = err.message;
+                    feedback.style.display = 'block';
+                }
+            } finally {
+                if (spinner) spinner.style.display = 'none';
+            }
+        });
+    }
+
+    // Safety Case Details Modal
+    const btnCloseSafetyDetails = document.getElementById('btn-close-safety-details-modal');
+    const btnDismissSafetyDetails = document.getElementById('btn-dismiss-safety-details');
+    if (btnCloseSafetyDetails) btnCloseSafetyDetails.addEventListener('click', closeSafetyDetailsModal);
+    if (btnDismissSafetyDetails) btnDismissSafetyDetails.addEventListener('click', closeSafetyDetailsModal);
+
+    // Safety Clinician Assign Modal
+    const btnCancelSafetyAssign = document.getElementById('btn-cancel-safety-assign');
+    const btnCloseSafetyAssign = document.getElementById('btn-close-safety-assign-modal');
+    if (btnCancelSafetyAssign) btnCancelSafetyAssign.addEventListener('click', closeSafetyAssignModal);
+    if (btnCloseSafetyAssign) btnCloseSafetyAssign.addEventListener('click', closeSafetyAssignModal);
+
+    const formSafetyAssign = document.getElementById('form-admin-safety-assign');
+    if (formSafetyAssign) {
+        formSafetyAssign.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentAssignAssessmentId) return;
+
+            const selectDoc = document.getElementById('safety-assign-doctor-select');
+            const notesInput = document.getElementById('safety-assign-notes');
+            const feedback = document.getElementById('safety-assign-feedback');
+            const spinner = document.getElementById('safety-assign-spinner');
+
+            const doctor_id = selectDoc?.value;
+            const notes = (notesInput?.value || '').trim();
+
+            if (!doctor_id) {
+                if (feedback) {
+                    feedback.textContent = 'Please select a qualified clinician.';
+                    feedback.style.display = 'block';
+                }
+                return;
+            }
+
+            try {
+                if (spinner) spinner.style.display = 'inline-block';
+                if (feedback) feedback.style.display = 'none';
+
+                const res = await fetch(`/api/admin/safety-queue/${currentAssignAssessmentId}/assign`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(true),
+                    body: JSON.stringify({ doctor_id, notes })
+                });
+                if (handleAuthError(res)) return;
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Assignment failed');
+                }
+                closeSafetyAssignModal();
+                loadAdminSafetyQueue();
+                loadAdminOverview();
+            } catch (err) {
+                if (feedback) {
+                    feedback.textContent = err.message;
+                    feedback.style.display = 'block';
+                }
+            } finally {
+                if (spinner) spinner.style.display = 'none';
+            }
+        });
+    }
+
+    // Incident Modal
+    const btnOpenIncident = document.getElementById('btn-open-incident-modal');
+    const modalIncident = document.getElementById('modal-admin-incident');
+    const btnCloseIncident = document.getElementById('btn-close-admin-incident-modal');
+    const btnCancelIncident = document.getElementById('btn-cancel-admin-incident');
+
+    if (btnOpenIncident) {
+        btnOpenIncident.addEventListener('click', () => {
+            if (modalIncident) modalIncident.style.display = 'flex';
+        });
+    }
+    if (btnCloseIncident) btnCloseIncident.addEventListener('click', () => { if (modalIncident) modalIncident.style.display = 'none'; });
+    if (btnCancelIncident) btnCancelIncident.addEventListener('click', () => { if (modalIncident) modalIncident.style.display = 'none'; });
+
+    const formIncident = document.getElementById('form-admin-incident');
+    if (formIncident) {
+        formIncident.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const service_name = document.getElementById('admin-incident-service')?.value || 'ConvNeXt CT Gatekeeper';
+            const severity = document.getElementById('admin-incident-severity')?.value || 'medium';
+            const incident_type = (document.getElementById('admin-incident-type')?.value || '').trim();
+            const description = (document.getElementById('admin-incident-desc')?.value || '').trim();
+            const feedback = document.getElementById('admin-incident-feedback');
+            const spinner = document.getElementById('admin-incident-spinner');
+
+            if (!incident_type || !description) {
+                if (feedback) {
+                    feedback.textContent = 'Please fill all required fields.';
+                    feedback.style.display = 'block';
+                }
+                return;
+            }
+
+            try {
+                if (spinner) spinner.style.display = 'inline-block';
+                const res = await fetch('/api/admin/incidents', {
+                    method: 'POST',
+                    headers: getAuthHeaders(true),
+                    body: JSON.stringify({ service_name, severity, incident_type, description })
+                });
+                if (handleAuthError(res)) return;
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Incident logging failed');
+                }
+                if (modalIncident) modalIncident.style.display = 'none';
+                formIncident.reset();
+                loadAdminHealth();
+                loadAdminOverview();
+            } catch (err) {
+                if (feedback) {
+                    feedback.textContent = err.message;
+                    feedback.style.display = 'block';
+                }
+            } finally {
+                if (spinner) spinner.style.display = 'none';
+            }
+        });
+    }
+
+    // Audit Detail Modal
+    const btnCloseAuditDetail = document.getElementById('btn-close-admin-audit-detail');
+    const modalAuditDetail = document.getElementById('modal-admin-audit-detail');
+    if (btnCloseAuditDetail) {
+        btnCloseAuditDetail.addEventListener('click', () => {
+            if (modalAuditDetail) modalAuditDetail.style.display = 'none';
+        });
+    }
+}
+
 
 
 
