@@ -5668,7 +5668,8 @@ async function loadAdminAuditLogs(search = '') {
         });
         if (handleAuthError(res)) return;
         if (!res.ok) throw new Error(`Audit log fetch failed (${res.status})`);
-        const logs = await res.json();
+        const data = await res.json();
+        const logs = Array.isArray(data) ? data : (data.items || []);
         cachedAuditLogs = logs;
 
         if (logs.length === 0) {
@@ -5762,44 +5763,60 @@ async function loadAdminHealth() {
         if (!res.ok) throw new Error(`Health fetch failed (${res.status})`);
         const data = await res.json();
 
+        const statusStr = (data.overall_status || data.status || 'HEALTHY').toUpperCase();
         if (overallBadge) {
-            overallBadge.textContent = `SYSTEM STATUS: ${data.status}`;
-            overallBadge.className = `health-overall-badge ${data.status === 'HEALTHY' ? 'badge-healthy' : 'badge-degraded'}`;
+            overallBadge.textContent = `SYSTEM STATUS: ${statusStr}`;
+            overallBadge.className = `health-overall-badge ${statusStr === 'HEALTHY' ? 'badge-healthy' : 'badge-degraded'}`;
         }
         if (checkedAt) {
             checkedAt.textContent = 'Last verified: ' + formatAdminDateTime(data.checked_at);
         }
 
         if (servicesContainer && data.services) {
-            servicesContainer.innerHTML = data.services.map(s => {
-                const isHealthy = s.status === 'HEALTHY';
+            const serviceList = Array.isArray(data.services)
+                ? data.services
+                : Object.entries(data.services).map(([key, s]) => ({ id: key, ...s }));
+
+            servicesContainer.innerHTML = serviceList.map(s => {
+                const isHealthy = (s.status || '').toLowerCase() === 'healthy';
                 return `
                     <div class="admin-service-card">
                         <div>
-                            <span class="admin-service-name">${escapeHTML(s.name)}</span>
-                            <span class="admin-service-type">${escapeHTML(s.type)} &bull; ${s.latency_ms || 0}ms</span>
+                            <span class="admin-service-name">${escapeHTML(s.name || s.id)}</span>
+                            <span class="admin-service-type">${escapeHTML(s.details || s.type || 'Subsystem')} &bull; ${s.latency_ms ? s.latency_ms + 'ms' : 'Active'}</span>
                         </div>
-                        <span class="badge-status ${isHealthy ? 'badge-healthy' : 'badge-degraded'}">${s.status}</span>
+                        <span class="badge-status ${isHealthy ? 'badge-healthy' : 'badge-degraded'}">${(s.status || 'UNKNOWN').toUpperCase()}</span>
                     </div>
                 `;
             }).join('');
         }
 
-        if (incidentsTbody && data.incidents) {
-            if (data.incidents.length === 0) {
-                incidentsTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No active operational incidents recorded.</td></tr>`;
-            } else {
-                incidentsTbody.innerHTML = data.incidents.map(inc => `
-                    <tr>
-                        <td style="white-space: nowrap;">${formatAdminDateTime(inc.created_at)}</td>
-                        <td><strong>${escapeHTML(inc.service_name)}</strong></td>
-                        <td><code>${escapeHTML(inc.incident_type)}</code></td>
-                        <td><span class="badge-status ${inc.severity === 'critical' || inc.severity === 'high' ? 'badge-critical' : 'badge-pending'}">${inc.severity.toUpperCase()}</span></td>
-                        <td>${escapeHTML(inc.description)}</td>
-                        <td><span class="badge-status ${inc.status === 'resolved' ? 'badge-approved' : 'badge-pending'}">${inc.status.toUpperCase()}</span></td>
-                        <td style="text-align: right;">--</td>
-                    </tr>
-                `).join('');
+        if (incidentsTbody) {
+            try {
+                const incRes = await fetch('/api/admin/incidents', {
+                    headers: getAuthHeaders(true)
+                });
+                if (incRes.ok) {
+                    const incidents = await incRes.json();
+                    const incList = Array.isArray(incidents) ? incidents : (incidents.items || []);
+                    if (incList.length === 0) {
+                        incidentsTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No active operational incidents recorded.</td></tr>`;
+                    } else {
+                        incidentsTbody.innerHTML = incList.map(inc => `
+                            <tr>
+                                <td style="white-space: nowrap;">${formatAdminDateTime(inc.created_at)}</td>
+                                <td><strong>${escapeHTML(inc.service_name || '--')}</strong></td>
+                                <td><code>${escapeHTML(inc.incident_type || '--')}</code></td>
+                                <td><span class="badge-status ${inc.severity === 'critical' || inc.severity === 'high' ? 'badge-critical' : 'badge-pending'}">${escapeHTML(inc.severity || 'medium').toUpperCase()}</span></td>
+                                <td>${escapeHTML(inc.description || '--')}</td>
+                                <td><span class="badge-status ${inc.status === 'resolved' ? 'badge-approved' : 'badge-pending'}">${escapeHTML(inc.status || 'open').toUpperCase()}</span></td>
+                                <td style="text-align: right;">--</td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            } catch (incErr) {
+                console.warn('Error loading incidents:', incErr);
             }
         }
 
