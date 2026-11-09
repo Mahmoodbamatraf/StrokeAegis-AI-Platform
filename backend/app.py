@@ -543,11 +543,22 @@ def chatbot_health():
 # Mount assets directory (includes logo.jpg and medical_robot_transparent.svg)
 app.mount("/assets", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
 
+FRONTEND_DIST = FRONTEND_DIR / "dist"
+
+
 @app.get("/")
 def get_index():
-    return FileResponse(FRONTEND_DIR / "index.html")
+    index = FRONTEND_DIST / "index.html"
+    if not index.exists():
+        return JSONResponse(
+            status_code=503,
+            content={"detail": "Frontend not built. Run: cd frontend && npm install && npm run build"},
+        )
+    return FileResponse(index)
 
-app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
+
+if FRONTEND_DIST.exists():
+    app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")
 
 
 if __name__ == "__main__":
