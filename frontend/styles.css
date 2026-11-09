@@ -30,6 +30,7 @@
     --color-ring: #0E7490;
     --color-white: #FFFFFF;          /* fixed in both themes (text on dark/colored areas) */
     --color-ink: #0F2A2E;            /* fixed dark surfaces (footer, tooltips, hero overlays) */
+    --color-primary-on-ink: #22D3EE; /* fixed accent on --color-ink surfaces */
 
     --color-danger: #DC2626;
     --color-danger-soft: #FEF2F2;
@@ -3203,7 +3204,7 @@ html[data-theme="light"] .track-bg-night {
 :root:not([data-theme="dark"]) .theme-switch-knob,
 html[data-theme="light"] .theme-switch-knob {
     transform: translateX(0px);
-    background: linear-gradient(145deg, var(--color-white) 0%, var(--color-warning-soft) 100%) !important;
+    background: linear-gradient(145deg, var(--color-surface) 0%, var(--color-warning-soft) 100%) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 12px rgba(251, 191, 36, 0.6) !important;
     color: var(--color-warning) !important;
 }
@@ -3257,17 +3258,17 @@ html[data-theme="light"] .theme-switch-knob .theme-icon-dark {
    ============================================================== */
 .lang-capsule,
 [data-theme="dark"] .lang-capsule {
-    background: var(--color-surface) !important;
+    background: var(--color-ink) !important;
     border: 1px solid rgba(255, 255, 255, 0.18) !important;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.45), 0 3px 10px rgba(0, 0, 0, 0.25) !important;
-    color: var(--color-text) !important;
+    color: var(--color-white) !important;
 }
 
 .lang-capsule .capsule-knob,
 [data-theme="dark"] .lang-capsule .capsule-knob {
-    background: linear-gradient(145deg, var(--color-white) 0%, var(--color-surface-muted) 100%) !important;
-    color: var(--color-primary) !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 1px var(--color-border-strong) !important;
+    background: var(--color-white) !important;
+    color: var(--color-ink) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 1px var(--color-white) !important;
 }
 
 .lang-capsule .lang-opt {
@@ -3279,7 +3280,7 @@ html[data-theme="light"] .theme-switch-knob .theme-icon-dark {
 }
 
 .lang-capsule .lang-opt.active {
-    color: var(--color-primary);
+    color: var(--color-primary-on-ink);
     background: rgba(34, 211, 238, 0.16);
     font-weight: 800;
     box-shadow: 0 0 10px rgba(34, 211, 238, 0.25);
@@ -3312,10 +3313,10 @@ button, input, select, textarea {
 [data-theme="dark"] .wizard-stepper,
 [data-theme="dark"] .results-top-nav,
 [data-theme="dark"] .pipeline-progress-banner {
-    background: var(--color-surface) !important;
+    background: var(--color-ink) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45) !important;
-    color: var(--color-text) !important;
+    color: var(--color-on-primary) !important;
 }
 
 [data-theme="dark"] .wstep-item {
@@ -3324,7 +3325,7 @@ button, input, select, textarea {
 
 [data-theme="dark"] .wstep-item .wnum,
 [data-theme="dark"] .step-node .num {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border-color: rgba(255, 255, 255, 0.12) !important;
     color: var(--color-text-muted) !important;
 }
@@ -3378,7 +3379,7 @@ button, input, select, textarea {
 
 /* Fix the Subtab Switcher Buttons in Nav (Was a stark white box when active!) */
 [data-theme="dark"] .subtab-btn {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
     color: var(--color-text-muted) !important;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4) !important;
@@ -3400,7 +3401,7 @@ button, input, select, textarea {
 /* Fix Presets Rows and CT Presets Mini List inside Hero Subpath */
 [data-theme="dark"] .hero-subpath .presets-row,
 [data-theme="dark"] .presets-row {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
@@ -3432,7 +3433,7 @@ button, input, select, textarea {
    ============================================================== */
 [data-theme="dark"] .dropzone,
 [data-theme="dark"] .dropzone-compact {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border: 2px dashed rgba(255, 255, 255, 0.14) !important;
     color: var(--color-text-muted) !important;
 }
@@ -3462,7 +3463,7 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .scan-preview-card {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
@@ -3482,10 +3483,10 @@ button, input, select, textarea {
 [data-theme="dark"] .report-executive-summary,
 [data-theme="dark"] .key-actions-box,
 [data-theme="dark"] .report-download-bar {
-    background: var(--color-surface) !important;
+    background: var(--color-ink) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04) !important;
-    color: var(--color-text) !important;
+    color: var(--color-on-primary) !important;
 }
 
 [data-theme="dark"] .card-header,
@@ -3571,7 +3572,7 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .mode-icon-circle {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
@@ -3582,7 +3583,7 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .path-preview-item {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     color: var(--color-text-muted) !important;
     border: 1px solid rgba(255, 255, 255, 0.06) !important;
 }
@@ -3595,13 +3596,13 @@ button, input, select, textarea {
    6. FORM INPUTS, CONTROLS & INSTRUCTIONS (STEP 1)
    ============================================================== */
 [data-theme="dark"] .form-group label {
-    color: var(--color-text) !important;
+    color: var(--color-text-muted) !important;
 }
 
 [data-theme="dark"] .form-control,
 [data-theme="dark"] select.form-control,
 [data-theme="dark"] input.form-control {
-    background-color: var(--color-bg) !important;
+    background-color: var(--color-surface) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     color: var(--color-text) !important;
 }
@@ -3622,7 +3623,7 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .step-instruction-box {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     color: var(--color-text-muted) !important;
 }
@@ -3670,7 +3671,7 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .agent-step-item {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border: 1px solid rgba(255, 255, 255, 0.07) !important;
 }
 
@@ -3698,7 +3699,7 @@ button, input, select, textarea {
    ============================================================== */
 /* Compact gauge circle (Was white circle!) */
 [data-theme="dark"] .gauge-circle-compact {
-    background: var(--color-bg) !important;
+    background: var(--color-ink) !important;
     border: 3px solid rgba(255, 255, 255, 0.1) !important;
     box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5) !important;
 }
@@ -3718,13 +3719,13 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .chip-item {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border: 1px solid rgba(255, 255, 255, 0.06) !important;
     color: var(--color-text-muted) !important;
 }
 
 [data-theme="dark"] .ct-outcome-box {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
@@ -3745,7 +3746,7 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .validation-audit-strip {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
@@ -3828,7 +3829,7 @@ button, input, select, textarea {
 }
 
 [data-theme="dark"] .chat-input-wrap {
-    background: var(--color-bg) !important;
+    background: var(--color-surface) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 
@@ -4754,7 +4755,7 @@ body.rtl .btn-send svg {
 }
 
 [data-theme="dark"] .modern-input:focus {
-    background: var(--color-bg);
+    background: var(--color-surface);
     border-color: var(--color-secondary);
     box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.25);
 }
@@ -4958,7 +4959,7 @@ body.rtl .btn-send svg {
 [data-theme="dark"] .demo-pill-btn.patient-demo:hover {
     background: var(--color-surface);
     border-color: var(--color-primary);
-    box-shadow: 0 4px 16px rgba(129, 140, 248, 0.25);
+    box-shadow: 0 4px 16px rgba(34, 211, 238, 0.25);
 }
 
 .demo-badge {
@@ -6197,8 +6198,8 @@ html[data-theme="light"] .selfcheck-card-container,
 :root:not([data-theme="dark"]) .selfcheck-card-container.vchk-card,
 html[data-theme="light"] .selfcheck-card-container.vchk-card,
 [data-theme="light"] .selfcheck-card-container.vchk-card {
-    background: linear-gradient(145deg, var(--color-white) 0%, var(--color-surface-muted) 100%) !important;
-    border: 1px solid var(--color-border-strong) !important;
+    background: linear-gradient(145deg, var(--color-surface) 0%, var(--color-bg) 100%) !important;
+    border: 1px solid var(--color-border) !important;
     box-shadow: 0 14px 38px -10px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04) !important;
 }
 
@@ -6242,7 +6243,7 @@ html[data-theme="light"] .vchk-title,
 :root:not([data-theme="dark"]) .selfcheck-intro h3,
 html[data-theme="light"] .selfcheck-intro h3,
 [data-theme="light"] .selfcheck-intro h3 {
-    color: var(--color-on-primary) !important; /* Crisp dark navy text for headings */
+    color: var(--color-text) !important; /* Crisp dark navy text for headings */
 }
 
 :root:not([data-theme="dark"]) .vchk-desc,
@@ -6258,7 +6259,7 @@ html[data-theme="light"] .selfcheck-intro p,
 :root:not([data-theme="dark"]) .vchk-label,
 html[data-theme="light"] .vchk-label,
 [data-theme="light"] .vchk-label {
-    color: var(--color-surface) !important; /* Dark navy text for labels */
+    color: var(--color-text) !important; /* Dark navy text for labels */
 }
 
 :root:not([data-theme="dark"]) .vchk-tag-vital,
@@ -6292,8 +6293,8 @@ html[data-theme="light"] .vchk-tag-life,
 :root:not([data-theme="dark"]) .vchk-control-wrap,
 html[data-theme="light"] .vchk-control-wrap,
 [data-theme="light"] .vchk-control-wrap {
-    background: var(--color-surface-muted) !important; /* Very light gray background for input fields */
-    border: 1.5px solid var(--color-border-strong) !important; /* Subtle light-gray border */
+    background: var(--color-bg) !important; /* Very light gray background for input fields */
+    border: 1.5px solid var(--color-text-muted) !important; /* Subtle light-gray border */
 }
 
 :root:not([data-theme="dark"]) .vchk-control-wrap:hover,
@@ -6306,7 +6307,7 @@ html[data-theme="light"] .vchk-control-wrap:hover,
 :root:not([data-theme="dark"]) .vchk-control-wrap:focus-within,
 html[data-theme="light"] .vchk-control-wrap:focus-within,
 [data-theme="light"] .vchk-control-wrap:focus-within {
-    background: var(--color-white) !important;
+    background: var(--color-surface) !important;
     border-color: var(--color-success) !important; /* Green StrokeAegis accent */
     box-shadow: 0 0 0 3.5px rgba(16, 185, 129, 0.18), 0 2px 8px rgba(16, 185, 129, 0.08) !important;
 }
@@ -6340,7 +6341,7 @@ html[data-theme="light"] .vchk-icon-lab,
 :root:not([data-theme="dark"]) .vchk-input,
 html[data-theme="light"] .vchk-input,
 [data-theme="light"] .vchk-input {
-    color: var(--color-on-primary) !important; /* Dark readable text */
+    color: var(--color-text) !important; /* Dark readable text */
 }
 
 :root:not([data-theme="dark"]) .vchk-input::placeholder,
@@ -6353,14 +6354,14 @@ html[data-theme="light"] .vchk-input::placeholder,
 :root:not([data-theme="dark"]) .vchk-select,
 html[data-theme="light"] .vchk-select,
 [data-theme="light"] .vchk-select {
-    color: var(--color-on-primary) !important; /* Dark readable text */
+    color: var(--color-text) !important; /* Dark readable text */
 }
 
 :root:not([data-theme="dark"]) .vchk-select option,
 html[data-theme="light"] .vchk-select option,
 [data-theme="light"] .vchk-select option {
-    background-color: var(--color-white) !important;
-    color: var(--color-on-primary) !important;
+    background-color: var(--color-surface) !important;
+    color: var(--color-text) !important;
 }
 
 :root:not([data-theme="dark"]) .vchk-chevron,
@@ -7849,15 +7850,15 @@ body.rtl .vchk-chevron {
 }
 
 .rel-badge-care {
-    background: rgba(139, 92, 246, 0.12);
+    background: rgba(14, 116, 144, 0.12);
     color: var(--color-primary);
-    border: 1px solid rgba(139, 92, 246, 0.3);
+    border: 1px solid rgba(14, 116, 144, 0.3);
 }
 
 [data-theme="dark"] .rel-badge-care {
-    background: rgba(167, 139, 250, 0.16);
+    background: rgba(34, 211, 238, 0.16);
     color: var(--color-primary);
-    border-color: rgba(167, 139, 250, 0.4);
+    border-color: rgba(34, 211, 238, 0.4);
 }
 
 .rel-badge-pending {
