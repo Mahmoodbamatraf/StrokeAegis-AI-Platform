@@ -3299,6 +3299,28 @@ button, input, select, textarea {
     font-family: inherit;
 }
 
+/* Text/link-style button (DESIGN.md §6 Ghost) */
+.btn-text-action {
+    background: transparent;
+    border: none;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    color: var(--color-primary);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 150ms ease;
+}
+
+.btn-text-action:hover {
+    background: var(--color-primary-soft);
+}
+
+.btn-text-action:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+}
+
 /* Dark tokens live in the [data-theme="dark"] block at the top of this file (see DESIGN.md §2.3). */
 
 [data-theme="dark"] body {

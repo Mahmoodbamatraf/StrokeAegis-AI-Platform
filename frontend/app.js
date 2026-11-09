@@ -1921,7 +1921,8 @@ function renderRegRiskResult(data) {
     const pill = document.getElementById('reg-tier-pill');
     if (pill) {
         pill.textContent = `${data.risk_tier.toUpperCase()} RISK TIER`;
-        pill.style.color = data.risk_tier_color;
+        const tierKey = /high/i.test(data.risk_tier) ? 'danger' : /moderate|medium/i.test(data.risk_tier) ? 'warning' : 'success';
+        pill.style.color = `var(--color-${tierKey})`;
     }
 
     const desc = document.getElementById('reg-tier-desc');
@@ -2693,7 +2694,7 @@ async function loadDoctorPatients() {
         cachedDoctorPatients = data.patients || [];
         renderDoctorPatientsTable(cachedDoctorPatients);
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #EF4444;">Failed to load patients: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--color-danger);">Failed to load patients: ${err.message}</td></tr>`;
     }
 }
 
@@ -2909,11 +2910,11 @@ function renderAIWizardModeBanner(patient) {
         const returnText = isAr ? '→ العودة إلى لوحة تحكم الطبيب' : '← Return to Doctor Portal';
 
         banner.innerHTML = `
-            <div style="background: rgba(2, 132, 199, 0.1); border: 1.5px solid #0284C7; border-radius: 12px; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="background: rgba(14, 116, 144, 0.1); border: 1.5px solid var(--color-primary); border-radius: 12px; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span style="font-size: 1.4rem; display: flex; align-items: center;">${getLucideIcon("user", "lucide-icon-lg")}</span>
                     <div>
-                        <strong style="color: #0284C7; font-size: 0.96rem; display: block;">${titleText}</strong>
+                        <strong style="color: var(--color-primary); font-size: 0.96rem; display: block;">${titleText}</strong>
                         <span style="color: var(--text-muted); font-size: 0.82rem;">${metaText}</span>
                     </div>
                 </div>
@@ -2935,11 +2936,11 @@ function renderAIWizardModeBanner(patient) {
         const returnText = isAr ? '→ العودة إلى لوحة تحكم الطبيب' : '← Return to Doctor Portal';
 
         banner.innerHTML = `
-            <div style="background: rgba(16, 185, 129, 0.1); border: 1.5px solid #10B981; border-radius: 12px; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="background: var(--color-success-soft); border: 1.5px solid var(--color-success); border-radius: 12px; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span style="font-size: 1.4rem; display: flex; align-items: center;">${getLucideIcon("flask-conical", "lucide-icon-lg")}</span>
                     <div>
-                        <strong style="color: #10B981; font-size: 0.96rem; display: block;">${titleText}</strong>
+                        <strong style="color: var(--color-success); font-size: 0.96rem; display: block;">${titleText}</strong>
                         <span style="color: var(--text-muted); font-size: 0.82rem;">${metaText}</span>
                     </div>
                 </div>
@@ -3034,17 +3035,17 @@ async function openPatientHistoryModal(patientId) {
 
         modalBody.innerHTML = `
             <div style="margin-bottom: 1.5rem;">
-                <h4 style="margin: 0 0 0.75rem 0; font-size: 1rem; color: #0284C7; display: flex; align-items: center; gap: 0.4rem;">${getLucideIcon('bar-chart-3')} Clinical Assessments Timeline</h4>
+                <h4 style="margin: 0 0 0.75rem 0; font-size: 1rem; color: var(--color-primary); display: flex; align-items: center; gap: 0.4rem;">${getLucideIcon('bar-chart-3')} Clinical Assessments Timeline</h4>
                 ${assessmentsHTML}
             </div>
             <div>
-                <h4 style="margin: 0 0 0.75rem 0; font-size: 1rem; color: #0284C7; display: flex; align-items: center; gap: 0.4rem;">${getLucideIcon('file-text')} Generated Clinical Reports</h4>
+                <h4 style="margin: 0 0 0.75rem 0; font-size: 1rem; color: var(--color-primary); display: flex; align-items: center; gap: 0.4rem;">${getLucideIcon('file-text')} Generated Clinical Reports</h4>
                 ${reportsHTML}
             </div>
         `;
 
     } catch (err) {
-        modalBody.innerHTML = `<div style="text-align: center; padding: 2rem; color: #EF4444;">Error: ${err.message}</div>`;
+        modalBody.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--color-danger);">Error: ${err.message}</div>`;
     }
 }
 
@@ -3064,7 +3065,7 @@ async function loadDoctorReports() {
         cachedDoctorReports = data.reports || [];
         renderDoctorReportsTable(cachedDoctorReports);
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #EF4444;">Failed to load reports: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--color-danger);">Failed to load reports: ${err.message}</td></tr>`;
     }
 }
 
@@ -3245,7 +3246,7 @@ async function openDoctorConversation(convoId, recipientName) {
 
         stream.scrollTop = stream.scrollHeight;
     } catch (err) {
-        stream.innerHTML = `<div style="text-align: center; color: #EF4444; padding: 1.5rem;">Error: ${err.message}</div>`;
+        stream.innerHTML = `<div style="text-align: center; color: var(--color-danger); padding: 1.5rem;">Error: ${err.message}</div>`;
     }
 }
 
@@ -3492,7 +3493,9 @@ async function handlePatientSelfCheck() {
 
         if (modal && modalBody) {
             const tier = ml.risk_tier || 'Low';
-            const tierColor = ml.tier_color || (tier === 'High' ? '#EF4444' : tier === 'Moderate' ? '#F59E0B' : '#10B981');
+            const tierKey = tier === 'High' ? 'danger' : tier === 'Moderate' ? 'warning' : 'success';
+            const tierColor = `var(--color-${tierKey})`;
+            const tierSoft = `var(--color-${tierKey}-soft)`;
             const probPct = ml.probability_pct || (ml.stroke_probability * 100).toFixed(1);
 
             const factorsList = (ml.risk_factors && ml.risk_factors.length > 0) ? ml.risk_factors : (ml.clinical_factors || []);
@@ -3534,7 +3537,7 @@ async function handlePatientSelfCheck() {
                                 <span style="color: ${tierColor};">${escapeHTML(tier)} Risk</span>
                             </h3>
                         </div>
-                        <div class="sc-modal-prob-capsule" style="background: ${tierColor}18; color: ${tierColor}; border: 1.5px solid ${tierColor}45;">
+                        <div class="sc-modal-prob-capsule" style="background: ${tierSoft}; color: ${tierColor}; border: 1.5px solid ${tierColor};">
                             <span class="prob-num">${escapeHTML(probPct)}%</span>
                             <span class="prob-label">${escapeHTML(calcProbLabel)}</span>
                         </div>
@@ -3627,7 +3630,7 @@ async function loadPatientAssessments() {
         }).join('');
 
     } catch (err) {
-        list.innerHTML = `<div style="text-align: center; padding: 2rem; color: #EF4444;">Error: ${err.message}</div>`;
+        list.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--color-danger);">Error: ${err.message}</div>`;
     }
 }
 
@@ -3683,7 +3686,7 @@ async function loadPatientReports() {
         }).join('');
 
     } catch (err) {
-        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #EF4444;">Error: ${err.message}</div>`;
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--color-danger);">Error: ${err.message}</div>`;
     }
 }
 
@@ -3920,7 +3923,7 @@ async function loadDoctorRequests() {
 
         container.style.display = 'block';
         container.innerHTML = `
-            <div style="background: rgba(37, 99, 235, 0.08); border: 1.5px solid #3B82F6; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem;">
+            <div style="background: rgba(14, 116, 144, 0.08); border: 1.5px solid var(--color-primary); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                         ${getLucideIcon('user-plus')}
@@ -3934,12 +3937,12 @@ async function loadDoctorRequests() {
                     ${incoming.map(req => {
                         const timeRem = formatTimeRemaining(req.expires_at);
                         return `
-                            <div style="background: var(--bg-card, #ffffff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 0.9rem 1.15rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                            <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 0.9rem 1.15rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
                                 <div>
                                     <strong style="color: var(--text-main); font-size: 0.95rem;">${escapeHTML(req.patient_name)}</strong>
                                     <span style="color: var(--text-muted); font-size: 0.82rem; margin-left: 0.5rem;">MRN: ${escapeHTML(req.patient_mrn)}</span>
                                     <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem;">
-                                        ${escapeHTML(req.patient_email)} • <span style="color: #D97706; font-weight: 600;">${timeRem}</span>
+                                        ${escapeHTML(req.patient_email)} • <span style="color: var(--color-warning); font-weight: 600;">${timeRem}</span>
                                     </div>
                                 </div>
                                 <div style="display: flex; gap: 0.5rem;">
@@ -4053,7 +4056,7 @@ async function loadPatientCareTeam() {
             if (incoming.length > 0) {
                 incContainer.style.display = 'block';
                 incContainer.innerHTML = `
-                    <div style="background: rgba(37, 99, 235, 0.08); border: 1.5px solid #3B82F6; border-radius: 12px; padding: 1.25rem;">
+                    <div style="background: rgba(14, 116, 144, 0.08); border: 1.5px solid var(--color-primary); border-radius: 12px; padding: 1.25rem;">
                         <h4 style="margin: 0 0 0.85rem 0; font-size: 0.98rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
                             ${getLucideIcon('user-plus')} Doctor Clinical Supervision Invitations (${incoming.length})
                         </h4>
@@ -4061,13 +4064,13 @@ async function loadPatientCareTeam() {
                             ${incoming.map(req => {
                                 const timeRem = formatTimeRemaining(req.expires_at);
                                 return `
-                                    <div style="background: var(--bg-card, #ffffff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 0.85rem 1.15rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                                    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 0.85rem 1.15rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
                                         <div>
                                             <strong style="color: var(--text-main); font-size: 0.95rem;">${escapeHTML(req.full_name)}</strong>
                                             <div style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.2rem;">
                                                 ${escapeHTML(req.specialization)} • ${escapeHTML(req.hospital)}
                                             </div>
-                                            <div style="color: #D97706; font-size: 0.8rem; font-weight: 600; margin-top: 0.2rem;">
+                                            <div style="color: var(--color-warning); font-size: 0.8rem; font-weight: 600; margin-top: 0.2rem;">
                                                 ${timeRem}
                                             </div>
                                         </div>
@@ -4097,7 +4100,7 @@ async function loadPatientCareTeam() {
                 docCard.innerHTML = `
                     <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                         <div style="display: flex; gap: 1.25rem; align-items: center;">
-                            <div class="doctor-avatar-lg" style="width: 58px; height: 58px; border-radius: 50%; background: rgba(37, 99, 235, 0.12); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                            <div class="doctor-avatar-lg" style="width: 58px; height: 58px; border-radius: 50%; background: rgba(14, 116, 144, 0.12); display: flex; align-items: center; justify-content: center; color: var(--primary);">
                                 ${getLucideIcon('stethoscope')}
                             </div>
                             <div>
@@ -4123,7 +4126,7 @@ async function loadPatientCareTeam() {
                 `;
             } else {
                 docCard.innerHTML = `
-                    <div style="text-align: center; padding: 2rem 1.5rem; background: var(--bg-card, #ffffff); border: 1.5px dashed var(--border-color, #cbd5e1); border-radius: 12px;">
+                    <div style="text-align: center; padding: 2rem 1.5rem; background: var(--color-surface); border: 1.5px dashed var(--color-border-strong); border-radius: 12px;">
                         <div style="margin-bottom: 0.75rem; color: var(--text-muted);">${getLucideIcon('user-x')}</div>
                         <h4 style="margin: 0 0 0.5rem 0; font-size: 1.05rem; font-weight: 700; color: var(--text-main);">No Primary Doctor Assigned</h4>
                         <p style="margin: 0 0 1.25rem 0; font-size: 0.86rem; color: var(--text-muted); max-width: 440px; margin-inline: auto;">
@@ -4143,7 +4146,7 @@ async function loadPatientCareTeam() {
                 careList.innerHTML = careTeam.map(doc => `
                     <div class="care-team-card">
                         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                            <div class="doctor-avatar-sm" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(16, 185, 129, 0.12); display: flex; align-items: center; justify-content: center; color: #10B981;">
+                            <div class="doctor-avatar-sm" style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-success-soft); display: flex; align-items: center; justify-content: center; color: var(--color-success);">
                                 ${getLucideIcon('stethoscope')}
                             </div>
                             <div>
@@ -4188,7 +4191,7 @@ async function loadPatientCareTeam() {
                                             <span style="font-size: 0.82rem; color: var(--text-muted); margin-left: 0.5rem;">${escapeHTML(req.specialization)}</span>
                                         </div>
                                         <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                            <span style="color: #D97706; font-size: 0.8rem; font-weight: 600;">${timeRem}</span>
+                                            <span style="color: var(--color-warning); font-size: 0.8rem; font-weight: 600;">${timeRem}</span>
                                             <span class="badge badge-warning" style="font-size: 0.75rem;">Awaiting Doctor Review</span>
                                         </div>
                                     </div>
@@ -4277,9 +4280,9 @@ async function loadAvailableDoctors(query = '') {
             }
 
             return `
-                <div style="background: var(--bg-card, #ffffff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 0.9rem 1.15rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 0.9rem 1.15rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
                     <div style="display: flex; align-items: center; gap: 0.85rem;">
-                        <div style="width: 42px; height: 42px; border-radius: 50%; background: rgba(37, 99, 235, 0.1); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                        <div style="width: 42px; height: 42px; border-radius: 50%; background: rgba(14, 116, 144, 0.1); display: flex; align-items: center; justify-content: center; color: var(--primary);">
                             ${getLucideIcon('stethoscope')}
                         </div>
                         <div>
@@ -4297,7 +4300,7 @@ async function loadAvailableDoctors(query = '') {
         }).join('');
 
     } catch (err) {
-        container.innerHTML = `<div style="text-align: center; padding: 2rem; color: #EF4444;">Error: ${escapeHTML(err.message)}</div>`;
+        container.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--color-danger);">Error: ${escapeHTML(err.message)}</div>`;
     }
 }
 
@@ -4458,7 +4461,7 @@ function renderNotificationsList(notifs) {
 
         let actionsHTML = '';
         if (isMsg && n.reference_id) {
-            actionsHTML += `<button type="button" class="notif-action-btn" onclick="openChatFromNotification('${n.reference_id}', '${n.id}')" style="background: var(--color-primary, #2563eb); color: #ffffff; border: none; font-weight: 600; padding: 0.3rem 0.75rem; border-radius: 6px; cursor: pointer; margin-right: 0.5rem; display: inline-flex; align-items: center; gap: 0.35rem;">${getLucideIcon('message-square')} Open Chat</button>`;
+            actionsHTML += `<button type="button" class="notif-action-btn" onclick="openChatFromNotification('${n.reference_id}', '${n.id}')" style="background: var(--color-primary); color: var(--color-on-primary); border: none; font-weight: 600; padding: 0.3rem 0.75rem; border-radius: 6px; cursor: pointer; margin-right: 0.5rem; display: inline-flex; align-items: center; gap: 0.35rem;">${getLucideIcon('message-square')} Open Chat</button>`;
         }
         if (!n.is_read) {
             actionsHTML += `<button type="button" class="notif-action-btn" onclick="markNotificationRead('${n.id}')">Mark as read</button>`;
@@ -4828,7 +4831,7 @@ async function loadAdminOverview() {
                         <strong>${total}</strong>
                     </div>
                     <div class="volume-progress-track">
-                        <div class="volume-progress-fill" style="width: 100%; background: #0284C7;"></div>
+                        <div class="volume-progress-fill" style="width: 100%; background: var(--color-primary);"></div>
                     </div>
                 </div>
                 <div class="volume-stat-item">
@@ -4837,7 +4840,7 @@ async function loadAdminOverview() {
                         <strong>${highRisk} (${vb.high_risk_rate_pct || calcPct(highRisk, total)}%)</strong>
                     </div>
                     <div class="volume-progress-track">
-                        <div class="volume-progress-fill" style="width: ${vb.high_risk_rate_pct || calcPct(highRisk, total)}%; background: #EF4444;"></div>
+                        <div class="volume-progress-fill" style="width: ${vb.high_risk_rate_pct || calcPct(highRisk, total)}%; background: var(--color-danger);"></div>
                     </div>
                 </div>
                 <div class="volume-stat-item">
@@ -4846,7 +4849,7 @@ async function loadAdminOverview() {
                         <strong>${ctTotal}</strong>
                     </div>
                     <div class="volume-progress-track">
-                        <div class="volume-progress-fill" style="width: ${calcPct(ctTotal, total)}%; background: #6366F1;"></div>
+                        <div class="volume-progress-fill" style="width: ${calcPct(ctTotal, total)}%; background: var(--color-secondary);"></div>
                     </div>
                 </div>
                 <div class="volume-stat-item">
@@ -4855,7 +4858,7 @@ async function loadAdminOverview() {
                         <strong>${ischemic} (${calcPct(ischemic, ctTotal)}%)</strong>
                     </div>
                     <div class="volume-progress-track">
-                        <div class="volume-progress-fill" style="width: ${calcPct(ischemic, ctTotal)}%; background: #F59E0B;"></div>
+                        <div class="volume-progress-fill" style="width: ${calcPct(ischemic, ctTotal)}%; background: var(--color-warning);"></div>
                     </div>
                 </div>
                 <div class="volume-stat-item">
@@ -4864,7 +4867,7 @@ async function loadAdminOverview() {
                         <strong>${hemorrhagic} (${calcPct(hemorrhagic, ctTotal)}%)</strong>
                     </div>
                     <div class="volume-progress-track">
-                        <div class="volume-progress-fill" style="width: ${calcPct(hemorrhagic, ctTotal)}%; background: #DC2626;"></div>
+                        <div class="volume-progress-fill" style="width: ${calcPct(hemorrhagic, ctTotal)}%; background: var(--color-danger);"></div>
                     </div>
                 </div>
                 <div class="volume-stat-item">
@@ -4873,7 +4876,7 @@ async function loadAdminOverview() {
                         <strong>${normal} (${calcPct(normal, ctTotal)}%)</strong>
                     </div>
                     <div class="volume-progress-track">
-                        <div class="volume-progress-fill" style="width: ${calcPct(normal, ctTotal)}%; background: #10B981;"></div>
+                        <div class="volume-progress-fill" style="width: ${calcPct(normal, ctTotal)}%; background: var(--color-success);"></div>
                     </div>
                 </div>
             `;
@@ -4911,7 +4914,7 @@ async function loadAdminOverview() {
                 alertsBox.innerHTML = data.attention_alerts.map(a => `
                     <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.5rem;">
                         <div style="display: flex; align-items: center; gap: 0.65rem;">
-                            <span style="color: #D97706;">${getLucideIcon('alert-triangle')}</span>
+                            <span style="color: var(--color-warning);">${getLucideIcon('alert-triangle')}</span>
                             <div>
                                 <strong style="font-size: 0.9rem;">${escapeHTML(a.title)}</strong>
                                 <p style="margin: 0; font-size: 0.82rem; color: var(--text-muted);">${escapeHTML(a.message)}</p>
@@ -5016,12 +5019,12 @@ async function loadAdminClinicians(filter = currentClinicianFilter, search = '')
                     <td>${escapeHTML(doc.hospital_affiliation || '--')}</td>
                     <td>
                         <code>${escapeHTML(doc.license_number || '--')}</code>
-                        ${doc.verification_reference ? `<div style="font-size: 0.72rem; color: #059669; margin-top: 0.2rem;">Ref: <strong>${escapeHTML(doc.verification_reference)}</strong></div>` : ''}
+                        ${doc.verification_reference ? `<div style="font-size: 0.72rem; color: var(--color-success); margin-top: 0.2rem;">Ref: <strong>${escapeHTML(doc.verification_reference)}</strong></div>` : ''}
                     </td>
                     <td>
                         <span class="badge-status ${badgeClass}">${statusText}</span>
-                        ${doc.rejection_reason ? `<div style="font-size: 0.72rem; color: #DC2626; margin-top: 0.2rem;" title="${escapeHTML(doc.rejection_reason)}">${escapeHTML(doc.rejection_reason.slice(0, 32))}...</div>` : ''}
-                        ${doc.more_info_request ? `<div style="font-size: 0.72rem; color: #2563EB; margin-top: 0.2rem;" title="${escapeHTML(doc.more_info_request)}">Req: ${escapeHTML(doc.more_info_request.slice(0, 32))}...</div>` : ''}
+                        ${doc.rejection_reason ? `<div style="font-size: 0.72rem; color: var(--color-danger); margin-top: 0.2rem;" title="${escapeHTML(doc.rejection_reason)}">${escapeHTML(doc.rejection_reason.slice(0, 32))}...</div>` : ''}
+                        ${doc.more_info_request ? `<div style="font-size: 0.72rem; color: var(--color-primary); margin-top: 0.2rem;" title="${escapeHTML(doc.more_info_request)}">Req: ${escapeHTML(doc.more_info_request.slice(0, 32))}...</div>` : ''}
                     </td>
                     <td style="white-space: nowrap;">
                         <div>${formatAdminDateTime(doc.created_at)}</div>
@@ -5031,11 +5034,11 @@ async function loadAdminClinicians(filter = currentClinicianFilter, search = '')
                         <div class="admin-actions-cell">
                             ${(isPending || isMoreInfo) ? `
                                 <button type="button" class="btn btn-sm btn-primary" onclick="openApproveModal('${doc.id}')" title="Verify & Approve Medical License">Approve</button>
-                                <button type="button" class="btn btn-sm btn-secondary" onclick="openReasonModal('${doc.id}', 'request-info')" style="color: #2563EB;" title="Request Additional Documentation">Request Info</button>
-                                <button type="button" class="btn btn-sm btn-secondary" onclick="openReasonModal('${doc.id}', 'reject')" style="color: #DC2626;" title="Reject Medical Application">Reject</button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="openReasonModal('${doc.id}', 'request-info')" style="color: var(--color-primary);" title="Request Additional Documentation">Request Info</button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="openReasonModal('${doc.id}', 'reject')" style="color: var(--color-danger);" title="Reject Medical Application">Reject</button>
                             ` : ''}
                             ${isApproved ? `
-                                <button type="button" class="btn btn-sm btn-secondary" onclick="openReasonModal('${doc.id}', 'suspend')" style="color: #D97706;" title="Suspend Active Privileges">Suspend</button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="openReasonModal('${doc.id}', 'suspend')" style="color: var(--color-warning);" title="Suspend Active Privileges">Suspend</button>
                             ` : ''}
                             ${isSuspended ? `
                                 <button type="button" class="btn btn-sm btn-primary" onclick="openApproveModal('${doc.id}')" title="Reinstate Clinician Privileges">Reinstate</button>
@@ -5047,7 +5050,7 @@ async function loadAdminClinicians(filter = currentClinicianFilter, search = '')
         }).join('');
 
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #DC2626; padding: 2rem;">Failed to load clinicians: ${escapeHTML(err.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--color-danger); padding: 2rem;">Failed to load clinicians: ${escapeHTML(err.message)}</td></tr>`;
     }
 }
 
@@ -5243,7 +5246,7 @@ async function loadAdminSafetyQueue(filter = currentSafetyFilter) {
                         <div class="admin-actions-cell" style="justify-content: flex-end; gap: 0.35rem;">
                             <button type="button" class="btn btn-sm btn-secondary" onclick="openSafetyDetailsModal('${escapeHTML(assessmentId)}')" title="View Case Details & Diagnostic Trail">Details</button>
                             <button type="button" class="btn btn-sm btn-primary" onclick="openSafetyAssignModal('${escapeHTML(assessmentId)}')" title="Assign to Qualified Clinician">Assign</button>
-                            <button type="button" class="btn btn-sm btn-secondary" onclick="openInvestigateModal(${idx})" title="Record Investigation Note" style="color: #6B7280;">Log</button>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="openInvestigateModal(${idx})" title="Record Investigation Note" style="color: var(--color-text-muted);">Log</button>
                         </div>
                     </td>
                 </tr>
@@ -5251,7 +5254,7 @@ async function loadAdminSafetyQueue(filter = currentSafetyFilter) {
         }).join('');
 
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #DC2626; padding: 2rem;">Failed to load safety queue: ${escapeHTML(err.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--color-danger); padding: 2rem;">Failed to load safety queue: ${escapeHTML(err.message)}</td></tr>`;
     }
 }
 
@@ -5329,7 +5332,7 @@ async function openSafetyDetailsModal(assessmentId) {
             <!-- Diagnostics Matrix -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
                 <!-- CT Neuroimaging Gate & Classifier -->
-                <div style="background: var(--card-bg, #fff); border: 1px solid var(--border-color, #E5E7EB); border-radius: 8px; padding: 1rem;">
+                <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 1rem;">
                     <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
                         <span>CT Neuroimaging</span>
                         <span class="badge-status ${gate.status === 'rejected' ? 'badge-rejected' : (gate.status === 'verified' || gate.status === 'passed' ? 'badge-approved' : 'badge-pending')}" style="font-size: 0.7rem;">Gate: ${escapeHTML(gate.status || 'skipped')}</span>
@@ -5340,7 +5343,7 @@ async function openSafetyDetailsModal(assessmentId) {
                 </div>
 
                 <!-- Predictive ML Risk Engine -->
-                <div style="background: var(--card-bg, #fff); border: 1px solid var(--border-color, #E5E7EB); border-radius: 8px; padding: 1rem;">
+                <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 1rem;">
                     <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
                         <span>Predictive ML Risk</span>
                         <span class="badge-status ${ml.tier === 'High' ? 'badge-rejected' : (ml.tier === 'Moderate' ? 'badge-pending' : 'badge-approved')}" style="font-size: 0.7rem;">${escapeHTML(ml.tier || 'N/A')} Risk</span>
@@ -5355,12 +5358,12 @@ async function openSafetyDetailsModal(assessmentId) {
                 </div>
 
                 <!-- Clinical Safety & Validation Status -->
-                <div style="background: var(--card-bg, #fff); border: 1px solid var(--border-color, #E5E7EB); border-radius: 8px; padding: 1rem;">
+                <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 1rem;">
                     <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
                         <span>Validation & Sign-Off</span>
                         <span class="badge-status ${rep.validation_status === 'FLAGGED' ? 'badge-rejected' : (rep.validation_status === 'VALIDATED' ? 'badge-approved' : 'badge-pending')}" style="font-size: 0.7rem;">${escapeHTML(rep.validation_status || 'N/A')}</span>
                     </div>
-                    <div style="margin-bottom: 0.35rem; font-size: 0.85rem;">Physician Signed: <strong>${rep.physician_signed_off ? '<span style="color: #059669;">Signed</span>' : '<span style="color: #DC2626;">Unsigned (Pending)</span>'}</strong></div>
+                    <div style="margin-bottom: 0.35rem; font-size: 0.85rem;">Physician Signed: <strong>${rep.physician_signed_off ? '<span style="color: var(--color-success);">Signed</span>' : '<span style="color: var(--color-danger);">Unsigned (Pending)</span>'}</strong></div>
                     ${rep.signed_at ? `<div style="font-size: 0.75rem; color: var(--text-muted);">Signed: ${formatAdminDateTime(rep.signed_at)}</div>` : ''}
                     ${rep.pdf_filename ? `<div style="margin-top: 0.35rem;"><a href="/reports/${encodeURIComponent(rep.pdf_filename)}" target="_blank" class="btn btn-sm btn-secondary" style="font-size: 0.72rem; padding: 0.2rem 0.5rem;">View PDF Report &rarr;</a></div>` : ''}
                 </div>
@@ -5368,7 +5371,7 @@ async function openSafetyDetailsModal(assessmentId) {
 
             <!-- Notes & Report Summary -->
             ${(rep.report_summary || rep.sign_off_notes || st.notes) ? `
-                <div style="background: rgba(37, 99, 235, 0.04); border-left: 3px solid #2563EB; border-radius: 4px; padding: 0.75rem 1rem; margin-bottom: 1.25rem;">
+                <div style="background: rgba(14, 116, 144, 0.04); border-left: 3px solid var(--color-primary); border-radius: 4px; padding: 0.75rem 1rem; margin-bottom: 1.25rem;">
                     ${st.notes ? `<div style="margin-bottom: 0.35rem; font-size: 0.82rem;"><strong>Safety Assignment Note:</strong> ${escapeHTML(st.notes)}</div>` : ''}
                     ${rep.sign_off_notes ? `<div style="margin-bottom: 0.35rem; font-size: 0.82rem;"><strong>Physician Sign-Off Notes:</strong> ${escapeHTML(rep.sign_off_notes)}</div>` : ''}
                     ${rep.report_summary ? `<div style="font-size: 0.82rem;"><strong>Clinical Report Summary:</strong> <span style="color: var(--text-muted);">${escapeHTML(rep.report_summary)}</span></div>` : ''}
@@ -5381,7 +5384,7 @@ async function openSafetyDetailsModal(assessmentId) {
                     <span>Administrative Case Audit Log</span>
                     <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">(Immutable PostgreSQL Trail)</span>
                 </div>
-                <div class="table-responsive" style="max-height: 180px; overflow-y: auto; border: 1px solid var(--border-color, #E5E7EB); border-radius: 6px;">
+                <div class="table-responsive" style="max-height: 180px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: 6px;">
                     <table class="admin-table" style="font-size: 0.78rem; margin: 0;">
                         <thead>
                             <tr>
@@ -5400,12 +5403,12 @@ async function openSafetyDetailsModal(assessmentId) {
             </div>
 
             <!-- Administrative Governance Advisory Notice -->
-            <div style="margin-top: 1.25rem; padding: 0.75rem; background: rgba(245, 158, 11, 0.08); border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 0.78rem; color: #92400E;">
+            <div style="margin-top: 1.25rem; padding: 0.75rem; background: var(--color-warning-soft); border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 0.78rem; color: var(--color-warning);">
                 <strong>Clinical Governance Rule:</strong> Administrative personnel supervise operational workflows and assign clinicians. Diagnostic inferences, AI model overrides, and clinical report sign-offs remain strictly restricted to licensed attending physicians.
             </div>
         `;
     } catch (err) {
-        content.innerHTML = `<div style="text-align: center; color: #DC2626; padding: 2rem;">Error retrieving case details: ${escapeHTML(err.message)}</div>`;
+        content.innerHTML = `<div style="text-align: center; color: var(--color-danger); padding: 2rem;">Error retrieving case details: ${escapeHTML(err.message)}</div>`;
     }
 }
 
@@ -5435,7 +5438,7 @@ async function openSafetyAssignModal(assessmentId) {
                 <div><strong>Current Doctor:</strong> ${escapeHTML(item?.doctor_name || 'Unassigned')}</div>
                 <div><strong>CT Diagnosis:</strong> ${escapeHTML(item?.ct_diagnosis || '--')}</div>
             </div>
-            <div style="padding: 0.4rem 0.6rem; background: rgba(239, 68, 68, 0.08); border-left: 3px solid #EF4444; border-radius: 4px; font-size: 0.8rem; margin-top: 0.35rem;">
+            <div style="padding: 0.4rem 0.6rem; background: var(--color-danger-soft); border-left: 3px solid var(--color-danger); border-radius: 4px; font-size: 0.8rem; margin-top: 0.35rem;">
                 <strong>Alert:</strong> ${escapeHTML(item?.alert_reason || item?.flag_reason || 'Clinical Review Required')}
             </div>
         `;
@@ -5499,7 +5502,7 @@ function openInvestigateModal(index) {
                 <div><strong>Model Confidence:</strong> ${item.confidence_pct != null ? item.confidence_pct + '%' : '--'}</div>
                 <div><strong>Attending Doctor:</strong> ${escapeHTML(item.doctor_name || '--')}</div>
             </div>
-            <div style="padding: 0.5rem; background: rgba(239, 68, 68, 0.08); border-left: 3px solid #EF4444; border-radius: 4px;">
+            <div style="padding: 0.5rem; background: var(--color-danger-soft); border-left: 3px solid var(--color-danger); border-radius: 4px;">
                 <strong>Safety Alert Reason:</strong> ${escapeHTML(item.alert_reason || item.flag_reason || '--')}
             </div>
         `;
@@ -5572,7 +5575,7 @@ async function loadAdminUsers(role = currentUserRoleFilter, search = '') {
         }).join('');
 
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #DC2626; padding: 2rem;">Failed to load users: ${escapeHTML(err.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--color-danger); padding: 2rem;">Failed to load users: ${escapeHTML(err.message)}</td></tr>`;
     }
 }
 
@@ -5630,11 +5633,11 @@ async function loadAdminModels() {
                             <span class="model-stat-lbl">Inferences</span>
                         </div>
                         <div>
-                            <span class="model-stat-val" style="color: ${m.failed_inferences > 0 ? '#EF4444' : 'inherit'};">${m.failed_inferences}</span>
+                            <span class="model-stat-val" style="color: ${m.failed_inferences > 0 ? 'var(--color-danger)' : 'inherit'};">${m.failed_inferences}</span>
                             <span class="model-stat-lbl">Failures</span>
                         </div>
                         <div>
-                            <span class="model-stat-val" style="color: ${m.error_rate_pct > 5 ? '#EF4444' : '#10B981'};">${m.error_rate_pct}%</span>
+                            <span class="model-stat-val" style="color: ${m.error_rate_pct > 5 ? 'var(--color-danger)' : 'var(--color-success)'};">${m.error_rate_pct}%</span>
                             <span class="model-stat-lbl">Error Rate</span>
                         </div>
                     </div>
@@ -5647,7 +5650,7 @@ async function loadAdminModels() {
         }).join('');
 
     } catch (err) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #DC2626; padding: 2rem;">Error fetching models: ${escapeHTML(err.message)}</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--color-danger); padding: 2rem;">Error fetching models: ${escapeHTML(err.message)}</div>`;
     }
 }
 
@@ -5695,7 +5698,7 @@ async function loadAdminAuditLogs(search = '') {
         `).join('');
 
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #DC2626; padding: 2rem;">Failed to load audit logs: ${escapeHTML(err.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--color-danger); padding: 2rem;">Failed to load audit logs: ${escapeHTML(err.message)}</td></tr>`;
     }
 }
 
@@ -5721,7 +5724,7 @@ function openAuditDetailModal(index) {
             ${log.reason ? `<div style="margin-bottom: 1rem;"><strong>Mandatory Justification / Rationale:</strong><div style="background: rgba(82, 114, 153, 0.08); padding: 0.5rem 0.75rem; border-radius: 6px; margin-top: 0.25rem;">${escapeHTML(log.reason)}</div></div>` : ''}
             <div>
                 <strong>Structured Context &amp; Metadata (JSON):</strong>
-                <pre style="background: #0F172A; color: #E2E8F0; padding: 1rem; border-radius: 8px; font-size: 0.78rem; overflow-x: auto; max-height: 250px; margin-top: 0.35rem;">${escapeHTML(JSON.stringify(log.details || {}, null, 2))}</pre>
+                <pre style="background: var(--color-ink); color: var(--color-white); padding: 1rem; border-radius: 8px; font-size: 0.78rem; overflow-x: auto; max-height: 250px; margin-top: 0.35rem;">${escapeHTML(JSON.stringify(log.details || {}, null, 2))}</pre>
             </div>
         `;
     }
