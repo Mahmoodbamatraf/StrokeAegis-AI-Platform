@@ -1,0 +1,439 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  /* ==========================================================================
+   * 1. CLINICAL TEAL (DEFAULT — ثيم: تيل طبي)
+   * ======================================================================== */
+  :root,
+  html[data-accent="clinical-teal"] {
+    --sa-primary: #0E7490;
+    --sa-primary-hover: #0B5C73;
+    --sa-primary-bright: #0891B2;
+    --sa-primary-soft: rgba(14, 116, 144, 0.12);
+    --sa-primary-border: rgba(14, 116, 144, 0.38);
+    --sa-primary-glow: rgba(14, 116, 144, 0.28);
+    --sa-primary-pulse-start: rgba(14, 116, 144, 0.34);
+    --sa-primary-pulse-fade: rgba(14, 116, 144, 0);
+    --sa-success: #047857;
+    --sa-warning: #B45309;
+    --sa-danger: #DC2626;
+    --sa-bg: #F4FAFB;
+    --sa-surface: #FFFFFF;
+    --sa-surface-elevated: #EAF5F7;
+    --sa-text: #0F2A2E;
+    --sa-muted: #526773;
+    --sa-border: #CBE2E7;
+    --sa-ambient-glow: radial-gradient(900px circle at 85% 0%, rgba(14, 116, 144, 0.10), transparent 70%);
+    --font-sans: 'Noto Sans Arabic', 'Figtree', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  html.dark,
+  html.dark[data-accent="clinical-teal"] {
+    --sa-primary: #0891B2;
+    --sa-primary-hover: #06B6D4;
+    --sa-primary-bright: #22D3EE;
+    --sa-primary-soft: rgba(6, 182, 212, 0.16);
+    --sa-primary-border: rgba(6, 182, 212, 0.45);
+    --sa-primary-glow: rgba(6, 182, 212, 0.34);
+    --sa-primary-pulse-start: rgba(34, 211, 238, 0.38);
+    --sa-primary-pulse-fade: rgba(34, 211, 238, 0);
+    --sa-success: #10B981;
+    --sa-warning: #F59E0B;
+    --sa-danger: #EF4444;
+    --sa-bg: #071115;
+    --sa-surface: #0C1B21;
+    --sa-surface-elevated: #11252D;
+    --sa-text: #ECF6F8;
+    --sa-muted: #8CA3AF;
+    --sa-border: #1B3540;
+    --sa-ambient-glow: radial-gradient(950px circle at 85% 0%, rgba(6, 182, 212, 0.14), transparent 70%);
+  }
+
+  /* ==========================================================================
+   * 2. SURGICAL EMERALD (ثيم: زمردي)
+   * ======================================================================== */
+  html[data-accent="surgical-emerald"] {
+    --sa-primary: #047857;
+    --sa-primary-hover: #065F46;
+    --sa-primary-bright: #059669;
+    --sa-primary-soft: rgba(4, 120, 87, 0.13);
+    --sa-primary-border: rgba(4, 120, 87, 0.42);
+    --sa-primary-glow: rgba(4, 120, 87, 0.28);
+    --sa-primary-pulse-start: rgba(5, 150, 105, 0.34);
+    --sa-primary-pulse-fade: rgba(5, 150, 105, 0);
+    --sa-bg: #F0FAF5;
+    --sa-surface: #FFFFFF;
+    --sa-surface-elevated: #E2F5EC;
+    --sa-text: #0B291E;
+    --sa-muted: #46695B;
+    --sa-border: #B8E1CC;
+    --sa-ambient-glow: radial-gradient(950px circle at 85% 0%, rgba(16, 185, 129, 0.15), transparent 70%);
+  }
+
+  html.dark[data-accent="surgical-emerald"] {
+    --sa-primary: #059669;
+    --sa-primary-hover: #10B981;
+    --sa-primary-bright: #34D399;
+    --sa-primary-soft: rgba(16, 185, 129, 0.18);
+    --sa-primary-border: rgba(16, 185, 129, 0.45);
+    --sa-primary-glow: rgba(16, 185, 129, 0.34);
+    --sa-primary-pulse-start: rgba(52, 211, 153, 0.38);
+    --sa-primary-pulse-fade: rgba(52, 211, 153, 0);
+    --sa-bg: #04130D;
+    --sa-surface: #092117;
+    --sa-surface-elevated: #0E2F22;
+    --sa-text: #ECFDF5;
+    --sa-muted: #86B8A3;
+    --sa-border: #164633;
+    --sa-ambient-glow: radial-gradient(950px circle at 85% 0%, rgba(16, 185, 129, 0.18), transparent 70%);
+  }
+
+  /* ==========================================================================
+   * 3. ROYAL CYAN-SAPPHIRE (ثيم: سيان ملكي)
+   * ======================================================================== */
+  html[data-accent="royal-cyan"] {
+    --sa-primary: #1D4ED8;
+    --sa-primary-hover: #1E40AF;
+    --sa-primary-bright: #2563EB;
+    --sa-primary-soft: rgba(29, 78, 216, 0.12);
+    --sa-primary-border: rgba(29, 78, 216, 0.40);
+    --sa-primary-glow: rgba(29, 78, 216, 0.28);
+    --sa-primary-pulse-start: rgba(37, 99, 235, 0.34);
+    --sa-primary-pulse-fade: rgba(37, 99, 235, 0);
+    --sa-bg: #F0F5FF;
+    --sa-surface: #FFFFFF;
+    --sa-surface-elevated: #E3EDFF;
+    --sa-text: #0F1D3B;
+    --sa-muted: #4E6085;
+    --sa-border: #BFD4F8;
+    --sa-ambient-glow: radial-gradient(950px circle at 85% 0%, rgba(37, 99, 235, 0.15), transparent 70%);
+  }
+
+  html.dark[data-accent="royal-cyan"] {
+    --sa-primary: #2563EB;
+    --sa-primary-hover: #3B82F6;
+    --sa-primary-bright: #60A5FA;
+    --sa-primary-soft: rgba(59, 130, 246, 0.18);
+    --sa-primary-border: rgba(96, 165, 250, 0.45);
+    --sa-primary-glow: rgba(59, 130, 246, 0.36);
+    --sa-primary-pulse-start: rgba(96, 165, 250, 0.38);
+    --sa-primary-pulse-fade: rgba(96, 165, 250, 0);
+    --sa-bg: #050C1C;
+    --sa-surface: #0B1730;
+    --sa-surface-elevated: #122347;
+    --sa-text: #EFF6FF;
+    --sa-muted: #8DA4C8;
+    --sa-border: #1E3668;
+    --sa-ambient-glow: radial-gradient(950px circle at 85% 0%, rgba(59, 130, 246, 0.20), transparent 70%);
+  }
+
+  html[dir="ltr"] body {
+    font-family: 'Figtree', 'Noto Sans Arabic', sans-serif;
+  }
+
+  html[dir="rtl"] body {
+    font-family: 'Noto Sans Arabic', 'Figtree', sans-serif;
+  }
+
+  body {
+    background-color: var(--sa-bg);
+    background-image: var(--sa-ambient-glow);
+    background-attachment: fixed;
+    color: var(--sa-text);
+    transition: background-color 280ms cubic-bezier(0.16, 1, 0.3, 1), color 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+/* ============================================================================
+ * DYNAMIC LUXURY THEME REMAPPING FOR TAILWIND CLASSES
+ * Ensures every button, card, badge, border, and surface responds immediately
+ * when switching between Clinical Teal, Surgical Emerald, and Royal Cyan.
+ * ========================================================================== */
+.bg-\[\#0E7490\] {
+  background-color: var(--sa-primary) !important;
+}
+.hover\:bg-\[\#0B5C73\]:hover,
+.hover\:bg-\[\#0E7490\]:hover {
+  background-color: var(--sa-primary-hover) !important;
+}
+.bg-\[\#0E7490\]\/8,
+.bg-\[\#0E7490\]\/10,
+.bg-\[\#0E7490\]\/12,
+.bg-\[\#0E7490\]\/15 {
+  background-color: var(--sa-primary-soft) !important;
+}
+.text-\[\#0E7490\] {
+  color: var(--sa-primary) !important;
+}
+html.dark .dark\:text-\[\#22D3EE\],
+html.dark .dark\:text-\[\#06B6D4\] {
+  color: var(--sa-primary-bright) !important;
+}
+.border-\[\#0E7490\],
+.hover\:border-\[\#0E7490\]:hover {
+  border-color: var(--sa-primary) !important;
+}
+.border-\[\#0E7490\]\/30,
+.border-\[\#0E7490\]\/35,
+.border-\[\#0E7490\]\/40,
+.border-\[\#0E7490\]\/50 {
+  border-color: var(--sa-primary-border) !important;
+}
+html.dark .dark\:border-\[\#06B6D4\] {
+  border-color: var(--sa-primary-bright) !important;
+}
+
+/* Canvas, Surface & Border Theme Sync */
+.bg-\[\#F7FAFA\] {
+  background-color: var(--sa-bg) !important;
+  background-image: var(--sa-ambient-glow);
+}
+html.dark .dark\:bg-\[\#071115\] {
+  background-color: var(--sa-bg) !important;
+  background-image: var(--sa-ambient-glow);
+}
+html.dark .dark\:bg-\[\#0C1B21\] {
+  background-color: var(--sa-surface) !important;
+}
+.bg-\[\#F0F6F7\] {
+  background-color: var(--sa-surface-elevated) !important;
+}
+html.dark .dark\:bg-\[\#11252D\] {
+  background-color: var(--sa-surface-elevated) !important;
+}
+.border-\[\#D7E3E6\] {
+  border-color: var(--sa-border) !important;
+}
+html.dark .dark\:border-\[\#1B3540\] {
+  border-color: var(--sa-border) !important;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.font-mono-tabular {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sa-primary-border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sa-primary);
+}
+
+/* ============================================================================
+ * SUBTLE LUXURY BREATHING & PULSING ANIMATIONS FOR PRIMARY ACTION BUTTONS
+ * ========================================================================== */
+@keyframes saPrimaryButtonBreathe {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 4px 14px -2px var(--sa-primary-glow),
+      0 0 0 0px var(--sa-primary-pulse-start);
+  }
+  50% {
+    transform: scale(1.015);
+    box-shadow:
+      0 8px 22px -2px var(--sa-primary-glow),
+      0 0 0 6px var(--sa-primary-pulse-fade);
+  }
+}
+
+@keyframes saSuccessButtonBreathe {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 4px 14px -2px rgba(4, 120, 87, 0.28),
+      0 0 0 0px rgba(16, 185, 129, 0.32);
+  }
+  50% {
+    transform: scale(1.015);
+    box-shadow:
+      0 8px 22px -2px rgba(4, 120, 87, 0.34),
+      0 0 0 6px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes saDangerButtonBreathe {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 4px 14px -2px rgba(220, 38, 38, 0.28),
+      0 0 0 0px rgba(239, 68, 68, 0.32);
+  }
+  50% {
+    transform: scale(1.015);
+    box-shadow:
+      0 8px 22px -2px rgba(220, 38, 38, 0.34),
+      0 0 0 6px rgba(239, 68, 68, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  button.bg-\[\#0E7490\]:not([role="tab"]),
+  .sa-btn-breathe {
+    animation: saPrimaryButtonBreathe 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform, box-shadow;
+  }
+
+  button.bg-\[\#047857\]:not([role="tab"]) {
+    animation: saSuccessButtonBreathe 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform, box-shadow;
+  }
+
+  button.bg-\[\#DC2626\]:not([role="tab"]) {
+    animation: saDangerButtonBreathe 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform, box-shadow;
+  }
+
+  button.bg-\[\#0E7490\]:not([role="tab"]):hover,
+  button.bg-\[\#047857\]:not([role="tab"]):hover,
+  button.bg-\[\#DC2626\]:not([role="tab"]):hover,
+  .sa-btn-breathe:hover {
+    animation-play-state: paused;
+    transform: translateY(-1.5px) scale(1.022);
+    box-shadow: 0 10px 24px -4px var(--sa-primary-glow);
+  }
+
+  button.bg-\[\#0E7490\]:not([role="tab"]):active,
+  button.bg-\[\#047857\]:not([role="tab"]):active,
+  button.bg-\[\#DC2626\]:not([role="tab"]):active,
+  .sa-btn-breathe:active {
+    transform: translateY(0px) scale(0.985);
+  }
+}
+
+@keyframes saFadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes saFloatEmblem {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(1.5deg);
+  }
+}
+
+@keyframes saEcgFlow {
+  0% {
+    stroke-dasharray: 40 260;
+    stroke-dashoffset: 300;
+  }
+  100% {
+    stroke-dasharray: 40 260;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes saCtLaserScan {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(260px);
+    opacity: 0;
+  }
+}
+
+@keyframes saReticleSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.sa-animate-in,
+.sa-luxury-enter {
+  animation: saFadeSlideUp 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.sa-float-emblem {
+  animation: saFloatEmblem 4.5s ease-in-out infinite;
+}
+
+.sa-ecg-line {
+  animation: saEcgFlow 2.6s linear infinite;
+}
+
+.sa-ct-laser {
+  animation: saCtLaserScan 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.sa-reticle-spin {
+  transform-origin: center;
+  animation: saReticleSpin 12s linear infinite;
+}
+
+/* ============================================================================
+ * CONVNEXT CT SCAN-LINE PROGRESS OVERLAY EFFECTS
+ * ========================================================================== */
+@keyframes saBarScanlineMove {
+  0% {
+    background-position: 0 0, -120% 0;
+  }
+  100% {
+    background-position: 0 0, 220% 0;
+  }
+}
+
+.sa-scanline-grid {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(34, 211, 238, 0.04) 0px,
+    rgba(34, 211, 238, 0.04) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+.sa-progress-scanline {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.14) 0px,
+      rgba(255, 255, 255, 0.14) 2px,
+      transparent 2px,
+      transparent 6px
+    ),
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 100%
+    );
+  background-size: 100% 100%, 45% 100%;
+  background-repeat: repeat, no-repeat;
+  animation: saBarScanlineMove 1.35s linear infinite;
+}
