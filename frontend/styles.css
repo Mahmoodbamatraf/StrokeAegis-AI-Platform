@@ -3299,6 +3299,11 @@ button, input, select, textarea {
     font-family: inherit;
 }
 
+/* Noto Sans Arabic's "normal" line box is ~1.7em; keep controls compact */
+button {
+    line-height: 1.3;
+}
+
 /* Text/link-style button (DESIGN.md §6 Ghost) */
 .btn-text-action {
     background: transparent;
@@ -5479,7 +5484,7 @@ body.rtl .btn-send svg {
 }
 
 .portal-table th {
-    padding: 0.9rem 1.15rem;
+    padding: 0.9rem 0.8rem;
     font-size: 0.72rem;
     font-weight: 800;
     text-transform: uppercase;
@@ -5488,7 +5493,7 @@ body.rtl .btn-send svg {
 }
 
 .portal-table td {
-    padding: 1rem 1.15rem;
+    padding: 1rem 0.8rem;
     border-bottom: 1px solid rgba(226, 232, 240, 0.6);
     color: var(--charcoal-slate, var(--color-text));
     vertical-align: middle;
@@ -5604,6 +5609,33 @@ body.rtl .btn-send svg {
     border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
+/* Risk badge in patient tables: "High Risk 82.0%" on one line, diagnosis under it */
+.tier-tag.tier-tag-stack {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+    line-height: 1.35;
+}
+
+.tier-tag-main {
+    white-space: nowrap;
+}
+
+.tier-tag-diag {
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+/* Short pills and values never break mid-word */
+.portal-table .status-pill,
+.portal-table .rel-badge {
+    white-space: nowrap;
+}
+
+.portal-table td.cell-nowrap {
+    white-space: nowrap;
+}
+
 /* Action Buttons in table */
 .table-actions-cell {
     display: flex;
@@ -5615,6 +5647,7 @@ body.rtl .btn-send svg {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
+    white-space: nowrap;
     padding: 0.4rem 0.75rem;
     border-radius: 6px;
     font-size: 0.75rem;

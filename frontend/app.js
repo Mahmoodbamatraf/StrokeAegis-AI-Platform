@@ -2725,8 +2725,8 @@ function renderDoctorPatientsTable(patients) {
             const tier = p.latest_assessment.ml_risk_tier || 'Low';
             const tierClass = tier.toLowerCase();
             const probPct = p.latest_assessment.ml_risk_probability ? `${(p.latest_assessment.ml_risk_probability * 100).toFixed(1)}%` : '';
-            const diag = p.latest_assessment.ct_diagnosis ? ` • ${p.latest_assessment.ct_diagnosis}` : '';
-            riskBadge = `<span class="tier-tag ${tierClass}">${tier} Risk ${probPct}${diag}</span>`;
+            const diag = p.latest_assessment.ct_diagnosis ? `<span class="tier-tag-diag">${escapeHTML(p.latest_assessment.ct_diagnosis)}</span>` : '';
+            riskBadge = `<span class="tier-tag tier-tag-stack ${tierClass}"><span class="tier-tag-main">${tier} Risk ${probPct}</span>${diag}</span>`;
         }
 
         const ageStr = p.date_of_birth ? `${calculateAge(p.date_of_birth)} yrs` : '--';
@@ -2747,7 +2747,7 @@ function renderDoctorPatientsTable(patients) {
                     </div>
                 </td>
                 <td><strong style="font-family: monospace;">${escapeHTML(p.mrn)}</strong></td>
-                <td>${escapeHTML(demoStr)}</td>
+                <td class="cell-nowrap">${escapeHTML(demoStr)}</td>
                 <td><span class="status-pill active">${escapeHTML(p.status)}</span> ${relBadge}</td>
                 <td>${riskBadge}</td>
                 <td>
